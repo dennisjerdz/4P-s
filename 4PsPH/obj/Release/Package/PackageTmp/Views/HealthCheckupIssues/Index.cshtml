@@ -1,0 +1,51 @@
+﻿@model IEnumerable<_4PsPH.Models.HealthCheckupIssue>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Person.GivenName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsResolved)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ResolvedDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Comment)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Person.GivenName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsResolved)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ResolvedDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Comment)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.HealthCheckupIssueId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.HealthCheckupIssueId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.HealthCheckupIssueId })
+        </td>
+    </tr>
+}
+
+</table>

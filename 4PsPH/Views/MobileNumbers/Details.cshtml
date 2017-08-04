@@ -1,0 +1,58 @@
+﻿@model _4PsPH.Models.MobileNumber
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>MobileNumber</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Person.GivenName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Person.GivenName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MobileNo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MobileNo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Token)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Token)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateTimeCreated)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateTimeCreated)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsDisabled)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsDisabled)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.MobileNumberId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

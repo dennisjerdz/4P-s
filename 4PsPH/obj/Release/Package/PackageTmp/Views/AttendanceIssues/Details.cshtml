@@ -1,0 +1,58 @@
+﻿@model _4PsPH.Models.AttendanceIssue
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>AttendanceIssue</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Person.GivenName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Person.GivenName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.School.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.School.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsResolved)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsResolved)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ResolvedDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ResolvedDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Comment)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Comment)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.AttendanceIssueId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -8,7 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using _4PsPH.Models;
 
-namespace _4PsPH.Controllers
+namespace _4PsPH.Controllers.Production
 {
     public class HealthCheckupIssuesController : Controller
     {
@@ -17,7 +17,7 @@ namespace _4PsPH.Controllers
         // GET: HealthCheckupIssues
         public ActionResult Index()
         {
-            var healthCheckupIssues = db.HealthCheckupIssues.Include(h => h.Person);
+            var healthCheckupIssues = db.HealthCheckupIssues.Include(h => h.Hospital).Include(h => h.Person);
             return View(healthCheckupIssues.ToList());
         }
 
@@ -39,6 +39,7 @@ namespace _4PsPH.Controllers
         // GET: HealthCheckupIssues/Create
         public ActionResult Create()
         {
+            ViewBag.HospitalId = new SelectList(db.Hospitals, "HospitalId", "Name");
             ViewBag.PersonId = new SelectList(db.Persons, "PersonId", "GivenName");
             return View();
         }
@@ -48,7 +49,7 @@ namespace _4PsPH.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "HealthCheckupIssueId,PersonId,IsResolved,ResolvedDate,Comment")] HealthCheckupIssue healthCheckupIssue)
+        public ActionResult Create([Bind(Include = "HealthCheckupIssueId,PersonId,HospitalId,IsResolved,ResolvedDate,Comment")] HealthCheckupIssue healthCheckupIssue)
         {
             if (ModelState.IsValid)
             {
@@ -57,6 +58,7 @@ namespace _4PsPH.Controllers
                 return RedirectToAction("Index");
             }
 
+            ViewBag.HospitalId = new SelectList(db.Hospitals, "HospitalId", "Name", healthCheckupIssue.HospitalId);
             ViewBag.PersonId = new SelectList(db.Persons, "PersonId", "GivenName", healthCheckupIssue.PersonId);
             return View(healthCheckupIssue);
         }
@@ -73,6 +75,7 @@ namespace _4PsPH.Controllers
             {
                 return HttpNotFound();
             }
+            ViewBag.HospitalId = new SelectList(db.Hospitals, "HospitalId", "Name", healthCheckupIssue.HospitalId);
             ViewBag.PersonId = new SelectList(db.Persons, "PersonId", "GivenName", healthCheckupIssue.PersonId);
             return View(healthCheckupIssue);
         }
@@ -82,7 +85,7 @@ namespace _4PsPH.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "HealthCheckupIssueId,PersonId,IsResolved,ResolvedDate,Comment")] HealthCheckupIssue healthCheckupIssue)
+        public ActionResult Edit([Bind(Include = "HealthCheckupIssueId,PersonId,HospitalId,IsResolved,ResolvedDate,Comment")] HealthCheckupIssue healthCheckupIssue)
         {
             if (ModelState.IsValid)
             {
@@ -90,6 +93,7 @@ namespace _4PsPH.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            ViewBag.HospitalId = new SelectList(db.Hospitals, "HospitalId", "Name", healthCheckupIssue.HospitalId);
             ViewBag.PersonId = new SelectList(db.Persons, "PersonId", "GivenName", healthCheckupIssue.PersonId);
             return View(healthCheckupIssue);
         }

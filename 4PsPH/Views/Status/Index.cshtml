@@ -26,10 +26,7 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Color)
+            <font style="color:@item.Color">@item.Name</font>
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.IsEditable)

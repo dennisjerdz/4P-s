@@ -1,0 +1,123 @@
+﻿@model IEnumerable<_4PsPH.Models.Person>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.EducationalAttainment.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Hospital.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Household.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Occupation.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RelationToGrantee.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.School.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.GivenName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MiddleName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsBeneficiary)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsGrantee)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsParentLeader)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Gender)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsExcluded)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BirthDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DateTimeCreated)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.EducationalAttainment.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Hospital.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Household.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Occupation.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RelationToGrantee.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.School.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.GivenName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MiddleName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LastName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsBeneficiary)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsGrantee)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsParentLeader)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Gender)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsExcluded)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.BirthDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DateTimeCreated)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.PersonId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.PersonId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.PersonId })
+        </td>
+    </tr>
+}
+
+</table>

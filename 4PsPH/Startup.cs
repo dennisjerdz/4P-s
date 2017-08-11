@@ -9,6 +9,7 @@ namespace _4PsPH
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
+            app.MapSignalR();
         }
     }
 }

@@ -8,7 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using _4PsPH.Models;
 
-namespace _4PsPH.Controllers
+namespace _4PsPH.Controllers.Production
 {
     public class TicketsController : Controller
     {
@@ -17,7 +17,7 @@ namespace _4PsPH.Controllers
         // GET: Tickets
         public ActionResult Index()
         {
-            var tickets = db.Tickets.Include(t => t.Category).Include(t => t.MobileNumber).Include(t => t.Status);
+            var tickets = db.Tickets.Include(t => t.Category).Include(t => t.MobileNumber).Include(t => t.Person).Include(t => t.Status);
             return View(tickets.ToList());
         }
 
@@ -41,6 +41,7 @@ namespace _4PsPH.Controllers
         {
             ViewBag.CategoryId = new SelectList(db.Categories, "CategoryId", "Name");
             ViewBag.MobileNumberId = new SelectList(db.MobileNumbers, "MobileNumberId", "MobileNo");
+            ViewBag.PersonId = new SelectList(db.Persons, "PersonId", "GivenName");
             ViewBag.StatusId = new SelectList(db.Statuses, "StatusId", "Name");
             return View();
         }
@@ -61,6 +62,7 @@ namespace _4PsPH.Controllers
 
             ViewBag.CategoryId = new SelectList(db.Categories, "CategoryId", "Name", ticket.CategoryId);
             ViewBag.MobileNumberId = new SelectList(db.MobileNumbers, "MobileNumberId", "MobileNo", ticket.MobileNumberId);
+            ViewBag.PersonId = new SelectList(db.Persons, "PersonId", "GivenName", ticket.PersonId);
             ViewBag.StatusId = new SelectList(db.Statuses, "StatusId", "Name", ticket.StatusId);
             return View(ticket);
         }
@@ -79,6 +81,7 @@ namespace _4PsPH.Controllers
             }
             ViewBag.CategoryId = new SelectList(db.Categories, "CategoryId", "Name", ticket.CategoryId);
             ViewBag.MobileNumberId = new SelectList(db.MobileNumbers, "MobileNumberId", "MobileNo", ticket.MobileNumberId);
+            ViewBag.PersonId = new SelectList(db.Persons, "PersonId", "GivenName", ticket.PersonId);
             ViewBag.StatusId = new SelectList(db.Statuses, "StatusId", "Name", ticket.StatusId);
             return View(ticket);
         }
@@ -98,6 +101,7 @@ namespace _4PsPH.Controllers
             }
             ViewBag.CategoryId = new SelectList(db.Categories, "CategoryId", "Name", ticket.CategoryId);
             ViewBag.MobileNumberId = new SelectList(db.MobileNumbers, "MobileNumberId", "MobileNo", ticket.MobileNumberId);
+            ViewBag.PersonId = new SelectList(db.Persons, "PersonId", "GivenName", ticket.PersonId);
             ViewBag.StatusId = new SelectList(db.Statuses, "StatusId", "Name", ticket.StatusId);
             return View(ticket);
         }

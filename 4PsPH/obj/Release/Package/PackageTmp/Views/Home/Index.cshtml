@@ -8,6 +8,12 @@
     <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
 </div>
 
+<div class="col-md-12">
+    <ul id="feed">
+
+    </ul>
+</div>
+
 <div class="row">
     <div class="col-md-4">
         <h2>Getting started</h2>
@@ -26,6 +32,74 @@
     <div class="col-md-4">
         <h2>Web Hosting</h2>
         <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+        <p><a id="BtnSend" href="#">Learn more &raquo;</a></p>
     </div>
 </div>
+
+@section scripts{
+    <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
+    <script src="~/signalr/hubs"></script>
+    
+    <script>
+        $(function () {
+            var feed = $.connection.feedHub;
+
+            feed.client.addmsg = function (msg) {
+                $("#feed").append("<li>" + msg + "</li>");
+                spawnNotification(msg, "", "Feed notifications.");
+            }
+
+            $.connection.hub.start().done(function () {
+                $('#BtnSend').click(function () {
+                    alert("damn");
+                    feed.server.send("fml");
+                });
+            });
+        });
+
+        function spawnNotification(theBody, theIcon, theTitle) {
+            var options = {
+                body: theBody,
+                icon: "http://4psph.azurewebsites.net/Content/images/4Ps_logo_w.png"
+            }
+            var n = new Notification(theTitle, options);
+            setTimeout(n.close.bind(n), 4500);
+            Play(3, 900);
+        }
+
+        Play = (function () {
+
+            var ctx = new (AudioContext || webkitAudioContext);
+
+            return function (duration, freq, finishedCallback) {
+                duration = +duration;
+                if (typeof finishedCallback != "function") {
+                    finishedCallback = function () { };
+                }
+                var osc = ctx.createOscillator();
+                var g = ctx.createGain();
+                osc.connect(g);
+                g.connect(ctx.destination);
+                osc.type = "sine";
+                osc.frequency.value = freq;
+
+                if (osc.start) {
+                    osc.start();
+                    g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + duration);
+                }
+                else {
+                    osc.noteOn(0);
+                    g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + duration);
+                }
+            };
+        })();
+
+        $(document).ready(function () {
+            Notification.requestPermission().then(function (result) {
+                if (result === "granted") {
+                    spawnNotification("Hello there!", "", "Notification is enabled.");
+                }
+            });
+        });
+    </script> 
+}

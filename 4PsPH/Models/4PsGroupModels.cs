@@ -46,6 +46,17 @@ namespace _4PsPH.Models
         public virtual City City { get; set; }
     }
 
+    public class Hospital
+    {
+        public int HospitalId { get; set; }
+        [Display(Name = "Hospital Name")]
+        public string Name { get; set; }
+        public DateTime DateTimeCreated { get; set; }
+
+        public int CityId { get; set; }
+        public virtual City City { get; set; }
+    }
+
     public class ParentLeaderHousehold
     {
         public int ParentLeaderHouseholdId { get; set; }

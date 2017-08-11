@@ -46,8 +46,10 @@ namespace _4PsPH.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "CityId,Name,DateTimeCreated")] City city)
+        public ActionResult Create([Bind(Include = "CityId,Name")] City city)
         {
+            city.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+
             if (ModelState.IsValid)
             {
                 db.City.Add(city);

@@ -14,12 +14,16 @@ namespace _4PsPH.Models
         public int CityId { get; set; }
         public virtual City City { get; set; }
 
+        [Required]
         [Display(Name = "Given Name")]
         public string GivenName { get; set; }
         [Display(Name = "Middle Name/Initial")]
         public string MiddleName { get; set; }
+        [Required]
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
+
+        public bool IsDisabled { get; set; }
 
         public string getFullName()
         {
@@ -83,6 +87,6 @@ namespace _4PsPH.Models
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
         }
 
-        
+        public System.Data.Entity.DbSet<_4PsPH.Models.Hospital> Hospitals { get; set; }
     }
 }

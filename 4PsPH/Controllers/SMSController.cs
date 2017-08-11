@@ -9,6 +9,8 @@ using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using _4PsPH.Models;
 using System.Text;
+using Microsoft.AspNet.SignalR;
+using _4PsPH.Hubs;
 
 namespace _4Ps.Controllers
 {
@@ -53,6 +55,14 @@ namespace _4Ps.Controllers
             return null;
         }
 
+        public ActionResult testFeed()
+        {
+            var signalr = GlobalHost.ConnectionManager.GetHubContext<feedHub>();
+            signalr.Clients.All.addmsg("There is a new message.");
+
+            return null;
+        }
+
         public ActionResult Inquiry()
         {
             String data = new System.IO.StreamReader(Request.InputStream).ReadToEnd();
@@ -70,8 +80,11 @@ namespace _4Ps.Controllers
             Trace.TraceInformation(customer_msg+" from "+mobile_number);
 
             var pm = db.MobileNumbers.Include("Person").FirstOrDefault(m => m.MobileNo == mobile_number);
-            
-            if(pm != null)
+
+            var signalr = GlobalHost.ConnectionManager.GetHubContext<feedHub>();
+            signalr.Clients.All.addmsg(mobile_number+" "+customer_msg);
+
+            if (pm != null)
             {
                 var record_msg = new Message();
                 record_msg.Body = customer_msg;

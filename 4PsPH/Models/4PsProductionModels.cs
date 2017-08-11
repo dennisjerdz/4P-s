@@ -57,8 +57,11 @@ namespace _4PsPH.Models
     public class HealthCheckupIssue
     {
         public int HealthCheckupIssueId { get; set; }
+
         public int PersonId { get; set; }
         public virtual Person Person { get; set; }
+        public int HospitalId { get; set; }
+        public virtual Hospital Hospital { get; set; }
 
         public bool IsResolved { get; set; }
         public DateTime? ResolvedDate { get; set; }
@@ -111,7 +114,7 @@ namespace _4PsPH.Models
         public int StatusId { get; set; }
         public virtual Status Status { get; set; }
 
-        public int MobileNumberId { get; set; }
+        public int? MobileNumberId { get; set; }
         public virtual MobileNumber MobileNumber { get; set; }
 
         public DateTime DateTimeCreated { get; set; }

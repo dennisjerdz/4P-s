@@ -67,3 +67,8 @@ c:\users\jerdz\documents\visual studio 2015\Projects\4PsPH\4PsPH\bin\Microsoft.O
 c:\users\jerdz\documents\visual studio 2015\Projects\4PsPH\4PsPH\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
 c:\users\jerdz\documents\visual studio 2015\Projects\4PsPH\4PsPH\obj\Debug\4PsPH.dll
 c:\users\jerdz\documents\visual studio 2015\Projects\4PsPH\4PsPH\obj\Debug\4PsPH.pdb
+C:\Users\Jerdz\Documents\Visual Studio 2015\Projects\4PsPH\4PsPH\bin\Microsoft.AspNet.SignalR.Core.dll
+C:\Users\Jerdz\Documents\Visual Studio 2015\Projects\4PsPH\4PsPH\bin\Microsoft.AspNet.SignalR.SystemWeb.dll
+C:\Users\Jerdz\Documents\Visual Studio 2015\Projects\4PsPH\4PsPH\bin\Microsoft.AspNet.SignalR.Core.xml
+C:\Users\Jerdz\Documents\Visual Studio 2015\Projects\4PsPH\4PsPH\bin\Microsoft.AspNet.SignalR.SystemWeb.xml
+C:\Users\Jerdz\Documents\Visual Studio 2015\Projects\4PsPH\4PsPH\obj\Debug\4PsPH.csprojResolveAssemblyReference.cache

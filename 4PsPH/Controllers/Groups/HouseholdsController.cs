@@ -17,7 +17,7 @@ namespace _4PsPH.Controllers
         // GET: Households
         public ActionResult Index()
         {
-            return View(db.Households.Include(h=>h.City).ToList());
+            return View(db.Households.Include(h=>h.City).Include(h=>h.People).ToList());
         }
 
         // GET: Households/Details/5

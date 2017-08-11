@@ -48,6 +48,14 @@
       <HintPath>..\packages\Globe.Connect.0.0.0\lib\net45\GlobeConnect.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.2.2\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=2.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.SystemWeb.2.2.2\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -173,6 +181,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\Client\ClientController.cs" />
+    <Compile Include="Controllers\Groups\HospitalsController.cs" />
     <Compile Include="Controllers\Groups\HouseholdsController.cs" />
     <Compile Include="Controllers\Production\AttendanceIssuesController.cs" />
     <Compile Include="Controllers\Production\CaseSummaryReportCommentsController.cs" />
@@ -184,15 +194,14 @@
     <Compile Include="Controllers\Production\FDSController.cs" />
     <Compile Include="Controllers\Production\FDSIssuesController.cs" />
     <Compile Include="Controllers\Groups\CitiesController.cs" />
-    <Compile Include="Controllers\Production\HealthCheckupIssuesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\Production\HealthCheckupIssuesController.cs" />
     <Compile Include="Controllers\Production\InquiriesController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\Groups\ParentLeaderHouseholdsController.cs" />
     <Compile Include="Controllers\Groups\SchoolsController.cs" />
     <Compile Include="Controllers\Client\MobileNumbersController.cs" />
     <Compile Include="Controllers\Client\OccupationsController.cs" />
-    <Compile Include="Controllers\Client\PeopleController.cs" />
     <Compile Include="Controllers\Client\RelationToGranteesController.cs" />
     <Compile Include="Controllers\Production\MessagesController.cs" />
     <Compile Include="Controllers\Production\ResolutionsController.cs" />
@@ -202,6 +211,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Hubs\FeedHub.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\4PsProductionModels.cs" />
     <Compile Include="Models\4PsClientModels.cs" />
@@ -215,6 +225,11 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\dataTables.bootstrap.min.css" />
+    <Content Include="Content\images\4Ps_logo.png" />
+    <Content Include="Content\images\4Ps_logo_b.png" />
+    <Content Include="Content\images\4Ps_logo_bw.png" />
+    <Content Include="Content\images\4Ps_logo_w.png" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -225,9 +240,13 @@
     <None Include="Properties\PublishProfiles\4PsPH - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\4PsPH - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\dataTables.bootstrap.js" />
+    <Content Include="Scripts\datatables.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.signalR-2.2.2.js" />
+    <Content Include="Scripts\jquery.signalR-2.2.2.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -387,6 +406,16 @@
     <Content Include="Views\Inquiries\Details.cshtml" />
     <Content Include="Views\Inquiries\Edit.cshtml" />
     <Content Include="Views\Inquiries\Index.cshtml" />
+    <Content Include="Views\Client\Create.cshtml" />
+    <Content Include="Views\Client\Delete.cshtml" />
+    <Content Include="Views\Client\Details.cshtml" />
+    <Content Include="Views\Client\Edit.cshtml" />
+    <Content Include="Views\Client\Index.cshtml" />
+    <Content Include="Views\Hospitals\Create.cshtml" />
+    <Content Include="Views\Hospitals\Delete.cshtml" />
+    <Content Include="Views\Hospitals\Details.cshtml" />
+    <Content Include="Views\Hospitals\Edit.cshtml" />
+    <Content Include="Views\Hospitals\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

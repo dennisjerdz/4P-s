@@ -37,6 +37,12 @@ namespace _4PsPH.Models
         public int HouseholdId { get; set; }
         public virtual Household Household { get; set; }
 
+        public int? SchoolId { get; set; }
+        public virtual School School { get; set; }
+
+        public int? HospitalId { get; set; }
+        public virtual Hospital Hospital { get; set; }
+
         //Refer to PersonInfo
         public int OccupationId { get; set; }
         public virtual Occupation Occupation { get; set; }

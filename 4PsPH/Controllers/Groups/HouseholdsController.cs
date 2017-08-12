@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using _4PsPH.Models;
+using _4PsPH.Extensions;
 
 namespace _4PsPH.Controllers
 {
@@ -17,28 +18,31 @@ namespace _4PsPH.Controllers
         // GET: Households
         public ActionResult Index()
         {
+
             return View(db.Households.Include(h=>h.City).Include(h=>h.People).ToList());
         }
 
-        // GET: Households/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Household household = db.Households.Find(id);
+            Household household = db.Households.Include(h => h.People).Include(h => h.HouseholdHistory).FirstOrDefault(h => h.HouseholdId == id);
             if (household == null)
             {
                 return HttpNotFound();
             }
+
             return View(household);
         }
 
         // GET: Households/Create
         public ActionResult Create()
         {
-            ViewBag.CityId = new SelectList(db.City, "CityId", "Name");
+            int city = Convert.ToInt16(User.Identity.GetCityId());
+
+            ViewBag.CityId = new SelectList(db.City.Where(c=>c.CityId==city), "CityId", "Name");
             return View();
         }
 
@@ -49,6 +53,8 @@ namespace _4PsPH.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "HouseholdId,Name,DateTimeCreated,IsExcluded,CityId")] Household household)
         {
+            household.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+
             if (ModelState.IsValid)
             {
                 db.Households.Add(household);
@@ -56,7 +62,9 @@ namespace _4PsPH.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.CityId = new SelectList(db.City, "CityId", "Name", household.CityId);
+            int city = Convert.ToInt16(User.Identity.GetCityId());
+
+            ViewBag.CityId = new SelectList(db.City.Where(c => c.CityId == city), "CityId", "Name");
             return View(household);
         }
 
@@ -67,12 +75,14 @@ namespace _4PsPH.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Household household = db.Households.Find(id);
+            Household household = db.Households.Include(h=>h.HouseholdHistory).FirstOrDefault(h=>h.HouseholdId == id);
             if (household == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.CityId = new SelectList(db.City, "CityId", "Name", household.CityId);
+            int city = Convert.ToInt16(User.Identity.GetCityId());
+
+            ViewBag.CityId = new SelectList(db.City.Where(c => c.CityId == city), "CityId", "Name");
             return View(household);
         }
 
@@ -83,14 +93,56 @@ namespace _4PsPH.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "HouseholdId,Name,DateTimeCreated,IsExcluded,CityId")] Household household)
         {
+            HouseholdHistory hh = new HouseholdHistory();
+            hh.HouseholdId = household.HouseholdId;
+            hh.CreatedByUsername = User.Identity.Name;
+            hh.CreatedBy = User.Identity.GetFullName();
+            hh.Body = "edited Household name to " + household.Name+".";
+            hh.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+            db.HouseholdHistory.Add(hh);
+
             if (ModelState.IsValid)
             {
                 db.Entry(household).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.CityId = new SelectList(db.City, "CityId", "Name", household.CityId);
+            int city = Convert.ToInt16(User.Identity.GetCityId());
+
+            ViewBag.CityId = new SelectList(db.City.Where(c => c.CityId == city), "CityId", "Name");
             return View(household);
+        }
+
+        public ActionResult Status(int? id)
+        {
+            Household household = db.Households.Find(id);
+
+            string stat = null;
+            bool new_stat = true;
+
+            if (household.IsExcluded)
+            {
+                stat = "Active.";
+                new_stat = false;
+            }
+            else
+            {
+                stat = "Excluded.";
+                new_stat = true;
+            }
+
+            HouseholdHistory hh = new HouseholdHistory();
+            hh.HouseholdId = household.HouseholdId;
+            hh.CreatedByUsername = User.Identity.Name;
+            hh.CreatedBy = User.Identity.GetFullName();
+            hh.Body = "changed the status to "+stat;
+            hh.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+            db.HouseholdHistory.Add(hh);
+
+            household.IsExcluded = new_stat;
+
+            db.SaveChanges();
+            return RedirectToAction("Index");
         }
 
         // GET: Households/Delete/5

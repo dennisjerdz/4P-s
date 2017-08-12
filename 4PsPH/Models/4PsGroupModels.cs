@@ -23,6 +23,7 @@ namespace _4PsPH.Models
     public class Household
     {
         public int HouseholdId { get; set; }
+        [Required]
         [Display(Name="Household Name")]
         public string Name { get; set; }
         public DateTime DateTimeCreated { get; set; }
@@ -33,6 +34,20 @@ namespace _4PsPH.Models
         public virtual City City { get; set; }
 
         public virtual List<Person> People { get; set; }
+        public virtual List<HouseholdHistory> HouseholdHistory { get; set; }
+    }
+
+    public class HouseholdHistory
+    {
+        public int HouseholdHistoryId { get; set; }
+
+        public int HouseholdId { get; set; }
+        public virtual Household Household { get; set; }
+
+        public string Body { get; set; }
+        public string CreatedBy { get; set; }
+        public string CreatedByUsername { get; set; }
+        public DateTime DateTimeCreated { get; set; }
     }
 
     public class School

@@ -21,11 +21,21 @@ namespace _4PsPH.Models
             return $"{GivenName} {MiddleName} {LastName}";
         }
 
+        public int getAge()
+        {
+            var age = DateTime.UtcNow.AddHours(8).Year - this.BirthDate.Year;
+            // Go back to the year the person was born in case of a leap year
+            if (this.BirthDate > DateTime.UtcNow.AddHours(8).AddYears(-age)) age--;
+
+            return age;
+        }
+
         public bool? IsBeneficiary { get; set; }
         public bool? IsGrantee { get; set; }
         public bool? IsParentLeader { get; set; }
         
         public int Gender { get; set; } //0 female, 1 male
+        public string picture_url { get; set; }
 
         [Display(Name ="Excluded")]
         public bool IsExcluded { get; set; }
@@ -52,6 +62,11 @@ namespace _4PsPH.Models
         public virtual RelationToGrantee RelationToGrantee { get; set; }
 
         public virtual List<MobileNumber> MobileNumbers { get; set; }
+        public virtual List<Ticket> Tickets { get; set; }
+
+        public virtual List<FDSIssue> FDSIssues { get; set; }
+        public virtual List<AttendanceIssue> AttendanceIssues { get; set; }
+        public virtual List<HealthCheckupIssue> HealthCheckupIssues { get; set; }
     }
 
     public class MobileNumber

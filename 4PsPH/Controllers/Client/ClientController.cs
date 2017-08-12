@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using _4PsPH.Models;
+using _4PsPH.Extensions;
 
 namespace _4PsPH.Controllers.Client
 {
@@ -53,7 +54,7 @@ namespace _4PsPH.Controllers.Client
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "PersonId,GivenName,MiddleName,LastName,IsBeneficiary,IsGrantee,IsParentLeader,Gender,IsExcluded,BirthDate,DateTimeCreated,HouseholdId,SchoolId,HospitalId,OccupationId,EducationalAttainmentId,RelationToGranteeId")] Person person)
+        public ActionResult Create([Bind(Include = "PersonId,GivenName,MiddleName,LastName,IsBeneficiary,IsGrantee,IsParentLeader,Gender,picture_url,IsExcluded,BirthDate,DateTimeCreated,HouseholdId,SchoolId,HospitalId,OccupationId,EducationalAttainmentId,RelationToGranteeId")] Person person)
         {
             if (ModelState.IsValid)
             {
@@ -97,7 +98,7 @@ namespace _4PsPH.Controllers.Client
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "PersonId,GivenName,MiddleName,LastName,IsBeneficiary,IsGrantee,IsParentLeader,Gender,IsExcluded,BirthDate,DateTimeCreated,HouseholdId,SchoolId,HospitalId,OccupationId,EducationalAttainmentId,RelationToGranteeId")] Person person)
+        public ActionResult Edit([Bind(Include = "PersonId,GivenName,MiddleName,LastName,IsBeneficiary,IsGrantee,IsParentLeader,Gender,picture_url,IsExcluded,BirthDate,DateTimeCreated,HouseholdId,SchoolId,HospitalId,OccupationId,EducationalAttainmentId,RelationToGranteeId")] Person person)
         {
             if (ModelState.IsValid)
             {

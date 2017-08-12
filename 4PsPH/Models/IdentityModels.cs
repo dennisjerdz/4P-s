@@ -35,6 +35,10 @@ namespace _4PsPH.Models
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
             var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
             // Add custom user claims here
+            userIdentity.AddClaim(new Claim("CityId", this.CityId.ToString()));
+            userIdentity.AddClaim(new Claim("CityName", this.City.Name.ToString()));
+            userIdentity.AddClaim(new Claim("FullName", this.getFullName()));
+
             return userIdentity;
         }
     }
@@ -88,5 +92,6 @@ namespace _4PsPH.Models
         }
 
         public System.Data.Entity.DbSet<_4PsPH.Models.Hospital> Hospitals { get; set; }
+        public System.Data.Entity.DbSet<_4PsPH.Models.HouseholdHistory> HouseholdHistory { get; set; }
     }
 }

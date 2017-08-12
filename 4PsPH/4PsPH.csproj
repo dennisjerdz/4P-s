@@ -208,6 +208,7 @@
     <Compile Include="Controllers\Production\StatusController.cs" />
     <Compile Include="Controllers\Production\TicketsController.cs" />
     <Compile Include="Controllers\SMSController.cs" />
+    <Compile Include="Extensions\extensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -226,6 +227,10 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\dataTables.bootstrap.min.css" />
+    <Content Include="Content\font-awesome4.7\css\font-awesome.css" />
+    <Content Include="Content\font-awesome4.7\css\font-awesome.min.css" />
+    <Content Include="Content\font-awesome4.7\fonts\fontawesome-webfont.svg" />
+    <Content Include="Content\font-awesome4.7\HELP-US-OUT.txt" />
     <Content Include="Content\images\4Ps_logo.png" />
     <Content Include="Content\images\4Ps_logo_b.png" />
     <Content Include="Content\images\4Ps_logo_bw.png" />
@@ -236,6 +241,39 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Content\font-awesome4.7\fonts\fontawesome-webfont.eot" />
+    <Content Include="Content\font-awesome4.7\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Content\font-awesome4.7\fonts\fontawesome-webfont.woff" />
+    <Content Include="Content\font-awesome4.7\fonts\fontawesome-webfont.woff2" />
+    <Content Include="Content\font-awesome4.7\fonts\FontAwesome.otf" />
+    <Content Include="Content\font-awesome4.7\less\animated.less" />
+    <Content Include="Content\font-awesome4.7\less\bordered-pulled.less" />
+    <Content Include="Content\font-awesome4.7\less\core.less" />
+    <Content Include="Content\font-awesome4.7\less\fixed-width.less" />
+    <Content Include="Content\font-awesome4.7\less\font-awesome.less" />
+    <Content Include="Content\font-awesome4.7\less\icons.less" />
+    <Content Include="Content\font-awesome4.7\less\larger.less" />
+    <Content Include="Content\font-awesome4.7\less\list.less" />
+    <Content Include="Content\font-awesome4.7\less\mixins.less" />
+    <Content Include="Content\font-awesome4.7\less\path.less" />
+    <Content Include="Content\font-awesome4.7\less\rotated-flipped.less" />
+    <Content Include="Content\font-awesome4.7\less\screen-reader.less" />
+    <Content Include="Content\font-awesome4.7\less\stacked.less" />
+    <Content Include="Content\font-awesome4.7\less\variables.less" />
+    <Content Include="Content\font-awesome4.7\scss\font-awesome.scss" />
+    <Content Include="Content\font-awesome4.7\scss\_animated.scss" />
+    <Content Include="Content\font-awesome4.7\scss\_bordered-pulled.scss" />
+    <Content Include="Content\font-awesome4.7\scss\_core.scss" />
+    <Content Include="Content\font-awesome4.7\scss\_fixed-width.scss" />
+    <Content Include="Content\font-awesome4.7\scss\_icons.scss" />
+    <Content Include="Content\font-awesome4.7\scss\_larger.scss" />
+    <Content Include="Content\font-awesome4.7\scss\_list.scss" />
+    <Content Include="Content\font-awesome4.7\scss\_mixins.scss" />
+    <Content Include="Content\font-awesome4.7\scss\_path.scss" />
+    <Content Include="Content\font-awesome4.7\scss\_rotated-flipped.scss" />
+    <Content Include="Content\font-awesome4.7\scss\_screen-reader.scss" />
+    <Content Include="Content\font-awesome4.7\scss\_stacked.scss" />
+    <Content Include="Content\font-awesome4.7\scss\_variables.scss" />
     <None Include="Properties\PublishProfiles\4Ps-PH - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\4PsPH - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\4PsPH - Web Deploy.pubxml" />
@@ -255,6 +293,7 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="Views\Households\Details.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -298,7 +337,6 @@
     <Content Include="Views\Cities\Index.cshtml" />
     <Content Include="Views\Households\Create.cshtml" />
     <Content Include="Views\Households\Delete.cshtml" />
-    <Content Include="Views\Households\Details.cshtml" />
     <Content Include="Views\Households\Edit.cshtml" />
     <Content Include="Views\Households\Index.cshtml" />
     <Content Include="Views\Schools\Create.cshtml" />

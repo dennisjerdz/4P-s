@@ -1,9 +1,80 @@
-﻿body {
+﻿/*UI colors*/
+hr.heading-cut{
+    margin-top:15px;
+    margin-bottom:0px;
+    border-color:rgba(150,150,150,0.1);
+}
+
+.navbar-brand{
+    color:#56A8FB !important; font-family: 'Sriracha', cursive;
+}
+
+#menu-toggle-right{
+    background-color:white; line-height:50px;
+}
+
+#sidebar-wrapper-right {
+    box-shadow: rgba(100,100,100,0.1) 3px 0px 8px -4px;
+}
+
+.window-heading{
+    color:#50596e;
+    background-color:white;
+    /*
+    border-bottom-style:solid;
+    border-bottom-color:rgba(100,100,100,0.1);
+    border-bottom-width:1px;*/
+}
+
+.table thead > tr > th {
+    background-color: white;
+}
+
+.navbar.navbar-default{
+    background-color:transparent; border-radius:0px; border:none;
+    /*
+        box-shadow:rgba(100,100,100,0.1) 0px 1px 1px 0px;
+    */
+}
+.navbar-default .navbar-nav > li > a{
+    color:#586371;
+}
+
+.shadow-wrapper{
+    margin-top:15px;
+    margin-bottom:15px;
+    box-shadow: rgba(0,0,0,0.1) 0px 1px 5px -1px;
+}
+
+.window-footer{
+    background-color:white;
+    border-top-style:solid;
+    border-top-width:1px;
+    border-color:rgba(100,100,100,0.1);
+}
+
+body {
     padding-bottom: 20px;
     /*background-color:#c9e3f6;*/
-    background-color:#FFD180;
+    /*background-color:#FFD180;*/
+    background-color:#F6F8FB;
     font-family: 'Nunito', sans-serif;
 }
+
+.form-control{
+    box-shadow:rgba(0,0,0,0.1) 0px 0px 0px 1px inset;
+    border-radius:2px;
+    border:none;
+}
+
+.form-control:active,.form-control:focus{
+    box-shadow:#56A8FB 0px 0px 0px 1px inset;
+}
+
+ul.pagination{
+    /*box-shadow:rgba(0,0,0,0.1) 0px 1px 2px 0px;*/
+}
+/*end of UI colors*/
 
 html{
     height:100% !important;
@@ -35,8 +106,8 @@ html{
     background-color:#00ACC1;
 }
 .pagination > .disabled > span, .pagination > .disabled > a, .pagination > .disabled > a:hover, .pagination > .disabled > a:focus{
-    background-color:#BDBDBD;
-    color:white;
+    background-color:#f2f2f2;
+    color:#d2d2d2;
 }
 .pagination > li:first-child > a, .pagination > li:first-child > span{
     border-bottom-left-radius:2px;
@@ -48,35 +119,65 @@ html{
 }
 
 /*buttons override*/
+.navbar-btn{
+    padding-top:5px !important;
+    padding-bottom:5px !important;
+    color:white !important;
+}
+
 .btn{
     transition:0.5s;
     border-radius:2px;
+    border:0;
+    /*box-shadow:rgba(0,0,0,0.1) 0px 2px 4px 0px;*/
 }
 .btn-info{
-    border:0;
-    background-color:#00ACC1;
+    background-color:transparent;
+    box-shadow:#00BCD4 0px 0px 0px 1px inset;
+    color:#00ACC1;
 }
 .btn-info:hover{
-    background-color:#4DD0E1;
+    color:white;
+    background-color:#00ACC1;
 }
 .btn-primary{
-    border:0;
-    background-color:#03a9f4;
+    background-color:#56A8FB;
+}
+.btn-danger{
+    background-color:#EF5350;
+}
+.btn-warning{
+    background-color:#FF9800;
 }
 .btn-primary:hover{
     background-color:#0277bd;
 }
+
 .btn-group .btn.btn-active{
-    background-color:#03a9f4;
+    /*
+        background-color:#03a9f4;
+        color:white;
+    */
     box-shadow:none;
 }
 .btn-group .btn{
-    background-color:#BDBDBD;
+    /*
+        color:#d2d2d2;
+    */
+    background-color:#fafafa;
     /*box-shadow: rgba(0,0,0,0.3) 0px 0px 7px 2px inset;*/
 }
 .btn-group .btn:hover, .btn-group .btn.btn-active{
     background-color:#03a9f4;
-    box-shadow:none;
+    color:white;
+}
+
+.outside-link{
+    font-size:1.1em; font-weight:600; color:#7b89a9; transition:0.4s;
+}
+.outside-link:hover,.outside.outside-link:active,.outside-link:focus{
+    text-decoration:none;
+    color:#50596e;
 }
 
 ul.dropdown-menu li a{
@@ -129,7 +230,6 @@ ul.dropdown-menu{
     margin-bottom:0px;
 }
 .table thead > tr > th{
-    background-color:#f0f6fa;
     border-bottom:none;
     line-height:35px;
     /*border-bottom:2px solid rgba(0,0,0,0.1);*/
@@ -147,19 +247,21 @@ ul.dropdown-menu{
     background-color:white;
     border-bottom-left-radius:3px;
     border-bottom-right-radius:3px;
-    margin-bottom:20px;
     width:100%;
     overflow:hidden;
     /*border:1px solid rgba(0,0,0,0.1);*/
 }
 
 .window-footer{
-    background-color:#f5fbff;
     border-bottom-left-radius:3px;
     border-bottom-right-radius:3px;
-    margin-bottom:20px;
     line-height:35px;
     overflow:hidden;
+    margin-bottom:0px;
+}
+
+.window-footer-btn{
+    line-height:55px;
 }
 
 .links{
@@ -171,14 +273,11 @@ ul.dropdown-menu{
     padding-right:5px;
     padding-top:15px;
     padding-bottom:15px;
-    background-color:#364860;
     border-top-left-radius:3px;
     border-top-right-radius:3px;
     width:100%;
     line-height:32px;
     min-height:65px;
-    color:white;
-    margin-top:20px;
     /*border:1px solid rgba(0,0,0,0.1);*/
 }
 
@@ -200,7 +299,7 @@ ul.dropdown-menu{
 input,
 select,
 textarea {
-    max-width: 280px;
+    max-width: 100%;
 }
 
 /*sidebar css*/
@@ -364,4 +463,94 @@ textarea {
             width: 150px;
             transition: all .4s ease 0s;
         }
+}
+
+/*view members ui*/
+.members-view .col-md-4:nth-child(3n){
+    padding-right:0px;
+}
+.members-view .col-md-4:first-child{
+    padding-left:0px;
+}
+.members-view .col-md-4:nth-child(3n+1){
+    padding-left:0px;
+}
+
+/*household stats*/
+.household-stats-view .col-md-3:first-of-type{
+    padding-left:0px;
+}
+.household-stats-view .col-md-3:nth-child(4){
+    padding-right:0px;
+}
+.household-stats-view>.col-md-3>.shadow-wrapper>.window{
+    padding-left:10px;
+    line-height:50px;
+    padding-top:0px;
+    padding-bottom:0px;
+}
+.stats-icon-text{
+    color:#5D5C6E; font-size:0.85em; padding-left:8px;
+}
+
+/*clients cards*/
+.btn-warning-g:hover i, .btn-danger2-g:hover i, .btn-danger-g:hover i, .btn-info-g:hover i{
+    color:white;
+}
+
+.btn-warning-g i{
+    color:#FF9800;
+}
+.btn-danger2-g i{
+    color:#EF5350;
+}
+.btn-danger-g i{
+    color:#37474F;
+}
+.btn-info-g i{
+    color:#56A8FB;
+}
+
+/*common ui*/
+.right-ui{
+    text-align:right; padding-right:0px;
+}
+.right-ui .btn{
+    width:100%;
+}
+.left-ui{
+    line-height:33px;
+    padding-left:0px;
+}
+
+.right-window{
+    padding-right:0px;
+}
+.left-window{
+    padding:0px;
+}
+@media(max-width:767px){
+    .right-window{
+        padding:2px;
+    }
+    .left-window{
+        padding:2px;
+    }
+
+    .members-view .col-md-4:nth-child(3n){
+        padding:2px;
+    }
+    .members-view .col-md-4:first-child{
+        padding:2px;
+    }
+    .members-view .col-md-4:nth-child(3n+1){
+        padding:2px;
+    }
+    .members-view .col-md-4:nth-child(3n-1){
+        padding:2px;
+    }
+
+    .household-stats-view .col-md-3{
+        padding:2px;
+    }
 }

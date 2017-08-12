@@ -1,50 +1,240 @@
 ﻿@model _4PsPH.Models.Household
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Households";
 }
 
-<h2>Details</h2>
-
-<div>
-    <h4>Household</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.DateTimeCreated)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.DateTimeCreated)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.IsExcluded)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.IsExcluded)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.CityId)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.CityId)
-        </dd>
-
-    </dl>
+<div class="row">
+    <div class="col-md-10 left-ui">
+        <a href="@Url.Action("Index")" class="outside-link">« Back to List</a>
+    </div>
+    <div class="col-md-2 right-ui">
+        <a href="@Url.Action("Edit", new { id = Model.HouseholdId })" class="btn btn-warning">Edit Household <span class="glyphicon glyphicon-pencil"></span></a>
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.HouseholdId }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+
+<hr class="heading-cut"/>
+
+<div id="stats" class="collapse">
+    <div class="row household-stats-view">
+        <div class="col-md-3">
+            <div class="shadow-wrapper">
+                <div class="window">
+                    <span class="fa-stack fa-lg">
+                        <i class="fa fa-circle fa-stack-2x" style="color:#26C6DA;"></i>
+                        <i class="fa fa-phone fa-stack-1x fa-inverse"></i>
+                    </span>
+                    <font class="stats-icon-text">Mobile Numbers Associated: @Model.People.Sum(p => p.MobileNumbers.Count())</font>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="shadow-wrapper">
+                <div class="window">
+                    <span class="fa-stack fa-lg">
+                        <i class="fa fa-circle fa-stack-2x" style="color:#D4E157;"></i>
+                        <i class="fa fa-ticket fa-stack-1x fa-inverse"></i>
+                    </span>
+                    <font class="stats-icon-text">Tickets Resolved: @Model.People.Sum(p => p.Tickets.Count(t => t.Status.Name == "Approved" || t.Status.Name == "Rejected")) / @Model.People.Sum(p => p.Tickets.Count())</font>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="shadow-wrapper">
+                <div class="window">
+                    <span class="fa-stack fa-lg">
+                        <i class="fa fa-circle fa-stack-2x" style="color:#FF7043;"></i>
+                        <i class="fa fa-thumbs-down fa-stack-1x fa-inverse"></i>
+                    </span>
+                    <font class="stats-icon-text">Issues Resolved: @(Model.People.Sum(p => p.HealthCheckupIssues.Count(h => h.IsResolved)) + Model.People.Sum(p => p.FDSIssues.Count(f => f.IsResolved)) + Model.People.Sum(p => p.AttendanceIssues.Count(a => a.IsResolved)) ) / @(Model.People.Sum(p => p.HealthCheckupIssues.Count()) + Model.People.Sum(p => p.FDSIssues.Count()) + Model.People.Sum(p => p.AttendanceIssues.Count()))</font>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="shadow-wrapper">
+                <div class="window">
+                    <span class="fa-stack fa-lg">
+                        <i class="fa fa-circle fa-stack-2x" style="color:#42A5F5;"></i>
+                        <i class="fa fa-diamond fa-stack-1x fa-inverse"></i>
+                    </span>
+                    <font style="color:#5D5C6E; font-size:0.85em;">
+                        Projected Monthly Benefit:
+                        <strong>
+                            @{
+                                int legible_beneficiaries = Model.People.Count(p => p.getAge() < 18
+                                     && p.AttendanceIssues.Count(a => a.IsResolved) == p.AttendanceIssues.Count()
+                                     && p.FDSIssues.Count(a => a.IsResolved) == p.FDSIssues.Count()
+                                     && p.HealthCheckupIssues.Count(a => a.IsResolved) == p.HealthCheckupIssues.Count()
+                                     && p.IsExcluded == false
+                                     && p.IsBeneficiary == true);
+
+                                float benefit = 0;
+
+                                if (legible_beneficiaries > 3)
+                                {
+                                    benefit = (3 * 300) + 500;
+                                }else
+                                {
+                                    benefit = (legible_beneficiaries * 300) + 500;
+                                }
+                            }
+
+                            @if (Model.IsExcluded)
+                            {
+                                <text>None; Household is excluded</text>
+                            }
+                            else
+                            {
+                                <text>₱ </text>@benefit
+                            }
+                        </strong>
+                    </font>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12" style="padding:0px;">
+        <div class="col-md-7 left-window">
+            <div class="shadow-wrapper">
+                <div class="row">
+                    <div class="window-heading">
+                        <div class="col-md-6">
+                            <div class="links">
+                                <strong>
+                                    @ViewBag.Title
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" style="text-align:right;">
+                            <a href="@Url.Action("Add","Client",new { id=Model.HouseholdId })" class="btn btn-info">Add Member <span class="glyphicon glyphicon-plus-sign"></span></a>
+                            <a href="#" data-toggle="collapse" data-target="#stats" class="btn btn-default">Household Stats <span class="glyphicon glyphicon-stats"></span></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="window-footer"></div>
+                </div>
+            </div>
+
+            <div class="row members-view">
+                @if (Model.People.Count() == 0)
+                {
+                    <div class="col-md-12" style="margin-top:40px; text-align:center;">This household has no members.</div>
+                }
+                @foreach (var item in Model.People)
+                {
+                    <div class="col-md-4">
+                        <div class="shadow-wrapper">
+                            <div class="window-heading" style="border-bottom-style:solid; border-width:1px; border-color:rgba(100,100,100,0.1); min-height:unset; line-height:40px; padding-top:0px; padding-bottom:0px;">
+                                <div class="col-md-12">
+                                    @if (item.Gender == 1) {
+                                        <i style="color:#56A8FB" class="fa fa-mars"></i>
+                                    }
+                                    else
+                                    {
+                                        <i style="color:#ffa0ec" class="fa fa-venus"></i>
+                                    }
+                                    <font style="font-size:0.9em; padding-left:3px;">@item.getFullName()</font>
+                                </div>
+                            </div>
+                            <div class="window">
+                                <div class="col-md-12">
+                                    <center>
+                                        <p>@item.BirthDate.ToString("M/d/yy")</p>
+                                        <p>@(DateTime.UtcNow.AddHours(8).Year - item.BirthDate.Year)</p>
+                                        <p>@item.RelationToGrantee.Name</p>
+                                        <p>@(item.School?.Name)</p>
+                                        <p>@item.EducationalAttainment.Name</p>
+                                        <p>@(item.Hospital?.Name ?? "None")</p>
+                                        <p>@item.Occupation.Name</p>
+                                    </center>
+                                </div>
+                            </div>
+                            <div class="window-footer">
+                                <div class="btn-group btn-group-justified">
+                                    <a href="#" class="btn btn-info-g"><i class="fa fa-address-book"></i></a>
+                                    <a href="#" class="btn btn-warning-g"><i class="fa fa-pencil"></i></a>
+                                    <a href="#" class="btn btn-danger2-g"><i class="fa fa-warning"></i></a>
+                                    <a href="#" class="btn btn-danger-g"><i class="fa fa-remove"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-md-5 right-window">
+            <div class="shadow-wrapper">
+                <div class="row">
+                    <div class="window-heading">
+                        <div class="col-md-6">
+                            <div class="links">
+                                <strong>
+                                    Household History
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" style="text-align:right;">
+                            <div class="input-group">
+                                <input type="text" class="form-control all-search" placeholder="Search All Fields" aria-describedby="basic-addon2">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.HouseholdHistory)
+                        {
+                            <tr>
+                                <td style="font-size:0.85em;">
+                                    @item.DateTimeCreated.ToString("M/dd/yy hh:mm tt")
+                                </td>
+                                <td style="font-size:0.85em;">
+                                    <font style="color:#56A8FB;">@item.CreatedBy</font> @item.Body
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(document).ready(function () {
+            var datatable = $("table").DataTable({
+                paging: true,
+                "pageLength": 6,
+                "dom": "<'row'<'table-window'<'table-responsive'rt>>><'window-footer'<'col-md-6'i><'col-md-6'p>>",
+                "columnDefs": [
+                        { "orderable": false, "targets": 1 }
+                ],
+                "order": [[0, "desc"]]
+            });
+
+            $(".all-search").keyup(function () {
+                datatable.search($(this).val()).draw();
+            })
+        });
+    </script>
+}

@@ -13,88 +13,97 @@
     </div>
 </div>
 
-<hr class="heading-cut"/>
+<hr class="heading-cut" />
 
 <div id="stats" class="collapse">
     <div class="row household-stats-view">
-        <div class="col-md-3">
-            <div class="shadow-wrapper">
-                <div class="window">
-                    <span class="fa-stack fa-lg">
-                        <i class="fa fa-circle fa-stack-2x" style="color:#26C6DA;"></i>
-                        <i class="fa fa-phone fa-stack-1x fa-inverse"></i>
-                    </span>
-                    <font class="stats-icon-text">Mobile Numbers Associated: @Model.People.Sum(p => p.MobileNumbers.Count())</font>
+        <a href="@Url.Action("Index","MobileNumbers",new { id=Model.HouseholdId })" class="stats-div-link">
+            <div class="col-md-3">
+                <div class="shadow-wrapper">
+                    <div class="window">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x" style="color:#26C6DA;"></i>
+                            <i class="fa fa-phone fa-stack-1x fa-inverse"></i>
+                        </span>
+                        <font class="stats-icon-text">Mobile Numbers Associated: @Model.People.Sum(p => p.MobileNumbers.Count())</font>
+                    </div>
                 </div>
             </div>
-        </div>
+        </a>
 
-        <div class="col-md-3">
-            <div class="shadow-wrapper">
-                <div class="window">
-                    <span class="fa-stack fa-lg">
-                        <i class="fa fa-circle fa-stack-2x" style="color:#D4E157;"></i>
-                        <i class="fa fa-ticket fa-stack-1x fa-inverse"></i>
-                    </span>
-                    <font class="stats-icon-text">Tickets Resolved: @Model.People.Sum(p => p.Tickets.Count(t => t.Status.Name == "Approved" || t.Status.Name == "Rejected")) / @Model.People.Sum(p => p.Tickets.Count())</font>
+        <a href="#" class="stats-div-link">
+            <div class="col-md-3">
+                <div class="shadow-wrapper">
+                    <div class="window">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x" style="color:#D4E157;"></i>
+                            <i class="fa fa-ticket fa-stack-1x fa-inverse"></i>
+                        </span>
+                        <font class="stats-icon-text">Tickets Resolved: @Model.People.Sum(p => p.Tickets.Count(t => t.Status.Name == "Approved" || t.Status.Name == "Rejected")) / @Model.People.Sum(p => p.Tickets.Count())</font>
+                    </div>
                 </div>
             </div>
-        </div>
+        </a>
 
-        <div class="col-md-3">
-            <div class="shadow-wrapper">
-                <div class="window">
-                    <span class="fa-stack fa-lg">
-                        <i class="fa fa-circle fa-stack-2x" style="color:#FF7043;"></i>
-                        <i class="fa fa-thumbs-down fa-stack-1x fa-inverse"></i>
-                    </span>
-                    <font class="stats-icon-text">Issues Resolved: @(Model.People.Sum(p => p.HealthCheckupIssues.Count(h => h.IsResolved)) + Model.People.Sum(p => p.FDSIssues.Count(f => f.IsResolved)) + Model.People.Sum(p => p.AttendanceIssues.Count(a => a.IsResolved)) ) / @(Model.People.Sum(p => p.HealthCheckupIssues.Count()) + Model.People.Sum(p => p.FDSIssues.Count()) + Model.People.Sum(p => p.AttendanceIssues.Count()))</font>
+        <a href="#" class="stats-div-link">
+            <div class="col-md-3">
+                <div class="shadow-wrapper">
+                    <div class="window">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x" style="color:#FF7043;"></i>
+                            <i class="fa fa-thumbs-down fa-stack-1x fa-inverse"></i>
+                        </span>
+                        <font class="stats-icon-text">Issues Resolved: @(Model.People.Sum(p => p.HealthCheckupIssues.Count(h => h.IsResolved)) + Model.People.Sum(p => p.FDSIssues.Count(f => f.IsResolved)) + Model.People.Sum(p => p.AttendanceIssues.Count(a => a.IsResolved)) ) / @(Model.People.Sum(p => p.HealthCheckupIssues.Count()) + Model.People.Sum(p => p.FDSIssues.Count()) + Model.People.Sum(p => p.AttendanceIssues.Count()))</font>
+                    </div>
                 </div>
             </div>
-        </div>
+        </a>
 
-        <div class="col-md-3">
-            <div class="shadow-wrapper">
-                <div class="window">
-                    <span class="fa-stack fa-lg">
-                        <i class="fa fa-circle fa-stack-2x" style="color:#42A5F5;"></i>
-                        <i class="fa fa-diamond fa-stack-1x fa-inverse"></i>
-                    </span>
-                    <font style="color:#5D5C6E; font-size:0.85em;">
-                        Projected Monthly Benefit:
-                        <strong>
-                            @{
-                                int legible_beneficiaries = Model.People.Count(p => p.getAge() < 18
-                                     && p.AttendanceIssues.Count(a => a.IsResolved) == p.AttendanceIssues.Count()
-                                     && p.FDSIssues.Count(a => a.IsResolved) == p.FDSIssues.Count()
-                                     && p.HealthCheckupIssues.Count(a => a.IsResolved) == p.HealthCheckupIssues.Count()
-                                     && p.IsExcluded == false
-                                     && p.IsBeneficiary == true);
+        <a href="#" class="stats-div-link">
+            <div class="col-md-3">
+                <div class="shadow-wrapper">
+                    <div class="window">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x" style="color:#42A5F5;"></i>
+                            <i class="fa fa-diamond fa-stack-1x fa-inverse"></i>
+                        </span>
+                        <font style="color:#5D5C6E; font-size:0.85em;">
+                            Projected Monthly Benefit:
+                            <strong>
+                                @{
+                                    int legible_beneficiaries = Model.People.Count(p => p.getAge() < 18
+                                         && p.AttendanceIssues.Count(a => a.IsResolved) == p.AttendanceIssues.Count()
+                                         && p.FDSIssues.Count(a => a.IsResolved) == p.FDSIssues.Count()
+                                         && p.HealthCheckupIssues.Count(a => a.IsResolved) == p.HealthCheckupIssues.Count()
+                                         && p.IsExcluded == false
+                                         && p.IsBeneficiary == true);
 
-                                float benefit = 0;
+                                    float benefit = 0;
 
-                                if (legible_beneficiaries > 3)
-                                {
-                                    benefit = (3 * 300) + 500;
-                                }else
-                                {
-                                    benefit = (legible_beneficiaries * 300) + 500;
+                                    if (legible_beneficiaries > 3)
+                                    {
+                                        benefit = (3 * 300) + 500;
+                                    }
+                                    else
+                                    {
+                                        benefit = (legible_beneficiaries * 300) + 500;
+                                    }
                                 }
-                            }
 
-                            @if (Model.IsExcluded)
-                            {
-                                <text>None; Household is excluded</text>
-                            }
-                            else
-                            {
-                                <text>₱ </text>@benefit
-                            }
-                        </strong>
-                    </font>
+                                @if (Model.IsExcluded)
+                                {
+                                    <text>None; Household is excluded</text>
+                                }
+                                else
+                                {
+                                    <text>₱ </text>@benefit
+                                }
+                            </strong>
+                        </font>
+                    </div>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
 </div>
 
@@ -113,7 +122,7 @@
                         </div>
 
                         <div class="col-md-6" style="text-align:right;">
-                            <a href="@Url.Action("Add","Client",new { id=Model.HouseholdId })" class="btn btn-info">Add Member <span class="glyphicon glyphicon-plus-sign"></span></a>
+                            <a href="@Url.Action("Create","Client",new { id=Model.HouseholdId })" class="btn btn-info">Add Member <span class="glyphicon glyphicon-plus-sign"></span></a>
                             <a href="#" data-toggle="collapse" data-target="#stats" class="btn btn-default">Household Stats <span class="glyphicon glyphicon-stats"></span></a>
                         </div>
                     </div>
@@ -134,7 +143,8 @@
                         <div class="shadow-wrapper">
                             <div class="window-heading" style="border-bottom-style:solid; border-width:1px; border-color:rgba(100,100,100,0.1); min-height:unset; line-height:40px; padding-top:0px; padding-bottom:0px;">
                                 <div class="col-md-12">
-                                    @if (item.Gender == 1) {
+                                    @if (item.Gender == 1)
+                                    {
                                         <i style="color:#56A8FB" class="fa fa-mars"></i>
                                     }
                                     else
@@ -146,20 +156,34 @@
                             </div>
                             <div class="window">
                                 <div class="col-md-12">
-                                    <center>
-                                        <p>@item.BirthDate.ToString("M/d/yy")</p>
-                                        <p>@(DateTime.UtcNow.AddHours(8).Year - item.BirthDate.Year)</p>
-                                        <p>@item.RelationToGrantee.Name</p>
-                                        <p>@(item.School?.Name)</p>
-                                        <p>@item.EducationalAttainment.Name</p>
-                                        <p>@(item.Hospital?.Name ?? "None")</p>
-                                        <p>@item.Occupation.Name</p>
+                                    <center class="member-info">
+                                        <p><strong>Birth Date:</strong> @item.BirthDate.ToString("M/d/yy")</p>
+                                        <p><strong>Age:</strong> @(DateTime.UtcNow.AddHours(8).Year - item.BirthDate.Year)</p>
+                                        @if (item.IsGrantee.HasValue)
+                                        {
+                                            if (item.IsGrantee.Value)
+                                            {
+                                                <p style="color:#ffd800">Grantee</p>
+                                            }
+                                            else
+                                            {
+                                                <p>@item.RelationToGrantee.Name</p>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <p>@item.RelationToGrantee.Name</p>
+                                        }
+                                        <p><strong>School:</strong><br /> @(item.School?.Name?? "None")</p>
+                                        <p><strong>Hospital:</strong><br /> @(item.Hospital?.Name ?? "None")</p>
+                                        <p><strong>Educational Attainment:</strong><br /> @item.EducationalAttainment.Name</p>
+                                        <p><strong>Occupation:</strong><br /> @item.Occupation.Name</p>
                                     </center>
                                 </div>
                             </div>
                             <div class="window-footer">
                                 <div class="btn-group btn-group-justified">
-                                    <a href="#" class="btn btn-info-g"><i class="fa fa-address-book"></i></a>
+                                    <a href="@Url.Action("ClientIndex","MobileNumbers",new { id=item.PersonId})" class="btn btn-info-g"><i class="fa fa-address-book"></i></a>
                                     <a href="#" class="btn btn-warning-g"><i class="fa fa-pencil"></i></a>
                                     <a href="#" class="btn btn-danger2-g"><i class="fa fa-warning"></i></a>
                                     <a href="#" class="btn btn-danger-g"><i class="fa fa-remove"></i></a>
@@ -216,6 +240,14 @@
         </div>
     </div>
 </div>
+
+@section styles{
+    <style>
+        .member-info p{
+            font-size:0.85em;
+        }
+    </style>    
+}
 
 @section scripts{
     @Scripts.Render("~/bundles/jqueryval")

@@ -224,6 +224,7 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\bootstrap-datetimepicker.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\dataTables.bootstrap.min.css" />
@@ -235,10 +236,12 @@
     <Content Include="Content\images\4Ps_logo_b.png" />
     <Content Include="Content\images\4Ps_logo_bw.png" />
     <Content Include="Content\images\4Ps_logo_w.png" />
+    <Content Include="Content\jquery-ui.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Scripts\bootstrap-datetimepicker.4.15.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Content\font-awesome4.7\fonts\fontawesome-webfont.eot" />
@@ -454,6 +457,7 @@
     <Content Include="Views\Hospitals\Details.cshtml" />
     <Content Include="Views\Hospitals\Edit.cshtml" />
     <Content Include="Views\Hospitals\Index.cshtml" />
+    <Content Include="Views\MobileNumbers\ClientIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

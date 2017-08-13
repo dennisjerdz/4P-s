@@ -6,7 +6,7 @@ hr.heading-cut{
 }
 
 .navbar-brand{
-    color:#56A8FB !important; font-family: 'Sriracha', cursive;
+    color:#56A8FB !important; font-family: 'Leckerli One', cursive; font-weight:normal; padding-top:15px; font-size:1.5em;
 }
 
 #menu-toggle-right{
@@ -35,6 +35,8 @@ hr.heading-cut{
     /*
         box-shadow:rgba(100,100,100,0.1) 0px 1px 1px 0px;
     */
+    margin-bottom:10px;
+    padding-top:6px;
 }
 .navbar-default .navbar-nav > li > a{
     color:#586371;
@@ -255,7 +257,7 @@ ul.dropdown-menu{
 .window-footer{
     border-bottom-left-radius:3px;
     border-bottom-right-radius:3px;
-    line-height:35px;
+    line-height:30px;
     overflow:hidden;
     margin-bottom:0px;
 }
@@ -477,10 +479,10 @@ textarea {
 }
 
 /*household stats*/
-.household-stats-view .col-md-3:first-of-type{
+.household-stats-view .stats-div-link:first-child .col-md-3{
     padding-left:0px;
 }
-.household-stats-view .col-md-3:nth-child(4){
+.household-stats-view .stats-div-link:nth-child(4) .col-md-3{
     padding-right:0px;
 }
 .household-stats-view>.col-md-3>.shadow-wrapper>.window{
@@ -492,6 +494,22 @@ textarea {
 .stats-icon-text{
     color:#5D5C6E; font-size:0.85em; padding-left:8px;
 }
+.stats-div-link{
+    text-decoration:none;
+}
+.stats-div-link:hover .col-md-3 .shadow-wrapper .window{
+    transition:0.4s;
+    box-shadow:rgba(120,200,255,0.7) 0px 0px 0px 1px inset;
+}
+.stats-div-link:hover .col-md-3 .shadow-wrapper{
+    box-shadow:none;
+}
+.stats-div-link .col-md-3 .shadow-wrapper .window{
+    border-top-left-radius:3px;
+    border-top-right-radius:3px;
+    padding-left:8px;
+}
+
 
 /*clients cards*/
 .btn-warning-g:hover i, .btn-danger2-g:hover i, .btn-danger-g:hover i, .btn-info-g:hover i{
@@ -529,12 +547,26 @@ textarea {
 .left-window{
     padding:0px;
 }
+
+.container{
+    padding-left:5px;
+    padding-right:5px;
+}
+
+.pagination > li > a, .pagination > li > span{
+    padding: 4px 8px;
+}
+
 @media(max-width:767px){
     .right-window{
         padding:2px;
     }
     .left-window{
         padding:2px;
+    }
+
+    .right-ui{
+        padding-left:0px;
     }
 
     .members-view .col-md-4:nth-child(3n){
@@ -552,5 +584,10 @@ textarea {
 
     .household-stats-view .col-md-3{
         padding:2px;
+    }
+
+    .window-heading .btn{
+        width:100%;
+        margin-bottom:10px;
     }
 }

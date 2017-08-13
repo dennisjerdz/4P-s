@@ -4,15 +4,27 @@
     ViewBag.Title = "Mobile No.";
 }
 
+<div class="row">
+    <div class="col-md-12 left-ui">
+        <a href="@Url.Action("Details","Households", new { id=ViewBag.HouseholdId })" class="outside-link">« Back to Household</a>
+
+        <hr class="heading-cut" />
+    </div>
+</div>
+
 <div class="shadow-wrapper">
     <div class="row">
         <div class="window-heading">
-            <div class="col-md-9">
+            <div class="col-md-5">
                 <div class="links">
                     <strong>
-                        @ViewBag.Title
+                        Mobile Numbers of @ViewBag.ClientName
                     </strong>
                 </div>
+            </div>
+
+            <div class="col-md-4" style="text-align:right;">
+                <a href="@Url.Action("Create", new { id=ViewBag.ClientId })" class="btn btn-info">Add Mobile No. <span class="glyphicon glyphicon-plus-sign"></span></a>
             </div>
 
             <div class="col-md-3" style="text-align:right;">
@@ -27,7 +39,6 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th>Name</th>
                 <th>Mobile Number</th>
                 <th>Verified</th>
                 <th>Status</th>
@@ -40,7 +51,6 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.Person.getFullName()</td>
                     <td>@item.MobileNo</td>
                     <td>
                         @if (item.Token != null)
@@ -68,7 +78,6 @@
                         {
                             <a href="@Url.Action("Message",new { id=item.MobileNumberId})" class="btn btn-info btn-xs">Message <span class="glyphicon glyphicon-comment"></span></a>
                         }
-                        <a href="@Url.Action("ClientIndex",new { id=item.PersonId})" class="btn btn-primary btn-xs">All Mobile No. <span class="glyphicon glyphicon-zoom-in"></span></a>
                         <a href="@Url.Action("Edit",new { id=item.MobileNumberId})" class="btn btn-warning btn-xs">Edit <span class="glyphicon glyphicon-pencil"></span></a>
                         <a href="@Url.Action("Delete",new { id=item.MobileNumberId})" class="btn btn-danger btn-xs">Delete <span class="glyphicon glyphicon-remove-circle"></span></a>
                     </td>
@@ -86,7 +95,7 @@
                 "pageLength": 10,
                 "dom": "<'row'<'table-window'<'table-responsive'rt>>><'window-footer'<'col-md-6'i><'col-md-6'p>>",
                 "columnDefs": [
-                    { "orderable": false, "targets": 5 }
+                    { "orderable": false, "targets": 4 }
                 ]
             });
 

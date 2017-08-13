@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using _4PsPH.Models;
+using _4PsPH.Extensions;
 
 namespace _4PsPH.Controllers
 {
@@ -15,10 +16,53 @@ namespace _4PsPH.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: MobileNumbers
-        public ActionResult Index()
+        public ActionResult Index(int? id)
         {
-            var mobileNumbers = db.MobileNumbers.Include(m => m.Person);
-            return View(mobileNumbers.ToList());
+            if (id != null)
+            {
+                Household household = db.Households.Include(h => h.People).FirstOrDefault(h => h.HouseholdId == id);
+                if (household == null)
+                {
+                    return HttpNotFound();
+                }
+                int[] clients = household.People.Select(p => p.PersonId).ToArray();
+                var mobileNumbers = db.MobileNumbers
+                    .Include(m => m.Messages)
+                    .Include(m => m.Person)
+                    .Where(m => clients.Contains(m.PersonId)).ToList();
+
+                return View(mobileNumbers);
+            }
+            else
+            {
+                int city = Convert.ToInt16(User.Identity.GetCityId());
+                var mobileNumbers = db.MobileNumbers
+                    .Include(m=>m.Messages)
+                    .Include(m => m.Person)
+                    .Where(m=>m.Person.Household.CityId==city).ToList();
+
+                return View(mobileNumbers);
+            }
+        }
+
+        public ActionResult ClientIndex(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Person person = db.Persons.Find(id);
+            if (person == null)
+            {
+                return HttpNotFound();
+            }
+
+            ViewBag.ClientId = id;
+            ViewBag.HouseholdId = person.HouseholdId;
+            ViewBag.ClientName = person.getFullName();
+
+            var mobileNumbers = db.MobileNumbers.Include(m => m.Messages).Include(m => m.Person).Where(m => m.PersonId == id).ToList();
+            return View(mobileNumbers);
         }
 
         // GET: MobileNumbers/Details/5

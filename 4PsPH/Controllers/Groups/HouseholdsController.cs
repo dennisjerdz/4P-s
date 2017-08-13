@@ -11,6 +11,7 @@ using _4PsPH.Extensions;
 
 namespace _4PsPH.Controllers
 {
+    [Authorize(Roles = "Social Worker, 4P's Officer")]
     public class HouseholdsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();

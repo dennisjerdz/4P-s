@@ -37,9 +37,9 @@ namespace _4PsPH.Controllers
             {
                 int city = Convert.ToInt16(User.Identity.GetCityId());
                 var mobileNumbers = db.MobileNumbers
-                    .Include(m=>m.Messages)
+                    .Include(m => m.Messages)
                     .Include(m => m.Person)
-                    .Where(m=>m.Person.Household.CityId==city).ToList();
+                    .Where(m => m.Person.Household.CityId == city).ToList();
 
                 return View(mobileNumbers);
             }
@@ -81,10 +81,23 @@ namespace _4PsPH.Controllers
         }
 
         // GET: MobileNumbers/Create
-        public ActionResult Create()
+        public ActionResult Create(int? id)
         {
-            ViewBag.PersonId = new SelectList(db.Persons, "PersonId", "GivenName");
-            return View();
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Person person = db.Persons.Find(id);
+            if (person == null)
+            {
+                return HttpNotFound();
+            }
+
+            MobileNumber mb = new MobileNumber();
+            mb.PersonId = person.PersonId;
+
+            return View(mb);
         }
 
         // POST: MobileNumbers/Create
@@ -94,14 +107,16 @@ namespace _4PsPH.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "MobileNumberId,MobileNo,Token,DateTimeCreated,IsDisabled,PersonId")] MobileNumber mobileNumber)
         {
+            mobileNumber.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+            mobileNumber.Token = null;
+
             if (ModelState.IsValid)
             {
                 db.MobileNumbers.Add(mobileNumber);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("ClientIndex", new { id = mobileNumber.PersonId });
             }
 
-            ViewBag.PersonId = new SelectList(db.Persons, "PersonId", "GivenName", mobileNumber.PersonId);
             return View(mobileNumber);
         }
 

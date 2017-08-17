@@ -26,6 +26,28 @@ namespace _4Ps.Controllers
             return View();
         }
 
+        [HttpPost]
+        public ActionResult SendMessage(string recipient_input, string message, string message_mobileNumber)
+        {
+            if (Request.IsAjaxRequest())
+            {
+                try
+                {
+                    SendSMS(message_mobileNumber, message);
+                }
+                catch (Exception e)
+                {
+                    return Content("<p style='color:rgba(200,50,50,1);'>Error occured; " + e.Message + "</p>");
+                }
+
+                return Content("<p style='color:rgba(0,200,100,1);'>Successfully sent message to " + recipient_input + ".</p>");
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public ActionResult Receive(string access_token, string subscriber_number)
         {
             string subscriber_number_p = "0" + subscriber_number;

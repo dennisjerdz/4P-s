@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<_4PsPH.Models.MobileNumber>
 
 @{
-    ViewBag.Title = "Mobile No.";
+    ViewBag.Title = "Mobile Numbers";
 }
 
 <div class="shadow-wrapper">
@@ -66,11 +66,17 @@
                     <td style="text-align:right;">
                         @if (item.Token != null)
                         {
-                            <a href="@Url.Action("Message",new { id=item.MobileNumberId})" class="btn btn-info btn-xs">Message <span class="glyphicon glyphicon-comment"></span></a>
+                            <a href="#" class="btn btn-info btn-xs btn-send-msg" data-mobile-numId="@item.MobileNumberId" data-recipient="@item.Person.getFullName()" data-mobile-num="@item.MobileNo">
+                                Message <span class="glyphicon glyphicon-comment"></span>
+                            </a>
                         }
+
                         <a href="@Url.Action("ClientIndex",new { id=item.PersonId})" class="btn btn-primary btn-xs">All Mobile No. <span class="glyphicon glyphicon-zoom-in"></span></a>
-                        <a href="@Url.Action("Edit",new { id=item.MobileNumberId})" class="btn btn-warning btn-xs">Edit <span class="glyphicon glyphicon-pencil"></span></a>
-                        <a href="@Url.Action("Delete",new { id=item.MobileNumberId})" class="btn btn-danger btn-xs">Delete <span class="glyphicon glyphicon-remove-circle"></span></a>
+
+                        @if (item.Token == null)
+                        {
+                            <a href="@Url.Action("Delete",new { id=item.MobileNumberId})" class="btn btn-danger btn-xs">Delete <span class="glyphicon glyphicon-remove-circle"></span></a>
+                        }
                     </td>
                 </tr>
             }
@@ -78,7 +84,51 @@
     </table>
 </div>
 
+<div id="msgModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Send SMS to <strong id="recipient"></strong></h4>
+            </div>
+            @using (Ajax.BeginForm("SendMessage", "SMS", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "result" }))
+            {
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden" value="" id="recipient_input" name="recipient_input" />
+                    <input type="hidden" value="" id="message_mobileNumber_id" name="message_mobileNumber_id" />
+
+                    <div class="form-group">
+                        <label>Mobile Number</label>
+                        <input class="form-control" name="message_mobileNumber" id="message_mobileNumber" readonly />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Message</label>
+                        <input class="form-control" id="message-body" name="message" required />
+                    </div>
+
+                    <div class="form-group">
+                        <div id="result"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="Submit" class="btn btn-info">Send Message <span class="glyphicon glyphicon-send"></span></button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>
+
 @section scripts{
+
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
     <script>
         $(document).ready(function () {
             var datatable = $("table").DataTable({
@@ -94,5 +144,23 @@
                 datatable.search($(this).val()).draw();
             })
         });
+    </script>
+
+    <script>
+        $(".btn-send-msg").click(function () {
+            $("#recipient").html($(this).attr("data-recipient"));
+            $("#message_mobileNumber_id").html($(this).attr("data-mobile-numId"));
+            $("#recipient_input").val($(this).attr("data-recipient"));
+            $("#message_mobileNumber").val($(this).attr("data-mobile-num"));
+
+            $("#msgModal").modal("show");
+        });
+    </script>
+
+    <script>
+        $('#msgModal').on('hide.bs.modal', function (e) {
+            $("#result").html("");
+            $("#message-body").val("");
+        })
     </script>
 }

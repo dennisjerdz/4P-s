@@ -1,0 +1,15 @@
+SW:
+/ Add Mobile No.
+/ Send sms
+> Create Ticket for Client with Category
+> Resolve Ticket for Categories; Compliance 
+Verification & payment
+> Create Endorsement Letter
+> Create Case Summary Report
+> Client Details
+
+plZCqSlTn8f3b3yv1t1waGuihDSqTy4DLic2zsommawR8qcplWaYXeNchtnm
+
+Ticket Index: ID/Category/Household/Name/Status/DateCreated/options
+Options: Update to Waiting for Verification/Revert/Add Resolution/
+Ticket History

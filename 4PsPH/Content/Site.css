@@ -14,7 +14,7 @@ hr.heading-cut{
 }
 
 #sidebar-wrapper-right {
-    box-shadow: rgba(100,100,100,0.1) 3px 0px 8px -4px;
+    box-shadow: rgba(100,100,100,0.5) 3px 0px 8px -4px;
 }
 
 .window-heading{
@@ -590,4 +590,23 @@ textarea {
         width:100%;
         margin-bottom:10px;
     }
+}
+
+/*sms modal*/
+.modal{
+    z-index:10001;
+}
+
+.modal-header{
+    padding:10px;
+}
+
+.modal-footer{
+    margin-top:0px;
+    padding:11px;
+}
+
+.modal-content{
+    border-radius:2px;
+    box-shadow: rgba(0,0,0,0.2) 0px 2px 4px -1px;
 }

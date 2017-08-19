@@ -1,69 +1,136 @@
 ﻿@model IEnumerable<_4PsPH.Models.Ticket>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Tickets";
 }
 
-<h2>Index</h2>
+<div class="shadow-wrapper">
+    <div class="row">
+        <div class="window-heading">
+            <div class="col-md-9">
+                <div class="links">
+                    <strong>
+                        @ViewBag.Title
+                    </strong>
+                </div>
+            </div>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Category.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.MobileNumber.MobileNo)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Person.GivenName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Status.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateTimeCreated)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IdAttached)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Comment)
-        </th>
-        <th></th>
-    </tr>
+            <div class="col-md-3" style="text-align:right;">
+                <div class="input-group">
+                    <input type="text" class="form-control all-search" placeholder="Search All Fields" aria-describedby="basic-addon2">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Category.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.MobileNumber.MobileNo)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Person.GivenName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateTimeCreated)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IdAttached)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Comment)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.TicketId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.TicketId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.TicketId })
-        </td>
-    </tr>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Category.Name)
+                </th>
+                <th>
+                    Client
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Status.Name)
+                </th>
+                <th>
+                    Date Created
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Comment)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Category.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Person.GivenName)
+                    </td>
+                    <td>
+                        <font style="color:@item.Status.Color">@item.Status.Name</font>
+                    </td>
+                    <td>
+                        @item.DateTimeCreated.ToString("M/d/yyyy")
+                    </td>
+                    <td>
+                        @if (item.Comment.Length > 0)
+                        {
+                            <a href="#" data-toggle="tooltip" class="btn btn-primary btn-xs" title="@item.Comment">View <span class="glyphicon glyphicon-info-sign"></span></a>
+                        }
+                        
+                    </td>
+                    <td style="text-align:right;">
+                        @if (item.Status.Name == "Waiting for Verification")
+                        {
+                            <a class="btn btn-xs btn-info" href="@Url.Action("Next", new { id=item.TicketId })">Set status to Verified</a>
+                        }
+
+                        @if (item.Status.Name == "Verified")
+                        {
+                            <a class="btn btn-xs btn-info" href="@Url.Action("Next", new { id=item.TicketId })">Set status to Verified</a> 
+                            <a class="btn btn-xs btn-danger" href="@Url.Action("Revert", new { id=item.TicketId })">Previous Status</a>
+                        }
+
+                        @if (item.Status.Name == "Pending Documents")
+                        {
+                            <a class="btn btn-xs btn-info" href="@Url.Action("Next", new { id=item.TicketId })">Pending Endorsement</a> 
+                            if (item.CreatedAtOffice == false)
+                            {
+                                <a class="btn btn-xs btn-danger" href="@Url.Action("Revert", new { id=item.TicketId })">Previous Status</a>
+                            }
+                        }
+
+                        @if (item.Status.Name == "Pending OIC Approval")
+                        {
+                            <a class="btn btn-xs btn-danger" href="@Url.Action("Revert", new { id=item.TicketId })">Previous Status</a>
+                        }
+
+                        @if (item.Status.Name == "Waiting for Resolution" && User.IsInRole("OIC"))
+                        {
+                            <a class="btn btn-xs btn-danger" href="@Url.Action("Revert", new { id=item.TicketId })">Withdraw Approval</a>
+                        }
+
+                        <a class="btn btn-xs btn-warning" href="@Url.Action("Edit",new { id=item.TicketId })">Edit <span class="glyphicon glyphicon-pencil"></span></a> 
+                        
+                        @if (item.Status.Name == "Waiting for Verification" || (item.Status.Name == "Waiting for Documents" && item.CreatedAtOffice == true))
+                        {
+                            @Html.ActionLink("Delete", "Delete", new { id = item.TicketId }, new { @class="btn btn-xs btn-danger" })
+                        }
+
+                        <a class="btn btn-default btn-xs" href="@Url.Action("Details", new { id=item.TicketId })">Details <span class="glyphicon glyphicon-info-sign"></span></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            var datatable = $("table").DataTable({
+                paging: true,
+                "pageLength": 20,
+                "dom": "<'row'<'table-window'<'table-responsive'rt>>><'window-footer'<'col-md-6'i><'col-md-6'p>>",
+                "columnDefs": [
+                    { "orderable": false, "targets": 5 },
+                    { "orderable": false, "targets": 4 }
+                ]
+            });
+
+            $(".all-search").keyup(function () {
+                datatable.search($(this).val()).draw();
+            })
+        });
+    </script>
 }
-
-</table>

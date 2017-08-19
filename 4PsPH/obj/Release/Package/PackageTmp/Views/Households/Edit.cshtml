@@ -1,68 +1,154 @@
 ﻿@model _4PsPH.Models.Household
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Households";
+
+    var options = new List<SelectListItem>();
+    options.Add(new SelectListItem { Text = "Yes", Value = "true" });
+    options.Add(new SelectListItem { Text = "No", Value = "false" });
 }
 
-<h2>Edit</h2>
+<div class="row">
+    <div class="col-md-10 left-ui">
+        <a href="@Url.Action("Index")" class="outside-link">« Back to List</a>
+    </div>
+    <div class="col-md-2 right-ui">
+        <a href="@Url.Action("Details",new { id=Model.HouseholdId })" class="btn btn-info">View Household <span class="glyphicon glyphicon-folder-open"></span></a>
+    </div>
+</div>
 
+<hr class="heading-cut" />
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Household</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.HouseholdId)
+<div class="row">
+    <div class="col-md-12" style="padding:0px;">
+        <div class="col-md-4 left-window">
+            <div class="shadow-wrapper">
+                <div class="row">
+                    <div class="window-heading">
+                        <div class="col-md-12">
+                            <div class="links">
+                                <strong>
+                                    @ViewBag.Title &emsp;»&emsp;Editing Household @Model.Name
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="window">
+                        <div class="col-md-12">
+                            @using (Html.BeginForm("Edit", "Households", FormMethod.Post, new { @id = "form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(model=>model.HouseholdId)
+                                @Html.HiddenFor(model => model.IsExcluded)
+                                @Html.HiddenFor(model => model.DateTimeCreated)
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                                <div class="form-horizontal">
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label" })
+                                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.DateTimeCreated, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.DateTimeCreated, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.DateTimeCreated, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <label>Select City:</label>
+                                            @Html.DropDownList("CityId", null, htmlAttributes: new { @class = "form-control", @readonly ="true" })
+                                            @Html.ValidationMessageFor(model => model.CityId, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.IsExcluded, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.IsExcluded)
-                    @Html.ValidationMessageFor(model => model.IsExcluded, "", new { @class = "text-danger" })
+                                    @*
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                @Html.LabelFor(model => model.IsExcluded, htmlAttributes: new { @class = "control-label" })
+                                                @Html.DropDownListFor(model => model.IsExcluded, options, new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.IsExcluded, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    *@
+                                    
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="window-footer window-footer-btn">
+                    <div class="col-md-12" style="text-align:right;">
+                        <button class="btn btn-primary" type="submit" form="form">Save</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.CityId, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.CityId, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.CityId, "", new { @class = "text-danger" })
-            </div>
-        </div>
+        <div class="col-md-8 right-window">
+            <div class="shadow-wrapper">
+                <div class="row">
+                    <div class="window-heading">
+                        <div class="col-md-6">
+                            <div class="links">
+                                <strong>
+                                    Household History
+                                </strong>
+                            </div>
+                        </div>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                        <div class="col-md-6" style="text-align:right;">
+                            <div class="input-group">
+                                <input type="text" class="form-control all-search" placeholder="Search All Fields" aria-describedby="basic-addon2">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.HouseholdHistory)
+                        {
+                            <tr>
+                                <td style="font-size:0.85em;">
+                                    @item.DateTimeCreated.ToString("M/dd/yy hh:mm tt")
+                                </td>
+                                <td style="font-size:0.85em;">
+                                    <font style="color:#56A8FB;">@item.CreatedBy</font> @item.Body
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
 </div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+            $(document).ready(function () {
+                var datatable = $("table").DataTable({
+                    paging: true,
+                    "pageLength": 4,
+                    "dom": "<'row'<'table-window'<'table-responsive'rt>>><'window-footer'<'col-md-6'i><'col-md-6'p>>",
+                    "columnDefs": [
+                        { "orderable": false, "targets": 1 }
+                    ],
+                    "order": [[0, "desc"]]
+                });
+
+                $(".all-search").keyup(function () {
+                    datatable.search($(this).val()).draw();
+                })
+            });
+    </script>
 }

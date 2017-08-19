@@ -1,74 +1,265 @@
-﻿@model _4PsPH.Models.Ticket
+﻿@model _4PsPH.Models.TicketComment
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Ticket";
 }
 
-<h2>Details</h2>
+<div class="row">
+    <div class="col-md-11 left-ui">
+        <a href="@Url.Action("Index", "Tickets", null)" class="outside-link">« Back to List</a>
 
-<div>
-    <h4>Ticket</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Category.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Category.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.MobileNumber.MobileNo)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.MobileNumber.MobileNo)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Person.GivenName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Person.GivenName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Status.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Status.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.DateTimeCreated)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.DateTimeCreated)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.IdAttached)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.IdAttached)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Comment)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Comment)
-        </dd>
-
-    </dl>
+        <hr class="heading-cut" />
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.TicketId }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+
+<div class="row">
+    <div class="col-md-12" style="padding:0px;">
+        <div class="col-md-5 left-window">
+            <div class="shadow-wrapper">
+                <div class="row">
+                    <div class="window-heading">
+                        <div class="col-md-12">
+                            <div class="links">
+                                <strong>
+                                    @ViewBag.Title &emsp;»&emsp;Ticket @Model.Ticket.TicketId Details
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="window">
+                        <div class="col-md-12">
+                            <p class="details-heading">Category:</p>
+                            <p class="details-line">@Model.Ticket.Category.Name</p>
+
+                            <p class="details-heading">Mobile Number:</p>
+                            <p class="details-line">
+                                @Model.Ticket.MobileNumber.MobileNo
+                                @if (Model.Ticket.MobileNumber.Token != null)
+                                {
+                                    <a href="#" class="btn btn-info btn-xs btn-send-msg" data-mobile-numid="@Model.Ticket.MobileNumberId" data-recipient="@Model.Ticket.Person.getFullName()" data-mobile-num="@Model.Ticket.MobileNumber.MobileNo">
+                                        Message <span class="glyphicon glyphicon-comment"></span>
+                                    </a>
+                                }
+                            </p>
+
+                            <p class="details-heading">Client:</p>
+                            <p class="details-line">@Model.Ticket.Person.getFullName()</p>
+                            
+                            <p class="details-heading">Status:</p>
+                            <p class="details-line" style="color:@Model.Ticket.Status.Color">@Model.Ticket.Status.Name</p>
+
+                            <p class="details-heading">Date Created:</p>
+                            <p class="details-line">@Model.Ticket.DateTimeCreated</p>
+                            
+                            <p class="details-heading">Supporting info:</p>
+                            <p class="details-line">@Model.Ticket.IdAttached</p>
+
+                            <p class="details-heading">Comment:</p>
+                            <p class="details-line">@Model.Ticket.Comment</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="window-footer window-footer-btn">
+                    <div class="col-md-12" style="text-align:right;">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6" style="padding:0px;">
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#comments" aria-controls="comments" role="tab" data-toggle="tab">Comments</a></li>
+                        <li role="presentation"><a href="#csr" aria-controls="csr" role="tab" data-toggle="tab">Case Summary Report</a></li>
+                        <li role="presentation"><a href="#endorsement" aria-controls="endorsement" role="tab" data-toggle="tab">Endorsement Letter</a></li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="comments">
+                            <div class="comment_here">
+                                @using (Html.BeginForm())
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.HiddenFor(model=>model.TicketId)
+                                    @Html.HiddenFor(model=>model.DateTimeCreated)
+
+                                    <div class="form-horizontal">
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                        <div class="form-group">
+                                            <div class="col-md-9">
+                                                @Html.EditorFor(model => model.Body, new { htmlAttributes = new { @class = "form-control", @placeholder="Input here ..." } })
+                                                @Html.ValidationMessageFor(model => model.Body, "", new { @class = "text-danger" })
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <button type="submit" class="btn btn-info btn-block">Add <i class="fa fa-comment"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="comments_here">
+                                @foreach (var x in Model.Ticket.TicketComments.OrderByDescending(c => c.DateTimeCreated))
+                                {
+                                    if (x.CreatedByUsername == User.Identity.Name)
+                                    {
+                                        <p class="comment-heading" style="color:#00ACC1;">You&emsp;<font>@x.DateTimeCreated</font></p>
+                                        <p class="comment-body">@x.Body</p>
+                                    }
+                                    else
+                                    {
+                                        <p class="comment-heading">@x.CreatedBy &emsp;<font>(@x.CreatedByType) @x.DateTimeCreated</font></p>
+                                        <p class="comment-body">@x.Body</p>
+                                    }
+
+                                }
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="csr">csr</div>
+                        <div role="tabpanel" class="tab-pane" id="endorsement">en</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="msgModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Send SMS to <strong id="recipient"></strong></h4>
+            </div>
+            @using (Ajax.BeginForm("SendMessage", "SMS", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "result" }))
+            {
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden" value="" id="recipient_input" name="recipient_input" />
+                    <input type="hidden" value="" id="message_mobileNumber_id" name="message_mobileNumber_id" />
+
+                    <div class="form-group">
+                        <label>Mobile Number</label>
+                        <input class="form-control" name="message_mobileNumber" id="message_mobileNumber" readonly />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Message</label>
+                        <input class="form-control" id="message-body" name="message" required />
+                    </div>
+
+                    <div class="form-group">
+                        <div id="result"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="Submit" class="btn btn-info">Send Message <span class="glyphicon glyphicon-send"></span></button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>
+
+@section styles{
+    <style>
+        .comment-body{
+            margin-bottom:7px;
+            padding-bottom:7px;
+            border-bottom:1px solid rgba(220,220,220,0.3);
+            font-size:1.1em;
+        }
+
+        .comment-heading{
+            color: #56A8FB;
+            font-weight:600;
+            font-size:0.9em;
+            margin-bottom:6px;
+        }
+
+        .comment-heading font{
+            color:#bebebe !important;
+            font-weight:300;
+        }
+
+        .form-control{
+            background-color:#eeeff3;
+        }
+
+        .form-control:active, .form-control:focus{
+            background-color:white;
+        }
+
+        .comment_here{
+            margin-top:15px;
+        }
+
+        .nav.nav-tabs{
+            margin-top:15px;
+        }
+
+        .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus{
+            border:none;
+            border-bottom:2px solid #56A8FB;
+            color:#50596e;
+            font-weight:600;
+            transition:0.4s;
+            background-color:transparent;
+        }
+
+        .nav-tabs > li > a{
+            color:#959cae;
+        }
+
+        .details-heading{
+            font-size:0.8em;
+            color:#797979;
+            margin-bottom:3px;
+        }
+
+        .details-line{
+            font-size:1.1em;
+            padding-bottom:6px;
+            margin-bottom:6px;
+            border-bottom:1px solid rgba(0,0,0,0.1);
+            min-height:20px;
+        }
+    </style>    
+}
+
+@section scripts{
+
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+    <script>
+        $(".btn-send-msg").click(function () {
+            $("#recipient").html($(this).attr("data-recipient"));
+            $("#message_mobileNumber_id").html($(this).attr("data-mobile-numId"));
+            $("#recipient_input").val($(this).attr("data-recipient"));
+            $("#message_mobileNumber").val($(this).attr("data-mobile-num"));
+
+            $("#msgModal").modal("show");
+        });
+    </script>
+
+    <script>
+            $('#msgModal').on('hide.bs.modal', function (e) {
+                $("#result").html("");
+                $("#message-body").val("");
+            })
+    </script>    
+}

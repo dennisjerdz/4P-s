@@ -182,15 +182,12 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Client\ClientController.cs" />
+    <Compile Include="Controllers\Production\EndorsementsController.cs" />
     <Compile Include="Controllers\Groups\HospitalsController.cs" />
     <Compile Include="Controllers\Groups\HouseholdsController.cs" />
     <Compile Include="Controllers\Production\AttendanceIssuesController.cs" />
-    <Compile Include="Controllers\Production\CaseSummaryReportCommentsController.cs" />
-    <Compile Include="Controllers\Production\CaseSummaryReportsController.cs" />
     <Compile Include="Controllers\Production\CategoriesController.cs" />
     <Compile Include="Controllers\Client\EducationalAttainmentsController.cs" />
-    <Compile Include="Controllers\Production\EndorsementCommentsController.cs" />
-    <Compile Include="Controllers\Production\EndorsementsController.cs" />
     <Compile Include="Controllers\Production\FDSController.cs" />
     <Compile Include="Controllers\Production\FDSIssuesController.cs" />
     <Compile Include="Controllers\Groups\CitiesController.cs" />
@@ -222,6 +219,8 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Controllers\Production\CaseSummaryReportsController.cs" />
+    <Compile Include="Controllers\Production\TicketCommentsController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-datetimepicker.css" />
@@ -288,6 +287,8 @@
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.signalR-2.2.2.js" />
     <Content Include="Scripts\jquery.signalR-2.2.2.min.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -417,26 +418,6 @@
     <Content Include="Views\Tickets\Details.cshtml" />
     <Content Include="Views\Tickets\Edit.cshtml" />
     <Content Include="Views\Tickets\Index.cshtml" />
-    <Content Include="Views\CaseSummaryReports\Create.cshtml" />
-    <Content Include="Views\CaseSummaryReports\Delete.cshtml" />
-    <Content Include="Views\CaseSummaryReports\Details.cshtml" />
-    <Content Include="Views\CaseSummaryReports\Edit.cshtml" />
-    <Content Include="Views\CaseSummaryReports\Index.cshtml" />
-    <Content Include="Views\CaseSummaryReportComments\Create.cshtml" />
-    <Content Include="Views\CaseSummaryReportComments\Delete.cshtml" />
-    <Content Include="Views\CaseSummaryReportComments\Details.cshtml" />
-    <Content Include="Views\CaseSummaryReportComments\Edit.cshtml" />
-    <Content Include="Views\CaseSummaryReportComments\Index.cshtml" />
-    <Content Include="Views\Endorsements\Create.cshtml" />
-    <Content Include="Views\Endorsements\Delete.cshtml" />
-    <Content Include="Views\Endorsements\Details.cshtml" />
-    <Content Include="Views\Endorsements\Edit.cshtml" />
-    <Content Include="Views\Endorsements\Index.cshtml" />
-    <Content Include="Views\EndorsementComments\Create.cshtml" />
-    <Content Include="Views\EndorsementComments\Delete.cshtml" />
-    <Content Include="Views\EndorsementComments\Details.cshtml" />
-    <Content Include="Views\EndorsementComments\Edit.cshtml" />
-    <Content Include="Views\EndorsementComments\Index.cshtml" />
     <Content Include="Views\Resolutions\Create.cshtml" />
     <Content Include="Views\Resolutions\Delete.cshtml" />
     <Content Include="Views\Resolutions\Details.cshtml" />
@@ -458,6 +439,21 @@
     <Content Include="Views\Hospitals\Edit.cshtml" />
     <Content Include="Views\Hospitals\Index.cshtml" />
     <Content Include="Views\MobileNumbers\ClientIndex.cshtml" />
+    <Content Include="Views\TicketComments\Create.cshtml" />
+    <Content Include="Views\TicketComments\Delete.cshtml" />
+    <Content Include="Views\TicketComments\Details.cshtml" />
+    <Content Include="Views\TicketComments\Edit.cshtml" />
+    <Content Include="Views\TicketComments\Index.cshtml" />
+    <Content Include="Views\CaseSummaryReports\Create.cshtml" />
+    <Content Include="Views\CaseSummaryReports\Delete.cshtml" />
+    <Content Include="Views\CaseSummaryReports\Details.cshtml" />
+    <Content Include="Views\CaseSummaryReports\Edit.cshtml" />
+    <Content Include="Views\CaseSummaryReports\Index.cshtml" />
+    <Content Include="Views\Endorsements\Create.cshtml" />
+    <Content Include="Views\Endorsements\Delete.cshtml" />
+    <Content Include="Views\Endorsements\Details.cshtml" />
+    <Content Include="Views\Endorsements\Edit.cshtml" />
+    <Content Include="Views\Endorsements\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

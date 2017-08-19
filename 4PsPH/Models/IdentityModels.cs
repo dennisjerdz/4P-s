@@ -72,9 +72,8 @@ namespace _4PsPH.Models
         public DbSet<Status> Statuses { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<CaseSummaryReport> CaseSummaryReports { get; set; }
-        public DbSet<CaseSummaryReportComment> CaseSummaryReportComment { get; set; }
+        public DbSet<TicketComment> TicketComments { get; set; }
         public DbSet<Endorsement> Endorsements { get; set; }
-        public DbSet<EndorsementComment> EndorsementComments { get; set; }
         public DbSet<Resolution> Resolutions { get; set; }
         public DbSet<Inquiry> Inquiries { get; set; }
 

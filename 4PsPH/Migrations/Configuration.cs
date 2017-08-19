@@ -36,9 +36,7 @@ namespace _4PsPH.Migrations
             context.Statuses.AddOrUpdate(
                 s=>s.Name,
                 new Status { Name = "Waiting for Verification", Color = "#FFCC80", IsEditable=false },
-                new Status { Name = "Verified", Color = "#AED581", IsEditable = false },
-                new Status { Name = "Pending Documents", Color = "#FFEB3B", IsEditable = false },
-                new Status { Name = "Pending Endorsement", Color = "#FFEB3B", IsEditable = false },
+                new Status { Name = "Verified / Pending Endorsement", Color = "#c7a900", IsEditable = false },
                 new Status { Name = "Pending OIC Approval", Color = "#80CBC4", IsEditable = false },
                 new Status { Name = "Waiting for Resolution", Color = "#26A69A", IsEditable = false },
                 new Status { Name = "Approved", Color = "#388E3C", IsEditable = false },

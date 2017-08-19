@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using _4PsPH.Models;
+using _4PsPH.Extensions;
+using Microsoft.AspNet.Identity;
 
 namespace _4PsPH.Controllers.Production
 {
@@ -17,7 +19,9 @@ namespace _4PsPH.Controllers.Production
         // GET: Tickets
         public ActionResult Index()
         {
-            var tickets = db.Tickets.Include(t => t.Category).Include(t => t.MobileNumber).Include(t => t.Person).Include(t => t.Status);
+            int city = Convert.ToInt16(User.Identity.GetCityId());
+
+            var tickets = db.Tickets.Include(t => t.Category).Include(t => t.MobileNumber).Include(t => t.Person).Include(t => t.Status).Where(t=>t.Person.Household.CityId == city);
             return View(tickets.ToList());
         }
 
@@ -28,22 +32,50 @@ namespace _4PsPH.Controllers.Production
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Ticket ticket = db.Tickets.Find(id);
+            Ticket ticket = db.Tickets.Include(t=>t.TicketComments).FirstOrDefault(t=>t.TicketId == id);
             if (ticket == null)
             {
                 return HttpNotFound();
             }
-            return View(ticket);
+
+            TicketComment tc = new TicketComment();
+            tc.TicketId = ticket.TicketId;
+            tc.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+            tc.Ticket = ticket;
+
+            return View(tc);
         }
 
         // GET: Tickets/Create
-        public ActionResult Create()
+        public ActionResult Create(int? id)
         {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Person p = db.Persons.Find(id);
+            if (p == null)
+            {
+                return HttpNotFound();
+            }
+
+            Ticket t = new Ticket();
+            t.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+            t.PersonId = p.PersonId;
+            t.Person = p;
+
             ViewBag.CategoryId = new SelectList(db.Categories, "CategoryId", "Name");
-            ViewBag.MobileNumberId = new SelectList(db.MobileNumbers, "MobileNumberId", "MobileNo");
-            ViewBag.PersonId = new SelectList(db.Persons, "PersonId", "GivenName");
+
+            int[] member_mobile_no = db.Persons.Where(e => e.HouseholdId == p.HouseholdId).Select(e=>e.PersonId).ToArray();
+
+            var mb = db.MobileNumbers.Include(m => m.Person).Where(m => member_mobile_no.Contains(m.PersonId) && m.Token != null).Select(s => new SelectListItem {
+                Value = s.MobileNumberId.ToString(),
+                Text = s.MobileNo + " (" + s.Person.GivenName + ")"
+            });
+
+            ViewBag.MobileNumberId = new SelectList(mb, "Value", "Text");
             ViewBag.StatusId = new SelectList(db.Statuses, "StatusId", "Name");
-            return View();
+            return View(t);
         }
 
         // POST: Tickets/Create
@@ -51,8 +83,11 @@ namespace _4PsPH.Controllers.Production
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "TicketId,PersonId,CategoryId,StatusId,MobileNumberId,DateTimeCreated,IdAttached,Comment")] Ticket ticket)
+        public ActionResult Create([Bind(Include = "TicketId,PersonId,CategoryId,MobileNumberId,DateTimeCreated,IdAttached,Comment")] Ticket ticket)
         {
+            ticket.CreatedAtOffice = true;
+            ticket.StatusId = db.Statuses.FirstOrDefault(s => s.Name == "Waiting for Verification").StatusId;
+
             if (ModelState.IsValid)
             {
                 db.Tickets.Add(ticket);
@@ -60,10 +95,18 @@ namespace _4PsPH.Controllers.Production
                 return RedirectToAction("Index");
             }
 
-            ViewBag.CategoryId = new SelectList(db.Categories, "CategoryId", "Name", ticket.CategoryId);
-            ViewBag.MobileNumberId = new SelectList(db.MobileNumbers, "MobileNumberId", "MobileNo", ticket.MobileNumberId);
-            ViewBag.PersonId = new SelectList(db.Persons, "PersonId", "GivenName", ticket.PersonId);
-            ViewBag.StatusId = new SelectList(db.Statuses, "StatusId", "Name", ticket.StatusId);
+            ViewBag.CategoryId = new SelectList(db.Categories, "CategoryId", "Name");
+
+            int[] member_mobile_no = db.Persons.Where(e => e.HouseholdId == ticket.Person.HouseholdId).Select(e => e.PersonId).ToArray();
+
+            var mb = db.MobileNumbers.Include(m => m.Person).Where(m => member_mobile_no.Contains(m.PersonId) && m.Token != null).Select(s => new SelectListItem
+            {
+                Value = s.MobileNumberId.ToString(),
+                Text = s.MobileNo + " (" + s.Person.GivenName + ")"
+            });
+
+            ViewBag.MobileNumberId = new SelectList(mb, "Value", "Text");
+            ViewBag.StatusId = new SelectList(db.Statuses, "StatusId", "Name");
             return View(ticket);
         }
 
@@ -79,10 +122,19 @@ namespace _4PsPH.Controllers.Production
             {
                 return HttpNotFound();
             }
-            ViewBag.CategoryId = new SelectList(db.Categories, "CategoryId", "Name", ticket.CategoryId);
-            ViewBag.MobileNumberId = new SelectList(db.MobileNumbers, "MobileNumberId", "MobileNo", ticket.MobileNumberId);
-            ViewBag.PersonId = new SelectList(db.Persons, "PersonId", "GivenName", ticket.PersonId);
-            ViewBag.StatusId = new SelectList(db.Statuses, "StatusId", "Name", ticket.StatusId);
+
+            ViewBag.CategoryId = new SelectList(db.Categories, "CategoryId", "Name");
+
+            int[] member_mobile_no = db.Persons.Where(e => e.HouseholdId == ticket.Person.HouseholdId).Select(e => e.PersonId).ToArray();
+
+            var mb = db.MobileNumbers.Include(m => m.Person).Where(m => member_mobile_no.Contains(m.PersonId) && m.Token != null).Select(s => new SelectListItem
+            {
+                Value = s.MobileNumberId.ToString(),
+                Text = s.MobileNo + " (" + s.Person.GivenName + ")"
+            });
+
+            ViewBag.MobileNumberId = new SelectList(mb, "Value", "Text");
+            ViewBag.StatusId = new SelectList(db.Statuses, "StatusId", "Name");
             return View(ticket);
         }
 
@@ -99,10 +151,19 @@ namespace _4PsPH.Controllers.Production
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.CategoryId = new SelectList(db.Categories, "CategoryId", "Name", ticket.CategoryId);
-            ViewBag.MobileNumberId = new SelectList(db.MobileNumbers, "MobileNumberId", "MobileNo", ticket.MobileNumberId);
-            ViewBag.PersonId = new SelectList(db.Persons, "PersonId", "GivenName", ticket.PersonId);
-            ViewBag.StatusId = new SelectList(db.Statuses, "StatusId", "Name", ticket.StatusId);
+
+            ViewBag.CategoryId = new SelectList(db.Categories, "CategoryId", "Name");
+
+            int[] member_mobile_no = db.Persons.Where(e => e.HouseholdId == ticket.Person.HouseholdId).Select(e => e.PersonId).ToArray();
+
+            var mb = db.MobileNumbers.Include(m => m.Person).Where(m => member_mobile_no.Contains(m.PersonId) && m.Token != null).Select(s => new SelectListItem
+            {
+                Value = s.MobileNumberId.ToString(),
+                Text = s.MobileNo + " (" + s.Person.GivenName + ")"
+            });
+
+            ViewBag.MobileNumberId = new SelectList(mb, "Value", "Text");
+            ViewBag.StatusId = new SelectList(db.Statuses, "StatusId", "Name");
             return View(ticket);
         }
 
@@ -130,6 +191,41 @@ namespace _4PsPH.Controllers.Production
             db.Tickets.Remove(ticket);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Details([Bind(Include = "TicketCommentId,TicketId,Body,DateTimeCreated")] TicketComment ticketComment)
+        {
+            ticketComment.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+            ticketComment.Ticket = db.Tickets.Include(t => t.TicketComments).FirstOrDefault(t => t.TicketId == ticketComment.TicketId);
+            ticketComment.CreatedBy = User.Identity.GetFullName();
+            ticketComment.CreatedByUsername = User.Identity.Name;
+
+            string type = "";
+            if (User.IsInRole("4P's Officer"))
+            {
+                type = "4P's Officer";
+            }
+            if (User.IsInRole("Social Worker"))
+            {
+                type = "Social Worker";
+            }
+            if (User.IsInRole("OIC"))
+            {
+                type = "OIC";
+            }
+
+            ticketComment.CreatedByType = type;
+
+            if (ModelState.IsValid)
+            {
+                db.TicketComments.Add(ticketComment);
+                db.SaveChanges();
+                return RedirectToAction("Details", "Tickets", new { id = ticketComment.TicketId });
+            }
+
+            return View(ticketComment);
         }
 
         protected override void Dispose(bool disposing)

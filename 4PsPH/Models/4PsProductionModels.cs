@@ -120,10 +120,28 @@ namespace _4PsPH.Models
         public DateTime DateTimeCreated { get; set; }
         public string IdAttached { get; set; }
         public string Comment { get; set; }
+        public bool CreatedAtOffice { get; set; }
 
         public virtual List<CaseSummaryReport> CaseSummaryReports { get; set; }
         public virtual List<Resolution> Resolutions { get; set; }
         public virtual List<Endorsement> Endorsements { get; set; }
+
+        public virtual List<TicketComment> TicketComments { get; set; }
+    }
+
+    public class TicketComment
+    {
+        public int TicketCommentId { get; set; }
+        public int TicketId { get; set; }
+        public virtual Ticket Ticket { get; set; }
+
+        public string CreatedByType { get; set; }
+        public string CreatedBy { get; set; }
+        public string CreatedByUsername { get; set; }
+
+        [Required]
+        public string Body { get; set; }
+        public DateTime DateTimeCreated { get; set; }
     }
 
     public class CaseSummaryReport
@@ -141,19 +159,6 @@ namespace _4PsPH.Models
 
         public DateTime LastUpdated { get; set; }
         public DateTime DateTimeCreated { get; set; }
-
-        public virtual List<CaseSummaryReportComment> CaseSummaryReportComments { get; set; }
-    }
-
-    public class CaseSummaryReportComment
-    {
-        public int CaseSummaryReportCommentId { get; set; }
-
-        public int CaseSummaryReportId { get; set; }
-        public virtual CaseSummaryReport CaseSummaryReport { get; set; }
-
-        public string Body { get; set; }
-        public DateTime DateTimeCreated { get; set; }
     }
 
     public class Endorsement
@@ -170,19 +175,6 @@ namespace _4PsPH.Models
         public string Body { get; set; }
 
         public DateTime LastUpdated { get; set; }
-        public DateTime DateTimeCreated { get; set; }
-
-        public virtual List<EndorsementComment> EndorsementComments { get; set; }
-    }
-
-    public class EndorsementComment
-    {
-        public int EndorsementCommentId { get; set; }
-
-        public int EndorsementId { get; set; }
-        public virtual Endorsement Endorsement { get; set; }
-
-        public string Body { get; set; }
         public DateTime DateTimeCreated { get; set; }
     }
 

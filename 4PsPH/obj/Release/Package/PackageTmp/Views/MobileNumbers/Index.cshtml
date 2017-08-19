@@ -1,57 +1,166 @@
 ﻿@model IEnumerable<_4PsPH.Models.MobileNumber>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Mobile Numbers";
 }
 
-<h2>Index</h2>
+<div class="shadow-wrapper">
+    <div class="row">
+        <div class="window-heading">
+            <div class="col-md-9">
+                <div class="links">
+                    <strong>
+                        @ViewBag.Title
+                    </strong>
+                </div>
+            </div>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Person.GivenName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.MobileNo)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Token)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateTimeCreated)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsDisabled)
-        </th>
-        <th></th>
-    </tr>
+            <div class="col-md-3" style="text-align:right;">
+                <div class="input-group">
+                    <input type="text" class="form-control all-search" placeholder="Search All Fields" aria-describedby="basic-addon2">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Person.GivenName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.MobileNo)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Token)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateTimeCreated)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsDisabled)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.MobileNumberId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.MobileNumberId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.MobileNumberId })
-        </td>
-    </tr>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Mobile Number</th>
+                <th>Verified</th>
+                <th>Status</th>
+                <th>Message Count</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Person.getFullName()</td>
+                    <td>@item.MobileNo</td>
+                    <td>
+                        @if (item.Token != null)
+                        {
+                            <font style="color:#5cb85c;">Verified</font>
+                        }
+                        else
+                        {
+                            <font style="color:#d1d1d1;">Not Verified</font>
+                        }
+                    </td>
+                    <td>
+                        @if (item.IsDisabled)
+                        {
+                            <font style="color:#fc5252;">Disabled</font>
+                        }
+                        else
+                        {
+                            <font style="color:#5cb85c;">Ok</font>
+                        }
+                    </td>
+                    <td>@item.Messages.Count()</td>
+                    <td style="text-align:right;">
+                        @if (item.Token != null)
+                        {
+                            <a href="#" class="btn btn-info btn-xs btn-send-msg" data-mobile-numId="@item.MobileNumberId" data-recipient="@item.Person.getFullName()" data-mobile-num="@item.MobileNo">
+                                Message <span class="glyphicon glyphicon-comment"></span>
+                            </a>
+                        }
+
+                        <a href="@Url.Action("ClientIndex",new { id=item.PersonId})" class="btn btn-primary btn-xs">All Mobile No. <span class="glyphicon glyphicon-zoom-in"></span></a>
+
+                        @if (item.Token == null)
+                        {
+                            <a href="@Url.Action("Delete",new { id=item.MobileNumberId})" class="btn btn-danger btn-xs">Delete <span class="glyphicon glyphicon-remove-circle"></span></a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div id="msgModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Send SMS to <strong id="recipient"></strong></h4>
+            </div>
+            @using (Ajax.BeginForm("SendMessage", "SMS", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "result" }))
+            {
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden" value="" id="recipient_input" name="recipient_input" />
+                    <input type="hidden" value="" id="message_mobileNumber_id" name="message_mobileNumber_id" />
+
+                    <div class="form-group">
+                        <label>Mobile Number</label>
+                        <input class="form-control" name="message_mobileNumber" id="message_mobileNumber" readonly />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Message</label>
+                        <input class="form-control" id="message-body" name="message" required />
+                    </div>
+
+                    <div class="form-group">
+                        <div id="result"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="Submit" class="btn btn-info">Send Message <span class="glyphicon glyphicon-send"></span></button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>
+
+@section scripts{
+
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var datatable = $("table").DataTable({
+                paging: true,
+                "pageLength": 10,
+                "dom": "<'row'<'table-window'<'table-responsive'rt>>><'window-footer'<'col-md-6'i><'col-md-6'p>>",
+                "columnDefs": [
+                    { "orderable": false, "targets": 5 }
+                ]
+            });
+
+            $(".all-search").keyup(function () {
+                datatable.search($(this).val()).draw();
+            })
+        });
+    </script>
+
+    <script>
+        $(".btn-send-msg").click(function () {
+            $("#recipient").html($(this).attr("data-recipient"));
+            $("#message_mobileNumber_id").html($(this).attr("data-mobile-numId"));
+            $("#recipient_input").val($(this).attr("data-recipient"));
+            $("#message_mobileNumber").val($(this).attr("data-mobile-num"));
+
+            $("#msgModal").modal("show");
+        });
+    </script>
+
+    <script>
+        $('#msgModal').on('hide.bs.modal', function (e) {
+            $("#result").html("");
+            $("#message-body").val("");
+        })
+    </script>
 }
-
-</table>

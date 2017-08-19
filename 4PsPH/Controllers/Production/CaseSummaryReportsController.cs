@@ -8,7 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using _4PsPH.Models;
 
-namespace _4PsPH.Controllers
+namespace _4PsPH.Views
 {
     public class CaseSummaryReportsController : Controller
     {

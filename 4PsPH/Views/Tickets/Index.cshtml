@@ -27,6 +27,7 @@
     <table class="table table-hover table-condensed">
         <thead>
             <tr>
+                <th>ID</th>
                 <th>
                     @Html.DisplayNameFor(model => model.Category.Name)
                 </th>
@@ -50,6 +51,7 @@
             @foreach (var item in Model)
             {
                 <tr>
+                    <td>@item.TicketId</td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Category.Name)
                     </td>
@@ -63,7 +65,7 @@
                         @item.DateTimeCreated.ToString("M/d/yyyy")
                     </td>
                     <td>
-                        @if (item.Comment.Length > 0)
+                        @if (item.Comment != null)
                         {
                             <a href="#" data-toggle="tooltip" class="btn btn-default btn-xs" title="@item.Comment">View <span class="glyphicon glyphicon-info-sign"></span></a>
                         }
@@ -79,7 +81,7 @@
                         {
                             if (User.IsInRole("Social Worker"))
                             {
-                                <a href="#" class="endorse btn btn-xs btn-info">Endorse</a>
+                                
                             }
                             <a class="btn btn-xs btn-danger" href="@Url.Action("Revert", new { id=item.TicketId })">Previous Status <span class="glyphicon glyphicon-repeat"></span></a>
                         }
@@ -88,24 +90,28 @@
                         {
                             if (User.IsInRole("OIC"))
                             {
-                                <a class="btn btn-xs btn-info" href="#">View Endorsement</a>
+                                <a class="btn btn-xs btn-info" href="@Url.Action("Details", new { id=item.TicketId })">View Endorsement</a>
                             }
-                            <a class="btn btn-xs btn-danger" href="@Url.Action("Revert", new { id=item.TicketId })">Previous Status <span class="glyphicon glyphicon-repeat"></span></a>
+                            @*
+                                <a class="btn btn-xs btn-danger" href="@Url.Action("Revert", new { id=item.TicketId })">Previous Status <span class="glyphicon glyphicon-repeat"></span></a>
+                            *@
                         }
 
-                        @if (item.Status.Name == "Waiting for Resolution" && User.IsInRole("OIC"))
+                        @if (item.Status.Name == "Waiting for Resolution")
                         {
-                            if (User.IsInRole("Social Worker") || User.IsInRole("4P's Officer"))
+                            if (User.IsInRole("OIC"))
                             {
-                                <a class="btn btn-xs btn-primary" href="#">Resolve <span class="glyphicon glyphicon-wrench"></span></a>
+                                <a class="btn btn-xs btn-danger" href="@Url.Action("Revert", new { id=item.TicketId })">Withdraw Approval <span class="glyphicon glyphicon-repeat"></span></a>
                             }
-
-                            <a class="btn btn-xs btn-danger" href="@Url.Action("Revert", new { id=item.TicketId })">Withdraw Approval <span class="glyphicon glyphicon-repeat"></span></a>
+                            else
+                            {
+                                <a class="btn btn-xs btn-primary" href="@Url.Action("Resolve", new { id=item.TicketId })">Resolve <span class="glyphicon glyphicon-wrench"></span></a>
+                            }
                         }
                         
                         @if (item.Status.Name == "Waiting for Verification")
                         {
-                            <a class="btn btn-xs btn-primary" href="#">Resolve <span class="glyphicon glyphicon-wrench"></span></a>
+                            <a class="btn btn-xs btn-primary" href="@Url.Action("Resolve", new { id=item.TicketId })">Resolve <span class="glyphicon glyphicon-wrench"></span></a>
                             <a class="btn btn-xs btn-warning" href="@Url.Action("Edit",new { id=item.TicketId })">Edit <span class="glyphicon glyphicon-pencil"></span></a> 
                             <a class="btn btn-danger btn-xs" href="@Url.Action("Delete", new { id=item.TicketId })">Delete <span class="glyphicon glyphicon-remove"></span></a>
                         }
@@ -135,7 +141,7 @@
                 "dom": "<'row'<'table-window'<'table-responsive'rt>>><'window-footer'<'col-md-6'i><'col-md-6'p>>",
                 "columnDefs": [
                     { "orderable": false, "targets": 5 },
-                    { "orderable": false, "targets": 4 }
+                    { "orderable": false, "targets": 6 }
                 ]
             });
 

@@ -9,10 +9,12 @@ namespace _4PsPH.Models
     public class Person
     {
         public int PersonId { get; set; }
+        [Required]
         [Display(Name="Given Name")]
         public string GivenName { get; set; }
         [Display(Name = "Middle Name/Initial")]
         public string MiddleName { get; set; }
+        [Required]
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
@@ -40,6 +42,7 @@ namespace _4PsPH.Models
         [Display(Name ="Excluded")]
         public bool IsExcluded { get; set; }
 
+        [Required]
         public DateTime BirthDate { get; set; }
         public DateTime DateTimeCreated { get; set; }
 

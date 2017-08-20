@@ -6,12 +6,10 @@
 
 <div class="row">
     <div class="col-md-5 left-ui">
-        <a href="@Url.Action("Index","Clients",null)" class="outside-link">« Back to Client List</a>&emsp;|&emsp;<a href="@Url.Action("Details","Households",new { id=Model.Person.HouseholdId })" class="outside-link">Back to Household</a>
+        <a href="@Url.Action("Index")" class="outside-link">« Back to Tickets List</a>
         <hr class="heading-cut" />
     </div>
 </div>
-
-
 
 <div class="row">
     <div class="col-md-12" style="padding:0px;">
@@ -22,7 +20,7 @@
                         <div class="col-md-12">
                             <div class="links">
                                 <strong>
-                                    @ViewBag.Title &emsp;»&emsp;Create Ticket for @Model.Person.getFullName()
+                                    @ViewBag.Title &emsp;»&emsp;Editing Ticket ID; @Model.TicketId for @Model.Person.getFullName()
                                 </strong>
                             </div>
                         </div>
@@ -31,13 +29,17 @@
                 <div class="row">
                     <div class="window">
                         <div class="col-md-12">
-                            @using (Html.BeginForm("Create", "Tickets", FormMethod.Post, new { @id = "form" }))
+                            @using (Html.BeginForm("Edit", "Tickets", FormMethod.Post, new { @id = "form" }))
                             {
                                 @Html.AntiForgeryToken()
 
                                 <div class="form-horizontal">
                                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                     @Html.HiddenFor(model => model.TicketId)
+                                    @Html.HiddenFor(model => model.DateTimeCreated)
+                                    @Html.HiddenFor(model => model.StatusId)
+                                    @Html.HiddenFor(model => model.PersonId)
+                                    @Html.HiddenFor(model => model.CreatedAtOffice)
 
                                     <div class="form-group">
                                         <div class="col-md-12">
@@ -77,7 +79,7 @@
                 </div>
                 <div class="window-footer window-footer-btn">
                     <div class="col-md-12" style="text-align:right;">
-                        <button class="btn btn-primary" type="submit" form="form">Create</button>
+                        <button class="btn btn-primary" type="submit" form="form">Save</button>
                     </div>
                 </div>
             </div>

@@ -9,12 +9,87 @@ using System.Web.Mvc;
 using _4PsPH.Models;
 using _4PsPH.Extensions;
 using Microsoft.AspNet.Identity;
+using Globe.Connect;
+using System.Diagnostics;
 
 namespace _4PsPH.Controllers.Production
 {
+    [Authorize]
     public class TicketsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+
+        /* send sms action */
+        public string short_code = "21583313";
+        private ActionResult SMS(string mobile_number, string message)
+        {
+            MobileNumber mb = db.MobileNumbers.FirstOrDefault(m => m.MobileNo == mobile_number);
+            string access_token = mb.Token;
+
+            if(access_token != null)
+            {
+                Sms sms = new Sms(short_code, access_token);
+
+                // mobile number argument is with format 09, convert it to +639
+                string globe_format_receiver = "+63" + mobile_number.Substring(1);
+
+                dynamic response = sms.SetReceiverAddress(globe_format_receiver)
+                    .SetMessage(message)
+                    .SendMessage()
+                    .GetDynamicResponse();
+
+                Trace.TraceInformation("Sent message; " + message + " to; "+globe_format_receiver+".");
+            }
+
+            return null;
+        }
+        /* end of send sms action */
+
+        public ActionResult Resolve(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Ticket ticket = db.Tickets.Include(t => t.Person).Include(t=>t.Category).Include(t=>t.MobileNumber).FirstOrDefault(t => t.TicketId == id);
+            if (ticket == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(ticket);
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult Resolve([Bind(Include = "TicketId,ActionAdvised,PersonId,CategoryId,StatusId,MobileNumberId,DateTimeCreated,IdAttached,Comment,CreatedAtOffice")] Ticket ticket)
+        {
+            ticket.ResolvedBy = User.Identity.GetFullName();
+            ticket.ResolvedByUsername = User.Identity.Name;
+            ticket.ResolvedDate = DateTime.UtcNow.AddHours(8);
+            ticket.StatusId = db.Statuses.FirstOrDefault(s => s.Name == "Resolved").StatusId;
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(ticket).State = EntityState.Modified;
+                db.SaveChanges();
+
+                Ticket nt = db.Tickets.Include("Person").Include("Category").Include("MobileNumber").FirstOrDefault(t => t.TicketId == ticket.TicketId);
+
+                try
+                {
+                    string msg = "Hello " + nt.Person.GivenName + ", the "+nt.Category.Name+" ticket with ID; " + nt.TicketId + " has been resolved; action advised is '"+ticket.ActionAdvised+"'.";
+                    SMS(nt.MobileNumber.MobileNo,msg);
+                }catch(Exception e)
+                {
+                    Trace.TraceInformation("Unable to send message to "+nt.MobileNumber.MobileNo+" with error; "+e.Message);
+                }
+
+                return RedirectToAction("Index");
+            }
+
+            return View(ticket);
+        }
 
         // GET: Tickets
         public ActionResult Index()
@@ -92,6 +167,22 @@ namespace _4PsPH.Controllers.Production
             {
                 db.Tickets.Add(ticket);
                 db.SaveChanges();
+
+                Ticket nt = db.Tickets.Include("Person").Include("Category").Include("MobileNumber").FirstOrDefault(t => t.TicketId == ticket.TicketId);
+
+                if (nt.MobileNumberId != null)
+                {
+                    try
+                    {
+                        string msg = "Hello " + nt.Person.GivenName + ", a ticket of " + nt.Category.Name + " category with ID; " + nt.TicketId + " has been created.";
+                        SMS(nt.MobileNumber.MobileNo, msg);
+                    }
+                    catch (Exception e)
+                    {
+                        Trace.TraceInformation("Unable to send message to " + nt.MobileNumber.MobileNo + " with error; " + e.Message);
+                    }
+                }
+
                 return RedirectToAction("Index");
             }
 
@@ -143,7 +234,7 @@ namespace _4PsPH.Controllers.Production
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "TicketId,PersonId,CategoryId,StatusId,MobileNumberId,DateTimeCreated,IdAttached,Comment")] Ticket ticket)
+        public ActionResult Edit([Bind(Include = "TicketId,PersonId,CategoryId,StatusId,MobileNumberId,DateTimeCreated,IdAttached,Comment,CreatedAtOffice")] Ticket ticket)
         {
             if (ModelState.IsValid)
             {
@@ -226,6 +317,139 @@ namespace _4PsPH.Controllers.Production
             }
 
             return View(ticketComment);
+        }
+
+        public ActionResult Next(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Ticket ticket = db.Tickets.Include(t=>t.Person).Include(t=>t.Status).Include(t=>t.Category).Include(t => t.MobileNumber).FirstOrDefault(t=>t.TicketId == id);
+            if (ticket == null)
+            {
+                return HttpNotFound();
+            }
+
+            string current_status = ticket.Status.Name;
+
+            if (current_status == "Waiting for Verification")
+            {
+                ticket.StatusId = db.Statuses.FirstOrDefault(s => s.Name == "Verified / Pending Endorsement" ).StatusId;
+
+                if(ticket.MobileNumberId != null)
+                {
+                    try
+                    {
+                        string msg = "Hello " + ticket.Person.GivenName + ", the " + ticket.Category.Name + " ticket with ID; " + ticket.TicketId + " has been verified.";
+                        SMS(ticket.MobileNumber.MobileNo, msg);
+                    }
+                    catch (Exception e)
+                    {
+                        Trace.TraceInformation("Unable to send message to " + ticket.MobileNumber.MobileNo + " with error; " + e.Message);
+                    }
+                }
+            }
+            else if(current_status == "Verified / Pending Endorsement")
+            {
+
+            }
+            else if(current_status == "Pending OIC Approval")
+            {
+
+            }else if(current_status == "Waiting for Resolution")
+            {
+
+            }else if(current_status == "Resolved")
+            {
+
+            }else
+            {
+
+            }
+
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult Revert(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Ticket ticket = db.Tickets.Include("Status").Include(t=>t.Category).Include(t=>t.MobileNumber).Include("CaseSummaryReports").Include("Endorsements").FirstOrDefault(t => t.TicketId == id);
+            if (ticket == null)
+            {
+                return HttpNotFound();
+            }
+
+            string current_status = ticket.Status.Name;
+
+            if (current_status == "Waiting for Verification")
+            {
+
+            }
+            else if (current_status == "Verified / Pending Endorsement")
+            {
+                ticket.StatusId = db.Statuses.FirstOrDefault(s => s.Name == "Waiting for Verification").StatusId;
+
+                if(ticket.MobileNumberId !=null)
+                {
+                    try
+                    {
+                        string msg = "Hello " + ticket.Person.GivenName + ", the " + ticket.Category.Name + " ticket with ID; " + ticket.TicketId + " has been reverted to waiting for verification.";
+                        SMS(ticket.MobileNumber.MobileNo, msg);
+                    }
+                    catch (Exception e)
+                    {
+                        Trace.TraceInformation("Unable to send message to " + ticket.MobileNumber.MobileNo + " with error; " + e.Message);
+                    }
+                }
+            }
+            else if (current_status == "Pending OIC Approval")
+            {
+                
+            }
+            else if (current_status == "Waiting for Resolution")
+            {
+                if (User.IsInRole("OIC"))
+                {
+                    ticket.StatusId = db.Statuses.FirstOrDefault(s => s.Name == "Pending OIC Approval").StatusId;
+
+                    ticket.Endorsements.First().DateTimeApproved = null;
+                    ticket.Endorsements.First().IsApproved = false;
+
+                    ticket.CaseSummaryReports.First().DateTimeApproved = null;
+                    ticket.CaseSummaryReports.First().IsApproved = false;
+
+                    if (ticket.MobileNumberId !=null)
+                    {
+                        try
+                        {
+                            string msg = "Hello " + ticket.Person.GivenName + ", the " + ticket.Category.Name + " ticket with ID; " + ticket.TicketId + " has been reverted to pending OIC approval.";
+                            SMS(ticket.MobileNumber.MobileNo, msg);
+                        }
+                        catch (Exception e)
+                        {
+                            Trace.TraceInformation("Unable to send message to " + ticket.MobileNumber.MobileNo + " with error; " + e.Message);
+                        }
+                    }
+                }
+            }
+            else if (current_status == "Resolved")
+            {
+
+            }
+            else
+            {
+
+            }
+
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)

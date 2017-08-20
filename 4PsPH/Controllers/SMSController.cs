@@ -11,6 +11,8 @@ using _4PsPH.Models;
 using System.Text;
 using Microsoft.AspNet.SignalR;
 using _4PsPH.Hubs;
+using _4PsPH.Extensions;
+using System.Globalization;
 
 namespace _4Ps.Controllers
 {
@@ -33,7 +35,7 @@ namespace _4Ps.Controllers
             {
                 try
                 {
-                    SendSMS(message_mobileNumber, message);
+                    SendSMS(message_mobileNumber, message+" - "+User.Identity.GetFullName());
                 }
                 catch (Exception e)
                 {
@@ -106,7 +108,7 @@ namespace _4Ps.Controllers
             var signalr = GlobalHost.ConnectionManager.GetHubContext<feedHub>();
             signalr.Clients.All.addmsg(mobile_number+" "+customer_msg);
 
-            if (pm != null)
+            if (pm != null && pm.IsDisabled == false)
             {
                 var record_msg = new Message();
                 record_msg.Body = customer_msg;
@@ -135,6 +137,144 @@ namespace _4Ps.Controllers
                     return null;
                 }
 
+                #region msg ticket
+                if (msg[0].All(char.IsDigit))
+                {
+                    int ticket_id = Convert.ToInt16(msg[0]);
+                    if (ticket_id == 0)
+                    {
+                        return null;
+                    }else
+                    {
+                        Ticket ticket = db.Tickets.Include(t=>t.Person).Include(t=>t.Person.MobileNumbers).Include(t=>t.Person.Household).FirstOrDefault(t => t.TicketId == ticket_id);
+
+                        if (ticket == null)
+                        {
+                            SendSMS(mobile_number, "Sorry, the ticket ID you requested cannot be found.");
+                        }else
+                        {
+                            if (ticket.Person.Household.People.Any(m=>m.MobileNumbers.Any(o=>o.MobileNo == mobile_number)))
+                            {
+                                string comment = string.Join(" ", msg.Skip(1));
+
+                                TicketComment tc = new TicketComment();
+                                tc.Body = comment;
+                                tc.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+                                tc.CreatedBy = pm.Person.getFullName();
+                                tc.CreatedByType = "client";
+                                tc.CreatedByUsername = pm.PersonId.ToString();
+                                tc.TicketId = ticket.TicketId;
+
+                                db.TicketComments.Add(tc);
+
+                                try
+                                {
+                                    db.SaveChanges();
+                                }
+                                catch (Exception ex)
+                                {
+                                    Trace.TraceInformation("Failed to add comment to Ticket ID "+ticket.TicketId+" from " + mobile_number + " with error; " + ex.Message);
+                                    return null;
+                                }
+
+                                SendSMS(mobile_number, "Message to Ticket ID "+ticket.TicketId+" has been created.");
+                            }
+                        }
+                    }
+                }
+                #endregion
+
+                #region create ticket
+                if (msg[0] == "ticket" && msg[1] == "create")
+                {
+                    if(msg[2] == "payment" || msg[2] == "complianceverification" || msg[2] == "others")
+                    {
+                        string c_received = "";
+                        if(msg[2] == "complianceverification")
+                        {
+                            c_received = "compliance verification";
+                        }else
+                        {
+                            c_received = msg[2].ToLower();
+                        }
+
+                        Ticket t = new Ticket();
+                        t.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+                        t.CategoryId = db.Categories.FirstOrDefault(c => c.Name.ToLower() == c_received).CategoryId;
+                        t.CreatedAtOffice = false;
+                        t.IdAttached = null;
+                        t.MobileNumberId = pm.MobileNumberId;
+                        t.PersonId = pm.PersonId;
+                        t.StatusId = db.Statuses.FirstOrDefault(c => c.Name == "Waiting for Verification").StatusId;
+
+                        db.Tickets.Add(t);
+
+                        try
+                        {
+                            db.SaveChanges();
+                        }
+                        catch(Exception ex)
+                        {
+                            Trace.TraceInformation("Failed to create ticket from "+mobile_number+" with error; "+ex.Message);
+                            return null;
+                        }
+                        
+                        SendSMS(mobile_number, "Ticket ID "+t.TicketId+" with category; " +c_received+" has been created.");
+                    }
+                    else
+                    {
+                        SendSMS(mobile_number, "Sorry, these are the only categories supported; 'Payment', 'ComplianceVerification', 'Others'.");
+                    }
+                }
+                #endregion
+
+                #region tickets
+                if (msg[0] == "tickets")
+                {
+                    int[] household_members = db.Persons.Where(p => p.HouseholdId == pm.Person.HouseholdId).Select(e => e.PersonId).ToArray();
+
+                    var tickets = db.Tickets.Include("Category").Include("Status").Where(t => household_members.Contains(t.PersonId));
+                    
+                    StringBuilder to_send = new StringBuilder("Your household has ");
+
+                    if(tickets == null)
+                    {
+                        SendSMS(mobile_number, "Your household doesn't have any tickets.");
+                    }else
+                    {
+                        var unresolved = tickets.Where(w => w.Status.Name != "Resolved");
+                        var resolved = tickets.Where(w => w.Status.Name == "Resolved");
+
+                        if(resolved.Count() != 0 && unresolved.Count() != 0)
+                        {
+                            to_send.Append(resolved.Count() + " resolved tickets and the following unresolved; ");
+                            foreach (var x in unresolved)
+                            {
+                                to_send.Append(x.Category.Name+" Ticket w/ ID "+x.TicketId+" - "+x.Status.Name+".");
+                            }
+                        }
+
+                        if(unresolved.Count() != 0 && resolved.Count() == 0)
+                        {
+                            to_send.Append("has the following unresolved tickets; ");
+                            foreach (var x in unresolved)
+                            {
+                                to_send.Append(x.Category.Name + " Ticket w/ ID " + x.TicketId + " - " + x.Status.Name + ".");
+                            }
+                        }
+
+                        if(unresolved.Count() == 0 && resolved.Count() != 0)
+                        {
+                            to_send.Append(resolved.Count() + " resolved tickets.");
+                            to_send.Append(" Reply 'tickets-resolved' for more details.");
+                        }
+
+                        SendSMS(mobile_number, to_send.ToString());
+                    }
+                }
+                #endregion
+
+                #region compliance
                 if (msg[0] == "compliance")
                 {
                     StringBuilder to_send = new StringBuilder("Your household has ");
@@ -200,6 +340,7 @@ namespace _4Ps.Controllers
                         SendSMS(mobile_number, to_send.ToString());
                     }
                 }
+                #endregion
 
             }
             else
@@ -219,19 +360,30 @@ namespace _4Ps.Controllers
 
         private ActionResult SendSMS(string mobile_number, string message)
         {
-            string access_token = db.MobileNumbers.Where(m => m.MobileNo == mobile_number).FirstOrDefault().Token;
+            MobileNumber mb = db.MobileNumbers.FirstOrDefault(m => m.MobileNo == mobile_number);
+            string access_token = mb.Token;
 
-            Sms sms = new Sms(short_code, access_token);
+            if (access_token != null)
+            {
+                try
+                {
+                    Sms sms = new Sms(short_code, access_token);
 
-            // mobile number argument is with format 09, convert it to +639
-            string globe_format_receiver = "+63" + mobile_number.Substring(1);
+                    // mobile number argument is with format 09, convert it to +639
+                    string globe_format_receiver = "+63" + mobile_number.Substring(1);
 
-            dynamic response = sms.SetReceiverAddress(globe_format_receiver)
-                .SetMessage(message)
-                .SendMessage()
-                .GetDynamicResponse();
+                    dynamic response = sms.SetReceiverAddress(globe_format_receiver)
+                        .SetMessage(message)
+                        .SendMessage()
+                        .GetDynamicResponse();
 
-            Trace.TraceInformation("Sent a message.");
+                    Trace.TraceInformation("Sent message; "+message);
+                }
+                catch(Exception e)
+                {
+                    Trace.TraceInformation("Unable to send message to "+mobile_number+". Error; "+e.Message);
+                }
+            }
 
             return null;
         }

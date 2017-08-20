@@ -122,8 +122,14 @@ namespace _4PsPH.Models
         public string Comment { get; set; }
         public bool CreatedAtOffice { get; set; }
 
+        /*for resolution*/
+        [Display(Name ="Action Taken / Action Advised")]
+        public string ActionAdvised { get; set; }
+        public DateTime? ResolvedDate { get; set; }
+        public string ResolvedBy { get; set; }
+        public string ResolvedByUsername { get; set; }
+
         public virtual List<CaseSummaryReport> CaseSummaryReports { get; set; }
-        public virtual List<Resolution> Resolutions { get; set; }
         public virtual List<Endorsement> Endorsements { get; set; }
 
         public virtual List<TicketComment> TicketComments { get; set; }
@@ -159,6 +165,7 @@ namespace _4PsPH.Models
 
         public DateTime LastUpdated { get; set; }
         public DateTime DateTimeCreated { get; set; }
+        public DateTime? DateTimeApproved { get; set; }
     }
 
     public class Endorsement
@@ -176,19 +183,7 @@ namespace _4PsPH.Models
 
         public DateTime LastUpdated { get; set; }
         public DateTime DateTimeCreated { get; set; }
-    }
-
-    public class Resolution
-    {
-        public int ResolutionId { get; set; }
-
-        public int TicketId { get; set; }
-        public virtual Ticket Ticket { get; set; }
-
-        public string CreatedBy { get; set; }
-
-        public string Body { get; set; }
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime? DateTimeApproved { get; set; }
     }
 
     //inquiry categories compliance verification, others

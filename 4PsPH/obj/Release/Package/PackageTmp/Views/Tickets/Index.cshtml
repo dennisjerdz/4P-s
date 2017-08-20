@@ -24,9 +24,10 @@
         </div>
     </div>
 
-    <table class="table table-hover">
+    <table class="table table-hover table-condensed">
         <thead>
             <tr>
+                <th>ID</th>
                 <th>
                     @Html.DisplayNameFor(model => model.Category.Name)
                 </th>
@@ -50,11 +51,12 @@
             @foreach (var item in Model)
             {
                 <tr>
+                    <td>@item.TicketId</td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Category.Name)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Person.GivenName)
+                        <a href="@Url.Action("Details","Households",new { id=item.Person.HouseholdId })">@item.Person.getFullName()</a>
                     </td>
                     <td>
                         <font style="color:@item.Status.Color">@item.Status.Name</font>
@@ -63,9 +65,9 @@
                         @item.DateTimeCreated.ToString("M/d/yyyy")
                     </td>
                     <td>
-                        @if (item.Comment.Length > 0)
+                        @if (item.Comment != null)
                         {
-                            <a href="#" data-toggle="tooltip" class="btn btn-primary btn-xs" title="@item.Comment">View <span class="glyphicon glyphicon-info-sign"></span></a>
+                            <a href="#" data-toggle="tooltip" class="btn btn-default btn-xs" title="@item.Comment">View <span class="glyphicon glyphicon-info-sign"></span></a>
                         }
                         
                     </td>
@@ -75,45 +77,60 @@
                             <a class="btn btn-xs btn-info" href="@Url.Action("Next", new { id=item.TicketId })">Set status to Verified</a>
                         }
 
-                        @if (item.Status.Name == "Verified")
+                        @if (item.Status.Name == "Verified / Pending Endorsement")
                         {
-                            <a class="btn btn-xs btn-info" href="@Url.Action("Next", new { id=item.TicketId })">Set status to Verified</a> 
-                            <a class="btn btn-xs btn-danger" href="@Url.Action("Revert", new { id=item.TicketId })">Previous Status</a>
-                        }
-
-                        @if (item.Status.Name == "Pending Documents")
-                        {
-                            <a class="btn btn-xs btn-info" href="@Url.Action("Next", new { id=item.TicketId })">Pending Endorsement</a> 
-                            if (item.CreatedAtOffice == false)
+                            if (User.IsInRole("Social Worker"))
                             {
-                                <a class="btn btn-xs btn-danger" href="@Url.Action("Revert", new { id=item.TicketId })">Previous Status</a>
+                                
                             }
+                            <a class="btn btn-xs btn-danger" href="@Url.Action("Revert", new { id=item.TicketId })">Previous Status <span class="glyphicon glyphicon-repeat"></span></a>
                         }
 
                         @if (item.Status.Name == "Pending OIC Approval")
                         {
-                            <a class="btn btn-xs btn-danger" href="@Url.Action("Revert", new { id=item.TicketId })">Previous Status</a>
+                            if (User.IsInRole("OIC"))
+                            {
+                                <a class="btn btn-xs btn-info" href="@Url.Action("Details", new { id=item.TicketId })">View Endorsement</a>
+                            }
+                            @*
+                                <a class="btn btn-xs btn-danger" href="@Url.Action("Revert", new { id=item.TicketId })">Previous Status <span class="glyphicon glyphicon-repeat"></span></a>
+                            *@
                         }
 
-                        @if (item.Status.Name == "Waiting for Resolution" && User.IsInRole("OIC"))
+                        @if (item.Status.Name == "Waiting for Resolution")
                         {
-                            <a class="btn btn-xs btn-danger" href="@Url.Action("Revert", new { id=item.TicketId })">Withdraw Approval</a>
+                            if (User.IsInRole("OIC"))
+                            {
+                                <a class="btn btn-xs btn-danger" href="@Url.Action("Revert", new { id=item.TicketId })">Withdraw Approval <span class="glyphicon glyphicon-repeat"></span></a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-xs btn-primary" href="@Url.Action("Resolve", new { id=item.TicketId })">Resolve <span class="glyphicon glyphicon-wrench"></span></a>
+                            }
                         }
-
-                        <a class="btn btn-xs btn-warning" href="@Url.Action("Edit",new { id=item.TicketId })">Edit <span class="glyphicon glyphicon-pencil"></span></a> 
                         
-                        @if (item.Status.Name == "Waiting for Verification" || (item.Status.Name == "Waiting for Documents" && item.CreatedAtOffice == true))
+                        @if (item.Status.Name == "Waiting for Verification")
                         {
-                            @Html.ActionLink("Delete", "Delete", new { id = item.TicketId }, new { @class="btn btn-xs btn-danger" })
+                            <a class="btn btn-xs btn-primary" href="@Url.Action("Resolve", new { id=item.TicketId })">Resolve <span class="glyphicon glyphicon-wrench"></span></a>
+                            <a class="btn btn-xs btn-warning" href="@Url.Action("Edit",new { id=item.TicketId })">Edit <span class="glyphicon glyphicon-pencil"></span></a> 
+                            <a class="btn btn-danger btn-xs" href="@Url.Action("Delete", new { id=item.TicketId })">Delete <span class="glyphicon glyphicon-remove"></span></a>
                         }
 
-                        <a class="btn btn-default btn-xs" href="@Url.Action("Details", new { id=item.TicketId })">Details <span class="glyphicon glyphicon-info-sign"></span></a>
+                        <a class="btn btn-default btn-xs" href="@Url.Action("Details", new { id=item.TicketId })">Details <span class="glyphicon glyphicon-resize-full"></span></a>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+
+@section styles{
+    <style>
+        table.dataTable.table-condensed .sorting:after, table.dataTable.table-condensed .sorting_asc:after, table.dataTable.table-condensed .sorting_desc:after{
+            top:3px !important;
+        }
+    </style>    
+}
 
 @section scripts{
     <script>
@@ -124,7 +141,7 @@
                 "dom": "<'row'<'table-window'<'table-responsive'rt>>><'window-footer'<'col-md-6'i><'col-md-6'p>>",
                 "columnDefs": [
                     { "orderable": false, "targets": 5 },
-                    { "orderable": false, "targets": 4 }
+                    { "orderable": false, "targets": 6 }
                 ]
             });
 

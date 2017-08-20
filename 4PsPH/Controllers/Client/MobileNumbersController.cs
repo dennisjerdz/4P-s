@@ -11,6 +11,7 @@ using _4PsPH.Extensions;
 
 namespace _4PsPH.Controllers
 {
+    [Authorize]
     public class MobileNumbersController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();

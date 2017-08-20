@@ -5,7 +5,7 @@
 }
 
 <div class="row">
-    <div class="col-md-11 left-ui">
+    <div class="col-md-12 left-ui">
         <a href="@Url.Action("Index", "Tickets", null)" class="outside-link">« Back to List</a>
 
         <hr class="heading-cut" />
@@ -36,12 +36,15 @@
 
                             <p class="details-heading">Mobile Number:</p>
                             <p class="details-line">
-                                @Model.Ticket.MobileNumber.MobileNo
-                                @if (Model.Ticket.MobileNumber.Token != null)
+                                @if (Model.Ticket.MobileNumberId != null)
                                 {
-                                    <a href="#" class="btn btn-info btn-xs btn-send-msg" data-mobile-numid="@Model.Ticket.MobileNumberId" data-recipient="@Model.Ticket.Person.getFullName()" data-mobile-num="@Model.Ticket.MobileNumber.MobileNo">
-                                        Message <span class="glyphicon glyphicon-comment"></span>
-                                    </a>
+                                    @Model.Ticket.MobileNumber.MobileNo
+                                    if (Model.Ticket.MobileNumber.Token != null)
+                                    {
+                                        <a href="#" class="btn btn-info btn-xs btn-send-msg" data-mobile-numid="@Model.Ticket.MobileNumberId" data-recipient="@Model.Ticket.Person.getFullName()" data-mobile-num="@Model.Ticket.MobileNumber.MobileNo">
+                                            Message <span class="glyphicon glyphicon-comment"></span>
+                                        </a>
+                                    }
                                 }
                             </p>
 
@@ -59,6 +62,18 @@
 
                             <p class="details-heading">Comment:</p>
                             <p class="details-line">@Model.Ticket.Comment</p>
+
+                            @if (Model.Ticket.Status.Name == "Resolved")
+                            {
+                                <p class="details-heading">Resolved By:</p>
+                                <p class="details-line">@Model.Ticket.ResolvedBy (@Model.Ticket.ResolvedByUsername)</p>
+
+                                <p class="details-heading">Resolved Date:</p>
+                                <p class="details-line">@Model.Ticket.ResolvedDate</p>
+
+                                <p class="details-heading">Action Taken / Action Advised:</p>
+                                <p class="details-line">@Model.Ticket.ActionAdvised</p>
+                            }
                         </div>
                     </div>
                 </div>
@@ -71,7 +86,7 @@
             </div>
         </div>
 
-        <div class="col-md-6" style="padding:0px;">
+        <div class="col-md-7" style="padding:0px;">
             <div class="row">
                 <div class="col-md-12">
                     <!-- Nav tabs -->
@@ -125,8 +140,109 @@
                                 }
                             </div>
                         </div>
-                        <div role="tabpanel" class="tab-pane" id="csr">csr</div>
-                        <div role="tabpanel" class="tab-pane" id="endorsement">en</div>
+                        <div role="tabpanel" class="tab-pane" id="csr">
+                            @if(Model.Ticket.CaseSummaryReports.Count == 0){
+                                <center style="margin-top:70px; margin-bottom:50px; color:#50596e; font-size:1.1em;">
+                                    @if (User.IsInRole("Social Worker")) {
+                                        <text>No case summary report found,</text> <a href="@Url.Action("Create","CaseSummaryReports", new { id=Model.TicketId })">create case summary report.</a>
+                                    }else
+                                    {
+                                        <text>No case summary report found.</text>
+                                    }
+                                </center>
+                            }else
+                            {
+                                <p style="margin-top:15px; color:#959cae; font-size:0.8em;">
+                                    Date Created: @Model.Ticket.CaseSummaryReports.First().DateTimeCreated Last Updated: @Model.Ticket.CaseSummaryReports.First().LastUpdated
+                                    @if (Model.Ticket.CaseSummaryReports.First().IsApproved.Value == true)
+                                    {
+                                        <font style="color:#00ACC1; font-weight:600;">Date Approved: @Model.Ticket.CaseSummaryReports.First().DateTimeApproved</font>
+                                    }
+                                </p>
+                                <div style="background-color:white; width:100%; overflow-x:auto; padding:15px; box-shadow:rgba(0,0,0,0.1) 0px 1px 5px -1px; position:relative;">
+                                    <div style="position:absolute; right:10px; top:10px;">
+                                        @if (User.IsInRole("Social Worker") && Model.Ticket.CaseSummaryReports.First().IsApproved == false)
+                                        {
+                                            <a class="btn btn-xs btn-warning" href="@Url.Action("oic","CaseSummaryReports", new { id=Model.Ticket.CaseSummaryReports.First().CaseSummaryReportId })">
+                                                Edit <span class="glyphicon glyphicon-pencil"></span>
+                                            </a>
+                                        }
+                                        @if (User.IsInRole("OIC"))
+                                        {
+                                            if (Model.Ticket.CaseSummaryReports.First().IsApproved == false)
+                                            {
+                                                <a class="btn btn-xs btn-info" href="@Url.Action("oic","CaseSummaryReports", new { id=Model.Ticket.CaseSummaryReports.First().CaseSummaryReportId })">
+                                                    Approve <span class="glyphicon glyphicon-check"></span>
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <a class="btn btn-xs btn-danger" href="@Url.Action("oic","CaseSummaryReports", new { id=Model.Ticket.CaseSummaryReports.First().CaseSummaryReportId })">
+                                                    Withdraw Approval <span class="glyphicon glyphicon-remove"></span>
+                                                </a>
+                                            }
+                                        }
+                                        <a class="btn btn-xs btn-primary" href="@Url.Action("Details","CaseSummaryReports", new { id=Model.Ticket.CaseSummaryReports.First().CaseSummaryReportId })">
+                                            Preview <span class="glyphicon glyphicon-eye-open"></span>
+                                        </a>
+                                    </div>
+                                    @Html.Raw(Model.Ticket.CaseSummaryReports.First().Body)
+                                </div>
+                            }
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="endorsement">
+                            @if (Model.Ticket.Endorsements.Count == 0)
+                            {
+                                <center style="margin-top:70px; margin-bottom:50px; color:#50596e; font-size:1.1em;">
+                                    @if (User.IsInRole("Social Worker"))
+                                    {
+                                        <text>No endorsement letter found,</text> <a href="@Url.Action("Create","Endorsements", new { id=Model.TicketId })">create endorsement letter.</a>
+                                    }else
+                                    {
+                                        <text>No endorsement letter found.</text>
+                                    }
+                                </center>
+                            }
+                            else
+                            {
+                                <p style="margin-top:15px; color:#959cae; font-size:0.8em;">
+                                    Date Created: @Model.Ticket.Endorsements.First().DateTimeCreated Last Updated: @Model.Ticket.Endorsements.First().LastUpdated
+                                    @if (Model.Ticket.Endorsements.First().IsApproved.Value == true)
+                                    {
+                                        <font style="color:#00ACC1; font-weight:600;">Date Approved: @Model.Ticket.Endorsements.First().DateTimeApproved</font>
+                                    }
+                                </p>
+                                <div style="background-color:white; width:100%; overflow-x:auto; padding:15px; box-shadow:rgba(0,0,0,0.1) 0px 1px 5px -1px; position:relative;">
+                                    <div style="position:absolute; right:10px; top:10px;">
+                                        @if (User.IsInRole("Social Worker") && Model.Ticket.Endorsements.First().IsApproved == false)
+                                        {
+                                            <a class="btn btn-xs btn-warning" href="@Url.Action("Edit","Endorsements", new { id=Model.Ticket.Endorsements.First().EndorsementId })">
+                                                Edit <span class="glyphicon glyphicon-pencil"></span>
+                                            </a>
+                                        }
+                                        @if (User.IsInRole("OIC"))
+                                        {
+                                            if (Model.Ticket.Endorsements.First().IsApproved == false)
+                                            {
+                                                <a class="btn btn-xs btn-info" href="@Url.Action("oic","Endorsements", new { id=Model.Ticket.Endorsements.First().EndorsementId })">
+                                                    Approve <span class="glyphicon glyphicon-check"></span>
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <a class="btn btn-xs btn-danger" href="@Url.Action("oic","Endorsements", new { id=Model.Ticket.Endorsements.First().EndorsementId })">
+                                                    Withdraw Approval <span class="glyphicon glyphicon-remove"></span>
+                                                </a>
+                                            }
+                                        }
+                                        <a class="btn btn-xs btn-primary" href="@Url.Action("Details","Endorsements", new { id=Model.Ticket.Endorsements.First().EndorsementId })">
+                                            Preview <span class="glyphicon glyphicon-eye-open"></span>
+                                        </a>
+                                    </div>
+                                    @Html.Raw(Model.Ticket.Endorsements.First().Body)
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -261,5 +377,5 @@
                 $("#result").html("");
                 $("#message-body").val("");
             })
-    </script>    
+    </script>
 }

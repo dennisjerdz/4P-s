@@ -39,8 +39,7 @@ namespace _4PsPH.Migrations
                 new Status { Name = "Verified / Pending Endorsement", Color = "#c7a900", IsEditable = false },
                 new Status { Name = "Pending OIC Approval", Color = "#80CBC4", IsEditable = false },
                 new Status { Name = "Waiting for Resolution", Color = "#26A69A", IsEditable = false },
-                new Status { Name = "Approved", Color = "#388E3C", IsEditable = false },
-                new Status { Name = "Declined", Color = "#FF5722", IsEditable = false }
+                new Status { Name = "Resolved", Color = "#388E3C", IsEditable = false }
             );
 
             /*seed roles*/

@@ -39,7 +39,7 @@
                             <i class="fa fa-circle fa-stack-2x" style="color:#D4E157;"></i>
                             <i class="fa fa-ticket fa-stack-1x fa-inverse"></i>
                         </span>
-                        <font class="stats-icon-text">Tickets Resolved: @Model.People.Sum(p => p.Tickets.Count(t => t.Status.Name == "Approved" || t.Status.Name == "Rejected")) / @Model.People.Sum(p => p.Tickets.Count())</font>
+                        <font class="stats-icon-text">Tickets Resolved: @Model.People.Sum(p => p.Tickets.Count(t => t.Status.Name == "Resolved" )) / @Model.People.Sum(p => p.Tickets.Count())</font>
                     </div>
                 </div>
             </div>

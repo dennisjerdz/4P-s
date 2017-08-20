@@ -1,77 +1,90 @@
 ﻿@model _4PsPH.Models.Endorsement
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Endorsement Letter";
 }
 
-<h2>Create</h2>
+<div class="row">
+    <div class="col-md-6 col-md-offset-2 left-ui">
+        <a href="@Url.Action("Details","Tickets", new { id = Model.TicketId })" class="outside-link">« Back to Ticket Details</a>
+    </div>
 
-@using (Html.BeginForm()) 
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Endorsement</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.TicketId, "TicketId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("TicketId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.TicketId, "", new { @class = "text-danger" })
-            </div>
-        </div>
+    @*
+        <div class="col-md-2 right-ui"><button class="btn btn-info" id="default-content">Use Default Content</button></div>
+    *@
+</div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.IsApproved, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.IsApproved)
-                    @Html.ValidationMessageFor(model => model.IsApproved, "", new { @class = "text-danger" })
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <hr class="heading-cut" />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12" style="padding:0px;">
+        <div class="col-md-8 col-md-offset-2" style="padding:0px;">
+            <div class="shadow-wrapper">
+                <div class="row">
+                    <div class="window-heading">
+                        <div class="col-md-12">
+                            <div class="links">
+                                <strong>
+                                    @ViewBag.Title &emsp;»&emsp;Endorsement letter for Ticket Number @Model.TicketId ( @Model.Ticket.Person.getFullName() )
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    @using (Html.BeginForm("Create", "Endorsements", FormMethod.Post, new { @id = "form" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-horizontal">
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                            @Html.HiddenFor(model => model.TicketId)
+
+                            <div class="form-group" style="margin-bottom:0px;">
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.Body, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.Body, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="window-footer window-footer-btn">
+                    <div class="col-md-12" style="text-align:right;">
+                        <button class="btn btn-primary" type="submit" form="form">Create</button>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.CreatedBy, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.CreatedBy, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.CreatedBy, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Body, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Body, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Body, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.LastUpdated, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.LastUpdated, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.LastUpdated, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.DateTimeCreated, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.DateTimeCreated, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.DateTimeCreated, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </div>
     </div>
+</div>
+
+@section styles{
+    <style>
+        .mce-panel {
+            border: none !important;
+        }
+    </style>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+@section scripts{
+    <script src="@Url.Content("~/Content/tinymce/tinymce.min.js")"></script>
+    <script>
+        tinymce.init({
+            selector: '#Body',
+            height: 100,
+            menubar: false,
+            plugins: [
+              'advlist autolink lists link charmap print preview anchor',
+              'searchreplace visualblocks fullscreen',
+              'insertdatetime media table contextmenu table'
+            ],
+            toolbar: 'undo redo | insert | styleselect | bold italic | bullist numlist | link | table',
+        });
+    </script>
+}

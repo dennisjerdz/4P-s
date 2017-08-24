@@ -65,13 +65,13 @@
 
                             @if (Model.Ticket.Status.Name == "Resolved")
                             {
-                                <p class="details-heading">Resolved By:</p>
+                                <p class="details-heading" style="color:#388E3C;">Resolved By:</p>
                                 <p class="details-line">@Model.Ticket.ResolvedBy (@Model.Ticket.ResolvedByUsername)</p>
 
-                                <p class="details-heading">Resolved Date:</p>
+                                <p class="details-heading" style="color:#388E3C;">Resolved Date:</p>
                                 <p class="details-line">@Model.Ticket.ResolvedDate</p>
 
-                                <p class="details-heading">Action Taken / Action Advised:</p>
+                                <p class="details-heading" style="color:#388E3C;">Action Taken / Action Advised:</p>
                                 <p class="details-line">@Model.Ticket.ActionAdvised</p>
                             }
                         </div>

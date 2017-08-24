@@ -1,0 +1,190 @@
+﻿@model _4PsPH.Models.FDS
+
+@{
+    ViewBag.Title = "Compliance Report Form";
+}
+
+<div class="row">
+    <div class="col-md-10 left-ui">
+        <a href="@Url.Action("Index")" class="outside-link">« Back to List</a>
+    </div>
+
+    <div class="col-md-2 right-ui"></div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <hr class="heading-cut" />
+        <br />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12" style="padding:0px;" id="print-div">
+        <div class="paper">
+            <div class="row">
+                <div class="col-xs-6">
+                    <h5>Compliance Report form for Family Development Session: @Model.Name</h5>
+                    <h5>City of @Model.City.Name</h5>
+                </div>
+                <div class="col-xs-6">
+                    <h5>Date Generated: @DateTime.UtcNow.AddHours(8).ToString("MM/dd/yyyy")</h5>
+                    <h5>
+                        Event Date: @Model.EventDate
+                    </h5>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <hr />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-condensed table-hover">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Household ID</th>
+                                    <th>Member ID</th>
+                                    <th>Name of Grantee</th>
+                                    <th>Non Attendance for Event</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @{
+                                    int count = 1;
+                                }
+
+                                @foreach (var x in Model.City.Households)
+                                {
+                                    foreach (var y in x.People.Where(p => p.IsGrantee == true).OrderByDescending(p => p.LastName))
+                                    {
+                                        <tr>
+                                            <td>@count</td>
+                                            <td>@y.HouseholdId</td>
+                                            <td>@y.PersonId</td>
+                                            <td>@y.LastName, @y.GivenName @y.MiddleName</td>
+                                            <td>
+                                                <input type="checkbox" class="c1" data-PersonId="@y.PersonId"/>
+                                            </td>
+                                        </tr>
+
+                                        count++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-2 col-md-offset-10" style="padding-right:1px;">
+        <br />
+        @using (Html.BeginForm("GenerateComplianceForm", "FDS", FormMethod.Post, new { @id = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.FDSId)
+
+            <div class="hidden" id="ppl">
+
+            </div>
+
+            <button type="submit" id="submit-btn" class="btn btn-primary btn-block">Submit Form <span class="glyphicon glyphicon-log-in"></span></button>
+        }
+    </div>
+</div>
+
+@section styles{
+    <style>
+        .datepicker {
+            border: none;
+            border-bottom: 1px solid grey;
+            text-align: center;
+            display: inline;
+            width: 100px;
+        }
+
+        .table thead tr th {
+            text-align: center;
+            font-size: 0.9em;
+            line-height: 15px !important;
+        }
+
+        .table tbody tr td {
+            text-align: center;
+            line-height: 18px;
+        }
+
+        .c1, .c2 {
+            background-color: white;
+            margin: 0px;
+            margin-top: 5px;
+        }
+    </style>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(document).ready(function () {
+            $('.datepicker').datetimepicker({
+                format: 'MMMM-YYYY',
+                widgetPositioning: {
+                    horizontal: 'auto',
+                    vertical: 'bottom'
+                },
+                minDate: moment().subtract(1, 'd'),
+                viewMode: "months",
+                useCurrent: false
+            });
+        });
+    </script>
+
+    <script>
+        $(".c1").click(function () {
+            var cb = $(this);
+
+            var PersonId = cb.attr("data-PersonId");
+
+            if (cb.is(":checked")) {
+                //if checked
+                var count = $(".ppl-row").length;
+
+                var insert = "<div class='ppl-row' data-PersonId='" + PersonId + "'>" +
+                    "<input class='p' value='" + PersonId + "' name='FDSIssues[" + count + "].PersonId'/>" +
+                    "</div>";
+                $("#ppl").append(insert);
+            } else {
+                //if uncheck
+
+                $(".ppl-row").each(function () {
+                    if ($(this).attr("data-PersonId") == PersonId) {
+                        $(this).remove();
+                    }
+                });
+
+                reorder();
+            }
+        });
+
+        function reorder() {
+            var count = 0;
+
+            $(".ppl-row").each(function () {
+                var r = $(this);
+                r.find(".p").attr("name", "FDSIssues[" + count + "].PersonId");
+                count++;
+            })
+        }
+    </script>
+}

@@ -75,6 +75,7 @@ namespace _4PsPH.Models
     public class MobileNumber
     {
         public int MobileNumberId { get; set; }
+        [Required]
         public string MobileNo { get; set; }
         public string Token { get; set; }
         public DateTime DateTimeCreated { get; set; }

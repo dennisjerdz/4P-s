@@ -40,7 +40,7 @@
                             @using (Html.BeginForm("Edit", "Households", FormMethod.Post, new { @id = "form" }))
                             {
                                 @Html.AntiForgeryToken()
-                                @Html.HiddenFor(model=>model.HouseholdId)
+                                @Html.HiddenFor(model => model.HouseholdId)
                                 @Html.HiddenFor(model => model.IsExcluded)
                                 @Html.HiddenFor(model => model.DateTimeCreated)
 
@@ -57,7 +57,7 @@
                                     <div class="form-group">
                                         <div class="col-md-12">
                                             <label>Select City:</label>
-                                            @Html.DropDownList("CityId", null, htmlAttributes: new { @class = "form-control", @readonly ="true" })
+                                            @Html.DropDownList("CityId", null, htmlAttributes: new { @class = "form-control", @readonly = "true" })
                                             @Html.ValidationMessageFor(model => model.CityId, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -71,7 +71,7 @@
                                             </div>
                                         </div>
                                     *@
-                                    
+
                                 </div>
                             }
                         </div>

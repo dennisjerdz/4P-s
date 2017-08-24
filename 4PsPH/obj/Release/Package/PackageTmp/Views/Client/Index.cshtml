@@ -41,7 +41,7 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.getFullName()</td>
+                    <td>@item.LastName, @item.GivenName @item.MiddleName</td>
                     <td><a href="@Url.Action("Details","Households", new { id = item.HouseholdId})">@item.Household.Name</a></td>
                     <td>@item.Household.City.Name</td>
                     <td>
@@ -96,7 +96,7 @@
                 "pageLength": 10,
                 "dom": "<'row'<'table-window'<'table-responsive'rt>>><'window-footer'<'col-md-6'i><'col-md-6'p>>",
                 "columnDefs": [
-                    { "orderable": false, "targets": 5 }
+                    { "orderable": false, "targets": 6 }
                 ]
             });
 

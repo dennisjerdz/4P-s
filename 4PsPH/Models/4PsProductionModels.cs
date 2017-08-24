@@ -11,6 +11,7 @@ namespace _4PsPH.Models
     {
         public int FDSId { get; set; }
         [Display(Name="Family Development Session")]
+        [Required]
         public string Name { get; set; }
         public string Body { get; set; }
         public DateTime EventDate { get; set; }
@@ -30,6 +31,7 @@ namespace _4PsPH.Models
         public bool IsResolved { get; set; }
         public DateTime? ResolvedDate { get; set; }
         public DateTime DateTimeCreated { get; set; }
+        public string ResolveComment { get; set; }
 
         public int FDSId { get; set; }
         public virtual FDS FDS { get; set; }
@@ -50,6 +52,8 @@ namespace _4PsPH.Models
 
         public bool IsResolved { get; set; }
         public DateTime? ResolvedDate { get; set; }
+        public DateTime DateTimeCreated { get; set; }
+        public string ResolveComment { get; set; }
         public string Comment { get; set; }
     }
 
@@ -65,6 +69,8 @@ namespace _4PsPH.Models
 
         public bool IsResolved { get; set; }
         public DateTime? ResolvedDate { get; set; }
+        public DateTime DateTimeCreated { get; set; }
+        public string ResolveComment { get; set; }
         public string Comment { get; set; }
     }
 

@@ -7,16 +7,33 @@
 
     <ul class="nav navbar-nav navbar-right">
         <li>
-            <a href="#">Logged in as @User.Identity.GetUserName()</a>
+            <a href="#">
+                Logged in as @User.Identity.GetUserName()
+                @if(User.IsInRole("4P's Officer"))
+                {
+                    <font>(4P's Officer)</font>
+                }
+                else if (User.IsInRole("Social Worker"))
+                {
+                    <font>(Social Worker)</font>
+                }
+                else if (User.IsInRole("OIC"))
+                {
+                    <font>(Officer In-charge)</font>
+                }
+                else
+                {
+
+                }
+            </a>
         </li>
-        <li><a class="btn btn-danger navbar-btn" href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+        <li><a class="btn btn-danger navbar-btn" style="color:#242424 !important;" href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
     </ul>
     }
 }
 else
 {
     <ul class="nav navbar-nav navbar-right">
-        <li>@Html.ActionLink("Register", "Register", "Account", null, new { @id = "registerLink" })</li>
         <li>@Html.ActionLink("Log in", "Login", "Account", null, new { @id = "loginLink" })</li>
     </ul>
 }

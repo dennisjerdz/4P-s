@@ -10,6 +10,7 @@ namespace _4PsPH.Models
     {
         public int CityId { get; set; }
         [Display(Name="City Name")]
+        [Required]
         public string Name { get; set; }
         public DateTime DateTimeCreated { get; set; }
 
@@ -54,22 +55,30 @@ namespace _4PsPH.Models
     {
         public int SchoolId { get; set; }
         [Display(Name="School Name")]
+        [Required]
         public string Name { get; set; }
         public DateTime DateTimeCreated { get; set; }
 
         public int CityId { get; set; }
         public virtual City City { get; set; }
+
+        public virtual List<Person> People { get; set; }
+        public virtual List<AttendanceIssue> AttendanceIssues { get; set; }
     }
 
     public class Hospital
     {
         public int HospitalId { get; set; }
         [Display(Name = "Hospital Name")]
+        [Required]
         public string Name { get; set; }
         public DateTime DateTimeCreated { get; set; }
 
         public int CityId { get; set; }
         public virtual City City { get; set; }
+
+        public virtual List<Person> People { get; set; }
+        public virtual List<HealthCheckupIssue> HealthCheckupIssues { get; set; }
     }
 
     public class ParentLeaderHousehold

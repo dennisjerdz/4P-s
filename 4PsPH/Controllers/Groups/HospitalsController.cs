@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using _4PsPH.Models;
+using _4PsPH.Extensions;
 
 namespace _4PsPH.Controllers.Groups
 {
@@ -14,10 +15,57 @@ namespace _4PsPH.Controllers.Groups
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        public ActionResult GenerateComplianceForm(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Hospital hospital = db.Hospitals.Include(s => s.People).Include(s => s.City).FirstOrDefault(s => s.HospitalId == id);
+            if (hospital == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(hospital);
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult GenerateComplianceForm([Bind(Include = "HealthCheckupIssues")] Hospital h)
+        {
+            if (h.HealthCheckupIssues != null)
+            {
+                foreach (var x in h.HealthCheckupIssues)
+                {
+                    HealthCheckupIssue hi = new HealthCheckupIssue();
+                    hi.ResolvedDate = null;
+                    hi.IsResolved = false;
+                    string comment = "The beneficiary didn't comply for the month of " + x.Comment + ".";
+                    hi.Comment = comment;
+                    hi.PersonId = x.PersonId;
+                    hi.HospitalId = x.HospitalId;
+                    hi.ResolveComment = null;
+                    hi.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+
+                    db.HealthCheckupIssues.Add(hi);
+                    db.SaveChanges();
+                }
+
+                return RedirectToAction("Index", "HealthCheckupIssues", null);
+            }
+            else
+            {
+                return RedirectToAction("Index", "HealthCheckupIssues", null);
+            }
+        }
+
         // GET: Hospitals
         public ActionResult Index()
         {
-            var hospitals = db.Hospitals.Include(h => h.City);
+            int city = Convert.ToInt16(User.Identity.GetCityId());
+
+            var hospitals = db.Hospitals.Include(h=>h.People).Where(h => h.CityId == city);
             return View(hospitals.ToList());
         }
 
@@ -39,7 +87,6 @@ namespace _4PsPH.Controllers.Groups
         // GET: Hospitals/Create
         public ActionResult Create()
         {
-            ViewBag.CityId = new SelectList(db.City, "CityId", "Name");
             return View();
         }
 
@@ -50,6 +97,8 @@ namespace _4PsPH.Controllers.Groups
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "HospitalId,Name,DateTimeCreated,CityId")] Hospital hospital)
         {
+            hospital.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+
             if (ModelState.IsValid)
             {
                 db.Hospitals.Add(hospital);
@@ -57,7 +106,6 @@ namespace _4PsPH.Controllers.Groups
                 return RedirectToAction("Index");
             }
 
-            ViewBag.CityId = new SelectList(db.City, "CityId", "Name", hospital.CityId);
             return View(hospital);
         }
 
@@ -73,7 +121,7 @@ namespace _4PsPH.Controllers.Groups
             {
                 return HttpNotFound();
             }
-            ViewBag.CityId = new SelectList(db.City, "CityId", "Name", hospital.CityId);
+
             return View(hospital);
         }
 
@@ -90,7 +138,7 @@ namespace _4PsPH.Controllers.Groups
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.CityId = new SelectList(db.City, "CityId", "Name", hospital.CityId);
+
             return View(hospital);
         }
 

@@ -7,39 +7,71 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using _4PsPH.Models;
+using _4PsPH.Extensions;
 
-namespace _4PsPH.Controllers
+namespace _4PsPH.Controllers.Groups
 {
+    [Authorize]
     public class SchoolsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: Schools
-        public ActionResult Index()
-        {
-            var schools = db.Schools.Include(s => s.City);
-            return View(schools.ToList());
-        }
-
-        // GET: Schools/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult GenerateAttendanceForm(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            School school = db.Schools.Find(id);
+            School school = db.Schools.Include(s=>s.People).Include(s=>s.City).FirstOrDefault(s=>s.SchoolId == id);
             if (school == null)
             {
                 return HttpNotFound();
             }
+
             return View(school);
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult GenerateAttendanceForm([Bind(Include = "AttendanceIssues")] School school)
+        {
+            if(school.AttendanceIssues != null)
+            {
+                foreach (var x in school.AttendanceIssues)
+                {
+                    AttendanceIssue ai = new AttendanceIssue();
+                    ai.ResolvedDate = null;
+                    ai.IsResolved = false;
+                    string comment = "The beneficiary didn't attend for the month of " + x.Comment + ".";
+                    ai.Comment = comment;
+                    ai.PersonId = x.PersonId;
+                    ai.SchoolId = x.SchoolId;
+                    ai.ResolveComment = null;
+                    ai.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+
+                    db.AttendanceIssues.Add(ai);
+                    db.SaveChanges();
+                }
+
+                return RedirectToAction("Index", "AttendanceIssues", null);
+            }else
+            {
+                return RedirectToAction("Index", "AttendanceIssues", null);
+            }
+        }
+
+        // GET: Schools
+        public ActionResult Index()
+        {
+            int city = Convert.ToInt16(User.Identity.GetCityId());
+
+            var schools = db.Schools.Include(s=>s.People).Where(s=>s.CityId == city);
+            return View(schools.ToList());
         }
 
         // GET: Schools/Create
         public ActionResult Create()
         {
-            ViewBag.CityId = new SelectList(db.City, "CityId", "Name");
             return View();
         }
 
@@ -50,6 +82,8 @@ namespace _4PsPH.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "SchoolId,Name,DateTimeCreated,CityId")] School school)
         {
+            school.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+
             if (ModelState.IsValid)
             {
                 db.Schools.Add(school);
@@ -57,7 +91,6 @@ namespace _4PsPH.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.CityId = new SelectList(db.City, "CityId", "Name", school.CityId);
             return View(school);
         }
 
@@ -73,7 +106,7 @@ namespace _4PsPH.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.CityId = new SelectList(db.City, "CityId", "Name", school.CityId);
+
             return View(school);
         }
 
@@ -90,7 +123,7 @@ namespace _4PsPH.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.CityId = new SelectList(db.City, "CityId", "Name", school.CityId);
+
             return View(school);
         }
 

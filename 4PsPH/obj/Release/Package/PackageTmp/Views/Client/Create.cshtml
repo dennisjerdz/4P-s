@@ -56,7 +56,7 @@
                                         </div>
 
                                         <div class="col-md-4">
-                                            @Html.LabelFor(model => model.MiddleName, htmlAttributes: new { @class = "control-label" })
+                                            <label class="control-label">Middle Name</label>
                                             @Html.EditorFor(model => model.MiddleName, new { htmlAttributes = new { @class = "form-control" } })
                                             @Html.ValidationMessageFor(model => model.MiddleName, "", new { @class = "text-danger" })
                                         </div>
@@ -103,13 +103,13 @@
 
                                     <div class="form-group">
                                         <div class="col-md-6">
-                                            <label>Is Beneficiary</label>
+                                            <label>Beneficiary?</label>
                                             <input class="form-control beneficiary-display" readonly />
                                             @Html.ValidationMessageFor(model => model.IsBeneficiary, "", new { @class = "text-danger" })
                                         </div>
 
                                         <div class="col-md-6">
-                                            <label>Is Grantee</label>
+                                            <label>Grantee?</label>
                                             @Html.DropDownListFor(model => model.IsGrantee, options, new { @class = "form-control" })
                                             @Html.ValidationMessageFor(model => model.IsGrantee, "", new { @class = "text-danger" })
                                         </div>
@@ -123,7 +123,7 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <label>Is Excluded</label>
+                                            <label>Excluded?</label>
                                             @Html.DropDownListFor(model => model.IsExcluded, options, new { @class = "form-control" })
                                             @Html.ValidationMessageFor(model => model.IsExcluded, "", new { @class = "text-danger" })
                                         </div>

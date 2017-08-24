@@ -182,6 +182,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Client\ClientController.cs" />
+    <Compile Include="Controllers\Groups\SchoolsController.cs" />
     <Compile Include="Controllers\Production\EndorsementsController.cs" />
     <Compile Include="Controllers\Groups\HospitalsController.cs" />
     <Compile Include="Controllers\Groups\HouseholdsController.cs" />
@@ -196,7 +197,6 @@
     <Compile Include="Controllers\Production\InquiriesController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\Groups\ParentLeaderHouseholdsController.cs" />
-    <Compile Include="Controllers\Groups\SchoolsController.cs" />
     <Compile Include="Controllers\Client\MobileNumbersController.cs" />
     <Compile Include="Controllers\Client\OccupationsController.cs" />
     <Compile Include="Controllers\Client\RelationToGranteesController.cs" />
@@ -222,6 +222,7 @@
     <Compile Include="Controllers\Production\TicketCommentsController.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\animate.css" />
     <Content Include="Content\bootstrap-datetimepicker.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
@@ -428,11 +429,6 @@
     <Content Include="Views\Households\Delete.cshtml" />
     <Content Include="Views\Households\Edit.cshtml" />
     <Content Include="Views\Households\Index.cshtml" />
-    <Content Include="Views\Schools\Create.cshtml" />
-    <Content Include="Views\Schools\Delete.cshtml" />
-    <Content Include="Views\Schools\Details.cshtml" />
-    <Content Include="Views\Schools\Edit.cshtml" />
-    <Content Include="Views\Schools\Index.cshtml" />
     <Content Include="Views\ParentLeaderHouseholds\Create.cshtml" />
     <Content Include="Views\ParentLeaderHouseholds\Delete.cshtml" />
     <Content Include="Views\ParentLeaderHouseholds\Details.cshtml" />
@@ -535,6 +531,15 @@
     <Content Include="Views\Endorsements\Edit.cshtml" />
     <Content Include="Views\Endorsements\Index.cshtml" />
     <Content Include="Views\Tickets\Resolve.cshtml" />
+    <Content Include="Views\Schools\Create.cshtml" />
+    <Content Include="Views\Schools\Delete.cshtml" />
+    <Content Include="Views\Schools\Details.cshtml" />
+    <Content Include="Views\Schools\Edit.cshtml" />
+    <Content Include="Views\Schools\Index.cshtml" />
+    <Content Include="Views\Schools\GenerateAttendanceForm.cshtml" />
+    <Content Include="Views\Hospitals\GenerateComplianceForm.cshtml" />
+    <Content Include="Views\Shared\_Layout_e.cshtml" />
+    <Content Include="Views\FDS\GenerateComplianceForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

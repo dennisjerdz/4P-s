@@ -11,7 +11,7 @@ using _4PsPH.Extensions;
 
 namespace _4PsPH.Controllers
 {
-    [Authorize(Roles = "Social Worker, 4P's Officer")]
+    [Authorize]
     public class HouseholdsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -19,8 +19,9 @@ namespace _4PsPH.Controllers
         // GET: Households
         public ActionResult Index()
         {
+            int city = Convert.ToInt16(User.Identity.GetCityId());
 
-            return View(db.Households.Include(h=>h.City).Include(h=>h.People).ToList());
+            return View(db.Households.Include(h=>h.City).Include(h=>h.People).Where(h=>h.CityId == city).ToList());
         }
 
         public ActionResult Details(int? id)

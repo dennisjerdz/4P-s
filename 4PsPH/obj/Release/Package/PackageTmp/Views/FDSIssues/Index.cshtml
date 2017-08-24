@@ -1,63 +1,100 @@
 ﻿@model IEnumerable<_4PsPH.Models.FDSIssue>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Family Development Sessions Compliance Issues";
 }
 
-<h2>Index</h2>
+<div class="shadow-wrapper">
+    <div class="row">
+        <div class="window-heading">
+            <div class="col-md-9">
+                <div class="links">
+                    <strong>
+                        @ViewBag.Title
+                    </strong>
+                </div>
+            </div>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.FDS.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Person.GivenName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Comment)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsResolved)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ResolvedDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateTimeCreated)
-        </th>
-        <th></th>
-    </tr>
+            <div class="col-md-3" style="text-align:right;">
+                <div class="input-group">
+                    <input type="text" class="form-control all-search" placeholder="Search All Fields" aria-describedby="basic-addon2">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.FDS.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Person.GivenName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Comment)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsResolved)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ResolvedDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateTimeCreated)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.FDSIssueId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.FDSIssueId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.FDSIssueId })
-        </td>
-    </tr>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FDS.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Person.GivenName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Comment)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IsResolved)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ResolvedDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DateTimeCreated)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FDS.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Person.GivenName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Comment)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsResolved)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ResolvedDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateTimeCreated)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.FDSIssueId })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            var datatable = $("table").DataTable({
+                paging: true,
+                "pageLength": 10,
+                "dom": "<'row'<'table-window'<'table-responsive'rt>>><'window-footer'<'col-md-6'i><'col-md-6'p>>",
+                "columnDefs": [
+                    { "orderable": false, "targets": 6 }
+                ]
+            });
+
+            $(".all-search").keyup(function () {
+                datatable.search($(this).val()).draw();
+            })
+        });
+    </script>
 }
-
-</table>

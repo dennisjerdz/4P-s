@@ -1,63 +1,155 @@
 ﻿@model IEnumerable<_4PsPH.Models.FDS>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "FDS";
 }
 
-<h2>Index</h2>
+<div class="shadow-wrapper">
+    <div class="row">
+        <div class="window-heading">
+            <div class="col-md-5">
+                <div class="links">
+                    <strong>
+                        Family Development Sessions
+                    </strong>
+                </div>
+            </div>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.City.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Body)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.EventDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateTimeCreated)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CreatedBy)
-        </th>
-        <th></th>
-    </tr>
+            <div class="col-md-4" style="text-align:right;">
+                <a href="@Url.Action("Create")" class="btn btn-info">Add FDS <span class="glyphicon glyphicon-plus-sign"></span></a>
+            </div>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.City.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Body)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.EventDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateTimeCreated)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CreatedBy)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.FDSId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.FDSId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.FDSId })
-        </td>
-    </tr>
+            <div class="col-md-3" style="text-align:right;">
+                <div class="input-group">
+                    <input type="text" class="form-control all-search" placeholder="Search All Fields" aria-describedby="basic-addon2">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>
+                    City
+                </th>
+                <th>
+                    Event Name
+                </th>
+                <th>
+                    Created By
+                </th>
+                <th>
+                    Info
+                </th>
+                <th>
+                    Event Date
+                </th>
+                <th>
+                    Date Created
+                </th>
+                <th>
+                    Status
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.City.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @if (item.CreatedBy != null)
+                        {
+                            <a href="#" data-toggle="tooltip" class="btn btn-default btn-xs" title="@item.CreatedBy">View <span class="glyphicon glyphicon-info-sign"></span></a>
+                        }
+                    </td>
+                    <td>
+                        @if (item.Body != null)
+                        {
+                            <a href="#" data-toggle="tooltip" class="btn btn-default btn-xs" title="@item.Body">View <span class="glyphicon glyphicon-info-sign"></span></a>
+                        }
+                    </td>
+                    <td>
+                        @item.EventDate.ToString("M/dd/yy hh:mm tt")
+                    </td>
+                    <td>
+                        @item.DateTimeCreated.ToString("M/dd/yy hh:mm tt")
+                    </td>
+                    <td>
+                        @if (DateTime.UtcNow.AddHours(8) > item.EventDate)
+                        {
+                            <font style="color:#c4c2c2;">Date Passed</font>
+                        }else
+                        {
+                            <font>
+                                @{ 
+                                    TimeSpan r = item.EventDate - DateTime.UtcNow.AddHours(8);
+                                    int days = r.Days;
+                                    int hours = r.Days;
+                                }
+
+                                @if (r.Days == 1)
+                                {
+                                    <font>@r.Days day @r.Hours hours left</font>
+                                }else if (r.Days < 1)
+                                {
+                                    <font>@r.Hours hours left</font>
+                                }
+                                else{
+                                    <font>@r.Days days @r.Hours hours left</font>
+                                }
+                            </font>
+                        }
+                    </td>
+                    <td style="text-align:right;">
+                        @if (DateTime.UtcNow.AddHours(8) < item.EventDate)
+                        {
+                            <a href="@Url.Action("Broadcast", new { id = item.FDSId })" class="btn btn-info btn-xs">Clients Broadcast (SMS) <span class="glyphicon glyphicon-bullhorn"></span></a>
+                        }else
+                        {
+
+                        }
+
+                        <a href="@Url.Action("GenerateComplianceForm", new { id = item.FDSId })" class="btn btn-info btn-xs">Generate Compliance Form <span class="glyphicon glyphicon-export"></span></a>
+
+                        @if (item.FDSIssues.Count() == 0)
+                        {
+                            @Html.ActionLink("Delete", "Delete", new { id = item.FDSId }, new { @class = "btn btn-xs btn-danger" })
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            var datatable = $("table").DataTable({
+                paging: true,
+                "pageLength": 20,
+                "dom": "<'row'<'table-window'<'table-responsive'rt>>><'window-footer'<'col-md-6'i><'col-md-6'p>>",
+                "columnDefs": [
+                    { "orderable": false, "targets": 6 },
+                    { "orderable": false, "targets": 3 },
+                    { "orderable": false, "targets": 2 },
+                    { "orderable": false, "targets": 7 }
+                ]
+            });
+
+            $(".all-search").keyup(function () {
+                datatable.search($(this).val()).draw();
+            })
+        });
+    </script>
 }
-
-</table>

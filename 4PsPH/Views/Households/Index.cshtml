@@ -32,7 +32,13 @@
         <thead>
             <tr>
                 <th>
+                    ID
+                </th>
+                <th>
                     @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    Address
                 </th>
                 <th>
                     Date Created
@@ -55,7 +61,16 @@
             {
                 <tr>
                     <td>
+                        @item.HouseholdId
+                    </td>
+                    <td>
                         @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @if (item.Address != null)
+                        {
+                            <a href="#" data-toggle="tooltip" class="btn btn-default btn-xs" title="@item.Address">View <span class="glyphicon glyphicon-info-sign"></span></a>
+                        }
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.DateTimeCreated)
@@ -112,7 +127,7 @@
                 "pageLength": 20,
                 "dom": "<'row'<'table-window'<'table-responsive'rt>>><'window-footer'<'col-md-6'i><'col-md-6'p>>",
                 "columnDefs": [
-                    { "orderable": false, "targets": 5 }
+                    { "orderable": false, "targets": 7 }
                 ]
             });
 

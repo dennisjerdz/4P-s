@@ -7,9 +7,11 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using _4PsPH.Models;
+using _4PsPH.Extensions;
 
 namespace _4PsPH.Controllers
 {
+    [Authorize]
     public class MessagesController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -17,8 +19,18 @@ namespace _4PsPH.Controllers
         // GET: Messages
         public ActionResult Index()
         {
-            var messages = db.Messages.Include(m => m.MobileNumber);
-            return View(messages.ToList());
+            if (User.IsInRole("4P's Officer"))
+            {
+                var messages = db.Messages.Include(m => m.MobileNumber);
+                return View(messages.ToList());
+            }
+            else
+            {
+                int city = Convert.ToInt16(User.Identity.GetCityId());
+                var messages = db.Messages.Include(m => m.MobileNumber).Where(m=>m.MobileNumber.Person.Household.CityId == city);
+
+                return View(messages.ToList());
+            }
         }
 
         // GET: Messages/Details/5

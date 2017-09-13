@@ -24,20 +24,23 @@
         </div>
     </div>
 
-    <table class="table table-hover">
+    <table class="table table-hover table-condensed">
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Person.GivenName)
+                    Client
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.School.Name)
+                    Household # - Name
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.IsResolved)
+                    School
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.ResolvedDate)
+                    Status
+                </th>
+                <th>
+                    Date Created
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Comment)
@@ -54,19 +57,31 @@
                         @Html.DisplayFor(modelItem => item.Person.GivenName)
                     </td>
                     <td>
+                        @item.Person.HouseholdId - @item.Person.Household.Name
+                    </td>
+                    <td>
                         @Html.DisplayFor(modelItem => item.School.Name)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.IsResolved)
+                        @if (item.IsResolved)
+                        {
+                            <font style="color:#3ec405">Resolved on @item.ResolvedDate.Value.ToString("MM/dd/yy")</font>
+                        }else
+                        {
+                            <font style="color:#a4a2a2">Unresolved</font>
+                        }
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ResolvedDate)
+                        @item.DateTimeCreated.ToString("MM/dd/yy")
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Comment)
                     </td>
-                    <td>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.AttendanceIssueId })
+                    <td style="text-align:right;">
+                        @if (!item.IsResolved)
+                        {
+                            @Html.ActionLink("Resolve", "Resolve", new { id = item.AttendanceIssueId }, new { @class = "btn btn-success btn-xs" })
+                        }
                     </td>
                 </tr>
             }
@@ -82,7 +97,7 @@
                 "pageLength": 10,
                 "dom": "<'row'<'table-window'<'table-responsive'rt>>><'window-footer'<'col-md-6'i><'col-md-6'p>>",
                 "columnDefs": [
-                    { "orderable": false, "targets": 5 }
+                    { "orderable": false, "targets": 6 }
                 ]
             });
 

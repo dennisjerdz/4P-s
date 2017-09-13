@@ -36,13 +36,25 @@ namespace _4PsPH.Controllers
             }
             else
             {
-                int city = Convert.ToInt16(User.Identity.GetCityId());
-                var mobileNumbers = db.MobileNumbers
-                    .Include(m => m.Messages)
-                    .Include(m => m.Person)
-                    .Where(m => m.Person.Household.CityId == city).ToList();
+                if (User.IsInRole("4P's Officer"))
+                {
+                    var mobileNumbers = db.MobileNumbers
+                        .Include(m => m.Messages)
+                        .Include(m => m.Person).ToList();
 
-                return View(mobileNumbers);
+                    return View(mobileNumbers);
+                }
+                else
+                {
+                    int city = Convert.ToInt16(User.Identity.GetCityId());
+                    var mobileNumbers = db.MobileNumbers
+                        .Include(m => m.Messages)
+                        .Include(m => m.Person)
+                        .Where(m => m.Person.Household.CityId == city).ToList();
+
+                    return View(mobileNumbers);
+                }
+                
             }
         }
 

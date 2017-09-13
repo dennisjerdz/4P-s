@@ -1,4 +1,25 @@
-﻿/*mobile adjustments*/
+﻿/*scrollbar*/
+
+::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar
+{
+	width: 2px;
+    height: 10px;
+	background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+	background-color: #00b9ff;
+	border: none;
+}
+
+/*mobile adjustments*/
 #sidebar-wrapper-right{
     overflow-y:auto;
 }
@@ -47,7 +68,7 @@ hr.heading-cut{
     /*
         box-shadow:rgba(100,100,100,0.1) 0px 1px 1px 0px;
     */
-    margin-bottom:10px;
+    margin-bottom:0px;
     padding-top:6px;
 }
 .navbar-default .navbar-nav > li > a{
@@ -69,9 +90,10 @@ hr.heading-cut{
 
 body {
     padding-bottom: 20px;
+    background-color:#e3f2fc;
     /*background-color:#c9e3f6;*/
     /*background-color:#FFD180;*/
-    background-color:#F6F8FB;
+    /*background-color:#F6F8FB;*/
     font-family: 'Nunito', sans-serif;
 }
 

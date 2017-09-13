@@ -9,16 +9,20 @@ using System.Web.Mvc;
 using _4PsPH.Models;
 using Globe.Connect;
 using System.Diagnostics;
+using Microsoft.AspNet.SignalR;
+using _4PsPH.Hubs;
+using _4PsPH.Extensions;
 
 namespace _4PsPH.Controllers
 {
-    [Authorize]
+    [System.Web.Mvc.Authorize]
     public class EndorsementsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         /* send sms action */
-        public string short_code = "21583313";
+        //public string short_code = "21584812";
+        public string short_code = "21582183";
         private ActionResult SMS(string mobile_number, string message)
         {
             MobileNumber mb = db.MobileNumbers.FirstOrDefault(m => m.MobileNo == mobile_number);
@@ -117,6 +121,10 @@ namespace _4PsPH.Controllers
                             Trace.TraceInformation("Unable to send message to " + ticket.MobileNumber.MobileNo + " with error; " + e.Message);
                         }
                     }
+
+                    //signalr notify oic
+                    var signalr = GlobalHost.ConnectionManager.GetHubContext<FeedHub>();
+                    signalr.Clients.Group("OIC" + "-" + User.Identity.GetCityName()).grpmsg("Ticket with ID; " + ticket.TicketId + " is now Pending for OIC Approval.");
                 }
 
                 db.SaveChanges();
@@ -222,6 +230,10 @@ namespace _4PsPH.Controllers
                             Trace.TraceInformation("Unable to send message to " + ticket.MobileNumber.MobileNo + " with error; " + ex.Message);
                         }
                     }
+
+                    //signalr notify oic
+                    var signalr = GlobalHost.ConnectionManager.GetHubContext<FeedHub>();
+                    signalr.Clients.Group(User.Identity.GetCityName()).grpmsg("Ticket with ID; " + ticket.TicketId + " is now Waiting for Resolution.");
                 }
             }
             else
@@ -231,6 +243,10 @@ namespace _4PsPH.Controllers
 
                 Ticket ticket = db.Tickets.FirstOrDefault(t => t.TicketId == e.TicketId);
                 ticket.StatusId = db.Statuses.FirstOrDefault(s => s.Name == "Pending OIC Approval").StatusId;
+
+                //signalr notify oic
+                var signalr = GlobalHost.ConnectionManager.GetHubContext<FeedHub>();
+                signalr.Clients.Group("Social Worker" + "-" + User.Identity.GetCityName()).grpmsg("OIC has withdrawn approval for Ticket with ID; " + ticket.TicketId + ".");
             }
 
             db.SaveChanges();

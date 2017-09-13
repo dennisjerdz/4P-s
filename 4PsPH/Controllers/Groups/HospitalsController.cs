@@ -15,6 +15,147 @@ namespace _4PsPH.Controllers.Groups
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        #region 0-5 regular preventive health-checkups and vaccines
+        public ActionResult GenerateComplianceForm0to5(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Hospital hospital = db.Hospitals.Include(s => s.People).Include(s => s.City).FirstOrDefault(s => s.HospitalId == id);
+            if (hospital == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(hospital);
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult GenerateComplianceForm0to5([Bind(Include = "HealthCheckupIssues")] Hospital h)
+        {
+            if (h.HealthCheckupIssues != null)
+            {
+                foreach (var x in h.HealthCheckupIssues)
+                {
+                    HealthCheckupIssue hi = new HealthCheckupIssue();
+                    hi.ResolvedDate = null;
+                    hi.IsResolved = false;
+                    string comment = "The beneficiary didn't comply on regular preventive health check-ups and vaccines for month of " + x.Comment + ".";
+                    hi.Comment = comment;
+                    hi.PersonId = x.PersonId;
+                    hi.HospitalId = x.HospitalId;
+                    hi.ResolveComment = null;
+                    hi.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+
+                    db.HealthCheckupIssues.Add(hi);
+                    db.SaveChanges();
+                }
+
+                return RedirectToAction("Index", "HealthCheckupIssues", null);
+            }
+            else
+            {
+                return RedirectToAction("Index", "HealthCheckupIssues", null);
+            }
+        }
+        #endregion
+
+        #region 6-14 receive deworming pills
+        public ActionResult GenerateComplianceForm6to14(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Hospital hospital = db.Hospitals.Include(s => s.People).Include(s => s.City).FirstOrDefault(s => s.HospitalId == id);
+            if (hospital == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(hospital);
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult GenerateComplianceForm6to14([Bind(Include = "HealthCheckupIssues")] Hospital h)
+        {
+            if (h.HealthCheckupIssues != null)
+            {
+                foreach (var x in h.HealthCheckupIssues)
+                {
+                    HealthCheckupIssue hi = new HealthCheckupIssue();
+                    hi.ResolvedDate = null;
+                    hi.IsResolved = false;
+                    string comment = "The beneficiary didn't comply on claiming deworming pills for the month of " + x.Comment + ".";
+                    hi.Comment = comment;
+                    hi.PersonId = x.PersonId;
+                    hi.HospitalId = x.HospitalId;
+                    hi.ResolveComment = null;
+                    hi.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+
+                    db.HealthCheckupIssues.Add(hi);
+                    db.SaveChanges();
+                }
+
+                return RedirectToAction("Index", "HealthCheckupIssues", null);
+            }
+            else
+            {
+                return RedirectToAction("Index", "HealthCheckupIssues", null);
+            }
+        }
+        #endregion
+
+        #region PregnantWomenCompliance
+        public ActionResult GenerateComplianceFormPregnant(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Hospital hospital = db.Hospitals.Include(s => s.People).Include(s => s.City).FirstOrDefault(s => s.HospitalId == id);
+            if (hospital == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(hospital);
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult GenerateComplianceFormPregnant([Bind(Include = "HealthCheckupIssues")] Hospital h)
+        {
+            if (h.HealthCheckupIssues != null)
+            {
+                foreach (var x in h.HealthCheckupIssues)
+                {
+                    HealthCheckupIssue hi = new HealthCheckupIssue();
+                    hi.ResolvedDate = null;
+                    hi.IsResolved = false;
+                    string comment = "The beneficiary didn't comply on availing pre- and post-natal care for the month of " + x.Comment + ".";
+                    hi.Comment = comment;
+                    hi.PersonId = x.PersonId;
+                    hi.HospitalId = x.HospitalId;
+                    hi.ResolveComment = null;
+                    hi.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+
+                    db.HealthCheckupIssues.Add(hi);
+                    db.SaveChanges();
+                }
+
+                return RedirectToAction("Index", "HealthCheckupIssues", null);
+            }
+            else
+            {
+                return RedirectToAction("Index", "HealthCheckupIssues", null);
+            }
+        }
+        #endregion
+
         public ActionResult GenerateComplianceForm(int? id)
         {
             if (id == null)
@@ -63,10 +204,19 @@ namespace _4PsPH.Controllers.Groups
         // GET: Hospitals
         public ActionResult Index()
         {
-            int city = Convert.ToInt16(User.Identity.GetCityId());
+            if (User.IsInRole("4P's Officer"))
+            {
+                var hospitals = db.Hospitals.Include(h => h.People);
+                return View(hospitals.ToList());
+            }
+            else
+            {
+                int city = Convert.ToInt16(User.Identity.GetCityId());
 
-            var hospitals = db.Hospitals.Include(h=>h.People).Where(h => h.CityId == city);
-            return View(hospitals.ToList());
+                var hospitals = db.Hospitals.Include(h => h.People).Where(h => h.CityId == city);
+                return View(hospitals.ToList());
+            }
+            
         }
 
         // GET: Hospitals/Details/5

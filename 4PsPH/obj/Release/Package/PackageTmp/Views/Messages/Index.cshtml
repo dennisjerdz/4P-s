@@ -1,45 +1,92 @@
 ﻿@model IEnumerable<_4PsPH.Models.Message>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Messages";
 }
 
-<h2>Index</h2>
+<div class="shadow-wrapper">
+    <div class="row">
+        <div class="window-heading">
+            <div class="col-md-5">
+                <div class="links">
+                    <strong>
+                        @ViewBag.Title
+                    </strong>
+                </div>
+            </div>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.MobileNumber.MobileNo)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Body)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateTimeCreated)
-        </th>
-        <th></th>
-    </tr>
+            <div class="col-md-4" style="text-align:right;">
+                <!--<a href="@Url.Action("Create")" class="btn btn-info">Create Household <span class="glyphicon glyphicon-plus-sign"></span></a>-->
+            </div>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.MobileNumber.MobileNo)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Body)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateTimeCreated)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.MessageId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.MessageId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.MessageId })
-        </td>
-    </tr>
+            <div class="col-md-3" style="text-align:right;">
+                <div class="input-group">
+                    <input type="text" class="form-control all-search" placeholder="Search All Fields" aria-describedby="basic-addon2">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-hover table-condensed">
+        <thead>
+            <tr>
+                <th>
+                    Sender
+                </th>
+                <th>Household - City</th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Body)
+                </th>
+                <th>
+                    Date Received
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.MobileNumber.Person.GivenName - @item.MobileNumber.MobileNo
+                    </td>
+                    <td>@item.MobileNumber.Person.Household.Name - @item.MobileNumber.Person.Household.City.Name</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Body)
+                    </td>
+                    <td>
+                        @item.DateTimeCreated.ToString("MM/DD/YY hh:mm T")
+                    </td>
+                    <td>
+                        @*
+                           @Html.ActionLink("Edit", "Edit", new { id = item.MessageId }) |
+                            @Html.ActionLink("Details", "Details", new { id = item.MessageId }) | 
+                        *@
+                        @Html.ActionLink("Delete", "Delete", new { id = item.MessageId }, new { @class="btn btn-xs btn-danger"})
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            var datatable = $("table").DataTable({
+                paging: true,
+                "pageLength": 20,
+                "dom": "<'row'<'table-window'<'table-responsive'rt>>><'window-footer'<'col-md-6'i><'col-md-6'p>>",
+                "columnDefs": [
+                    { "orderable": false, "targets": 4}
+                ]
+            });
+
+            $(".all-search").keyup(function () {
+                datatable.search($(this).val()).draw();
+            })
+        });
+    </script>
 }
-
-</table>

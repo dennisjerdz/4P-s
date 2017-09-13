@@ -1,0 +1,171 @@
+﻿@model IEnumerable<_4PsPH.Models.Ticket>
+
+@{
+    ViewBag.Title = "Reports";
+
+    var options = new List<SelectListItem>();
+    options.Add(new SelectListItem { Text = "Yes", Value = "true" });
+    options.Add(new SelectListItem { Text = "No", Value = "false" });
+}
+
+<div class="row">
+    <div class="col-xs-10 left-ui">
+        <a href="@Url.Action("Index")" class="outside-link">« Back to List</a>
+    </div>
+</div>
+
+<hr class="heading-cut" />
+
+<div class="row">
+    <div class="col-md-12" style="padding:0px;">
+        <div class="col-md-12" style="padding:0px;">
+            <div class="shadow-wrapper">
+                <div class="row">
+                    <div class="window-heading">
+                        <div class="col-md-12">
+                            <div class="links">
+                                <strong>
+                                    @ViewBag.Title &emsp;»&emsp;Create Household
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="window">
+                        <div class="col-md-12">
+                            @using (Html.BeginForm("Create", "Households", FormMethod.Post, new { @id = "form" }))
+                            {
+                                
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="window-footer window-footer-btn">
+                    <div class="col-md-12" style="text-align:right;">
+                        <button class="btn btn-primary" type="submit" form="form">Generate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-12" style="padding:0px;" id="print-div">
+            <div class="shadow-wrapper">
+                <div class="paper">
+                    <div class="row">
+                        <canvas id="report-here"></canvas>
+
+                        <table class="table table-bordered table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>A</th>
+                                    <th>B</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>2</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    
+    <script src="~/Scripts/Chart.js"></script>
+    
+    <script>
+        function rColor() {
+            var rgb = 'rgb(' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ')';
+            console.log(rgb);
+            return rgb;
+        }
+
+        var barChartData = {
+            labels: [
+                "2011", "2012", "2013"
+            ],
+            datasets: [
+                @foreach (var x in Model.GroupBy(c=>c.Category))
+                {
+                    <text>
+                        {
+                            label: "@x.Key.Name",
+                            backgroundColor: rColor(),
+                            data: [
+                                @x.Count(a=>a.DateTimeCreated.Year == 2011)
+                                ,
+                                @x.Count(a => a.DateTimeCreated.Year == 2012)
+                                ,
+                                @x.Count(a => a.DateTimeCreated.Year == 2013)
+                            ]
+                        },
+                    </text>
+                }
+
+                /*
+                {
+                label: 'Dataset 1',
+                backgroundColor: "rgba(200,0,0,1)",
+                data: [
+                    4,
+                    5,
+                    2
+                ]
+            }, {
+                label: 'Dataset 2',
+                backgroundColor: "rgba(0,200,0,1)",
+                data: [
+                    12,
+                    15,
+                    12
+                ]
+            }, {
+                label: 'Dataset 3',
+                backgroundColor: "rgba(0,0,200,1)",
+                data: [
+                    4,
+                    5,
+                    2
+                ]
+            }*/
+
+            ]
+
+        };
+
+        $(document).ready(function () {
+            var ctx = $("#report-here")[0].getContext("2d");
+            window.myBar = new Chart(ctx, {
+                type: 'bar',
+                data: barChartData,
+                options: {
+                    title: {
+                        display: true,
+                        text: "Category of Grievances Received Per Year Summation"
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    responsive: true,
+                    scales: {
+                        xAxes: [{
+                            stacked: true,
+                        }],
+                        yAxes: [{
+                            stacked: true
+                        }]
+                    }
+                }
+            });
+        });
+    </script>
+}

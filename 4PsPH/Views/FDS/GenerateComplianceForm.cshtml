@@ -62,7 +62,7 @@
 
                                 @foreach (var x in Model.City.Households)
                                 {
-                                    foreach (var y in x.People.Where(p => p.IsGrantee == true).OrderByDescending(p => p.LastName))
+                                    foreach (var y in x.People.Where(p => p.IsGrantee == true && p.IsExcluded == false).OrderByDescending(p => p.LastName))
                                     {
                                         <tr>
                                             <td>@count</td>

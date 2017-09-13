@@ -35,6 +35,8 @@ namespace _4PsPH.Models
         public bool? IsBeneficiary { get; set; }
         public bool? IsGrantee { get; set; }
         public bool? IsParentLeader { get; set; }
+
+        public bool? IsPregnant { get; set; }
         
         public int Gender { get; set; } //0 female, 1 male
         public string picture_url { get; set; }

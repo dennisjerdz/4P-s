@@ -68,7 +68,7 @@
                                     int count = 1;
                                 }
 
-                                @foreach (var x in Model.People.OrderByDescending(p => p.LastName))
+                                @foreach (var x in Model.People.OrderByDescending(p => p.LastName).Where(p=>p.IsExcluded == false))
                                 {
                                     <tr>
                                         <td>@count</td>

@@ -20,7 +20,8 @@ namespace _4Ps.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        public string short_code = "21583313";
+        //public string short_code = "21584812";
+        public string short_code = "21582183";
 
         // GET: SMS
         public ActionResult Index()
@@ -35,7 +36,7 @@ namespace _4Ps.Controllers
             {
                 try
                 {
-                    SendSMS(message_mobileNumber, message+" - "+User.Identity.GetFullName());
+                    SendSMS(message_mobileNumber, message + " - " + User.Identity.GetFullName());
                 }
                 catch (Exception e)
                 {
@@ -65,7 +66,7 @@ namespace _4Ps.Controllers
 
                 dynamic response = sms
                     .SetReceiverAddress("+63" + subscriber_number)
-                    .SetMessage("Hello, " + mobile_no.Person.GivenName + " from "+mobile_no.Person.Household.Name+" household. Your 4P's inquiry subscription is now verified. You could now inquire through text.")
+                    .SetMessage("Hello, " + mobile_no.Person.GivenName + " from " + mobile_no.Person.Household.Name + " household. Your 4P's inquiry subscription is now verified. You could now inquire through text. Send 'learn more' for list of keywords.")
                     .SendMessage()
                     .GetDynamicResponse();
 
@@ -79,10 +80,10 @@ namespace _4Ps.Controllers
             return null;
         }
 
-        public ActionResult testFeed()
+        public ActionResult testFeed(string msg, string city)
         {
-            var signalr = GlobalHost.ConnectionManager.GetHubContext<feedHub>();
-            signalr.Clients.All.addmsg("There is a new message.");
+            var signalr = GlobalHost.ConnectionManager.GetHubContext<FeedHub>();
+            signalr.Clients.Group(city).grpmsg(msg);
 
             return null;
         }
@@ -101,15 +102,13 @@ namespace _4Ps.Controllers
             string mobile_number = "0" + customer_number.Substring(7);
 
             //Console.WriteLine(result);
-            Trace.TraceInformation(customer_msg+" from "+mobile_number);
+            Trace.TraceInformation(customer_msg + " from " + mobile_number);
 
             var pm = db.MobileNumbers.Include("Person").FirstOrDefault(m => m.MobileNo == mobile_number);
 
-            var signalr = GlobalHost.ConnectionManager.GetHubContext<feedHub>();
-            signalr.Clients.All.addmsg(mobile_number+" "+customer_msg);
-
             if (pm != null && pm.IsDisabled == false)
             {
+                /*
                 var record_msg = new Message();
                 record_msg.Body = customer_msg;
                 record_msg.DateTimeCreated = DateTime.UtcNow.AddHours(8);
@@ -117,6 +116,7 @@ namespace _4Ps.Controllers
 
                 db.Messages.Add(record_msg);
                 db.SaveChanges();
+                */
 
                 string[] msg = customer_msg.ToLower().Split(' ');
 
@@ -127,7 +127,7 @@ namespace _4Ps.Controllers
                     try
                     {
                         // use sms function
-                        SendSMS(mobile_number, "Hello " + pm.Person.getFullName()+".");
+                        SendSMS(mobile_number, "Hello " + pm.Person.getFullName() + ".");
                     }
                     catch (Exception ex)
                     {
@@ -137,6 +137,31 @@ namespace _4Ps.Controllers
                     return null;
                 }
 
+                #region learn more
+                if ((msg[0] == "learn" && msg[1] == "more") || msg[0] == "tulong" || msg[0] == "saklolo")
+                {
+                    try
+                    {
+                        // use sms function
+                        SendSMS(mobile_number, "List of sms keywords: 'hello' - System will send an sms with your first name, 'compliance' - Send a summary of all issues associated with household if there are any, 'tickets' - Send a list of all tickets associated with household, '<Ticket ID> <message>' - Post a comment to the specific ticket ID that the social workers could view, 'Ticket <Ticket ID>' -  Show specific ticket details if exists, '? <message>' - Ask a specific question that a Social Worker can respond to.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceInformation(ex.Message);
+                    }
+
+                    #region record msg
+                    var record_msg = new Message();
+                    record_msg.Body = customer_msg;
+                    record_msg.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+                    record_msg.MobileNumberId = pm.MobileNumberId;
+
+                    db.Messages.Add(record_msg);
+                    db.SaveChanges();
+                    #endregion
+                }
+                #endregion
+
                 #region msg ticket
                 if (msg[0].All(char.IsDigit))
                 {
@@ -144,16 +169,18 @@ namespace _4Ps.Controllers
                     if (ticket_id == 0)
                     {
                         return null;
-                    }else
+                    }
+                    else
                     {
-                        Ticket ticket = db.Tickets.Include(t=>t.Person).Include(t=>t.Person.MobileNumbers).Include(t=>t.Person.Household).FirstOrDefault(t => t.TicketId == ticket_id);
+                        Ticket ticket = db.Tickets.Include(t => t.Person).Include(t => t.Person.MobileNumbers).Include(t => t.Person.Household).FirstOrDefault(t => t.TicketId == ticket_id);
 
                         if (ticket == null)
                         {
                             SendSMS(mobile_number, "Sorry, the ticket ID you requested cannot be found.");
-                        }else
+                        }
+                        else
                         {
-                            if (ticket.Person.Household.People.Any(m=>m.MobileNumbers.Any(o=>o.MobileNo == mobile_number)))
+                            if (ticket.Person.Household.People.Any(m => m.MobileNumbers.Any(o => o.MobileNo == mobile_number)))
                             {
                                 string comment = string.Join(" ", msg.Skip(1));
 
@@ -173,11 +200,25 @@ namespace _4Ps.Controllers
                                 }
                                 catch (Exception ex)
                                 {
-                                    Trace.TraceInformation("Failed to add comment to Ticket ID "+ticket.TicketId+" from " + mobile_number + " with error; " + ex.Message);
+                                    Trace.TraceInformation("Failed to add comment to Ticket ID " + ticket.TicketId + " from " + mobile_number + " with error; " + ex.Message);
                                     return null;
                                 }
 
-                                SendSMS(mobile_number, "Message to Ticket ID "+ticket.TicketId+" has been created.");
+                                SendSMS(mobile_number, "Message to Ticket ID " + ticket.TicketId + " has been created.");
+
+                                #region record msg
+                                var record_msg = new Message();
+                                record_msg.Body = customer_msg;
+                                record_msg.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+                                record_msg.MobileNumberId = pm.MobileNumberId;
+
+                                db.Messages.Add(record_msg);
+                                db.SaveChanges();
+                                #endregion
+
+                                /*signalr notification*/
+                                var signalr = GlobalHost.ConnectionManager.GetHubContext<FeedHub>();
+                                signalr.Clients.Group(pm.Person.Household.City.Name).grpmsg(pm.Person.GivenName + ": " + customer_msg);
                             }
                         }
                     }
@@ -187,13 +228,14 @@ namespace _4Ps.Controllers
                 #region create ticket
                 if (msg[0] == "ticket" && msg[1] == "create")
                 {
-                    if(msg[2] == "payment" || msg[2] == "complianceverification" || msg[2] == "others")
+                    if (msg[2] == "payment" || msg[2] == "complianceverification" || msg[2] == "others")
                     {
                         string c_received = "";
-                        if(msg[2] == "complianceverification")
+                        if (msg[2] == "complianceverification")
                         {
                             c_received = "compliance verification";
-                        }else
+                        }
+                        else
                         {
                             c_received = msg[2].ToLower();
                         }
@@ -213,17 +255,65 @@ namespace _4Ps.Controllers
                         {
                             db.SaveChanges();
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
-                            Trace.TraceInformation("Failed to create ticket from "+mobile_number+" with error; "+ex.Message);
+                            Trace.TraceInformation("Failed to create ticket from " + mobile_number + " with error; " + ex.Message);
                             return null;
                         }
-                        
-                        SendSMS(mobile_number, "Ticket ID "+t.TicketId+" with category; " +c_received+" has been created.");
+
+                        SendSMS(mobile_number, "Ticket ID " + t.TicketId + " with category; " + c_received + " has been created.");
+
+                        #region record msg
+                        var record_msg = new Message();
+                        record_msg.Body = customer_msg;
+                        record_msg.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+                        record_msg.MobileNumberId = pm.MobileNumberId;
+
+                        db.Messages.Add(record_msg);
+                        db.SaveChanges();
+                        #endregion
                     }
                     else
                     {
                         SendSMS(mobile_number, "Sorry, these are the only categories supported; 'Payment', 'ComplianceVerification', 'Others'.");
+                    }
+                }
+                #endregion
+
+                #region ticket <ID>
+                if (msg[0] == "ticket")
+                {
+                    int s = Convert.ToInt16(msg[1]);
+
+                    Ticket ticket = db.Tickets.Include(t => t.Category).Include(t => t.Person).Include(t => t.Status).FirstOrDefault(t => t.TicketId == s);
+
+                    if (ticket == null)
+                    {
+                        SendSMS(mobile_number, "This ticket doesn't exist.");
+
+                        #region record msg
+                        var record_msg = new Message();
+                        record_msg.Body = customer_msg;
+                        record_msg.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+                        record_msg.MobileNumberId = pm.MobileNumberId;
+
+                        db.Messages.Add(record_msg);
+                        db.SaveChanges();
+                        #endregion
+                    }
+                    else
+                    {
+                        SendSMS(mobile_number, "Ticket ID " + ticket.TicketId + ", status: " + ticket.Status.Name + ", category: " + ticket.Category.Name + ", and comment: " + ticket.Comment + ticket.ActionAdvised + ".");
+
+                        #region record msg
+                        var record_msg = new Message();
+                        record_msg.Body = customer_msg;
+                        record_msg.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+                        record_msg.MobileNumberId = pm.MobileNumberId;
+
+                        db.Messages.Add(record_msg);
+                        db.SaveChanges();
+                        #endregion
                     }
                 }
                 #endregion
@@ -234,42 +324,196 @@ namespace _4Ps.Controllers
                     int[] household_members = db.Persons.Where(p => p.HouseholdId == pm.Person.HouseholdId).Select(e => e.PersonId).ToArray();
 
                     var tickets = db.Tickets.Include("Category").Include("Status").Where(t => household_members.Contains(t.PersonId));
-                    
-                    StringBuilder to_send = new StringBuilder("Your household has ");
 
-                    if(tickets == null)
+                    StringBuilder to_send = new StringBuilder("Your household, " + pm.Person.Household.Name + ", has ");
+
+                    if (tickets == null)
                     {
-                        SendSMS(mobile_number, "Your household doesn't have any tickets.");
-                    }else
+                        SendSMS(mobile_number, "Your household, " + pm.Person.Household.Name + ", doesn't have any tickets.");
+
+                        #region record msg
+                        var record_msg = new Message();
+                        record_msg.Body = customer_msg;
+                        record_msg.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+                        record_msg.MobileNumberId = pm.MobileNumberId;
+
+                        db.Messages.Add(record_msg);
+                        db.SaveChanges();
+                        #endregion
+                    }
+                    else
                     {
                         var unresolved = tickets.Where(w => w.Status.Name != "Resolved");
                         var resolved = tickets.Where(w => w.Status.Name == "Resolved");
 
-                        if(resolved.Count() != 0 && unresolved.Count() != 0)
+                        if (resolved.Count() != 0 && unresolved.Count() != 0)
                         {
-                            to_send.Append(resolved.Count() + " resolved tickets and the following unresolved; ");
-                            foreach (var x in unresolved)
-                            {
-                                to_send.Append(x.Category.Name+" Ticket w/ ID "+x.TicketId+" - "+x.Status.Name+".");
-                            }
-                        }
-
-                        if(unresolved.Count() != 0 && resolved.Count() == 0)
-                        {
-                            to_send.Append("has the following unresolved tickets; ");
+                            to_send.Append(resolved.Count() + "resolved tickets and the following unresolved; ");
                             foreach (var x in unresolved)
                             {
                                 to_send.Append(x.Category.Name + " Ticket w/ ID " + x.TicketId + " - " + x.Status.Name + ".");
                             }
                         }
 
-                        if(unresolved.Count() == 0 && resolved.Count() != 0)
+                        if (unresolved.Count() != 0 && resolved.Count() == 0)
+                        {
+                            to_send.Append("the following unresolved tickets; ");
+                            foreach (var x in unresolved)
+                            {
+                                to_send.Append(x.Category.Name + " Ticket w/ ID " + x.TicketId + " - " + x.Status.Name + ".");
+                            }
+                        }
+
+                        if (unresolved.Count() == 0 && resolved.Count() != 0)
                         {
                             to_send.Append(resolved.Count() + " resolved tickets.");
-                            to_send.Append(" Reply 'tickets-resolved' for more details.");
+                            to_send.Append(" Reply 'ticket <ID>' for more details.");
                         }
 
                         SendSMS(mobile_number, to_send.ToString());
+
+                        #region record msg
+                        var record_msg = new Message();
+                        record_msg.Body = customer_msg;
+                        record_msg.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+                        record_msg.MobileNumberId = pm.MobileNumberId;
+
+                        db.Messages.Add(record_msg);
+                        db.SaveChanges();
+                        #endregion
+                    }
+                }
+                #endregion
+
+                #region health compliance
+                if (msg[0] == "compliance-health")
+                {
+                    StringBuilder to_send = new StringBuilder("Unresolved Health Compliance Issues: ");
+
+                    int[] household_members = db.Persons.Where(p => p.HouseholdId == pm.Person.HouseholdId).Select(e => e.PersonId).ToArray();
+                    var health_issues = db.HealthCheckupIssues.Where(a => household_members.Contains(a.PersonId) && a.IsResolved == false).ToList();
+
+                    if (health_issues.Count == 0)
+                    {
+                        SendSMS(mobile_number, "Your household, " + pm.Person.Household.Name + ", doesn't have any health-related compliance issues.");
+
+                        #region record msg
+                        var record_msg = new Message();
+                        record_msg.Body = customer_msg;
+                        record_msg.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+                        record_msg.MobileNumberId = pm.MobileNumberId;
+
+                        db.Messages.Add(record_msg);
+                        db.SaveChanges();
+                        #endregion
+                    }
+                    else
+                    {
+                        foreach (var x in health_issues)
+                        {
+                            to_send.Append("Issue ID " + x.HealthCheckupIssueId + "-" + x.Comment);
+                            to_send.Append(" ");
+                        }
+
+                        #region record msg
+                        var record_msg = new Message();
+                        record_msg.Body = customer_msg;
+                        record_msg.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+                        record_msg.MobileNumberId = pm.MobileNumberId;
+
+                        db.Messages.Add(record_msg);
+                        db.SaveChanges();
+                        #endregion
+                    }
+                }
+                #endregion
+
+                #region school compliance
+                if (msg[0] == "compliance-school")
+                {
+                    StringBuilder to_send = new StringBuilder("");
+
+                    int[] household_members = db.Persons.Where(p => p.HouseholdId == pm.Person.HouseholdId).Select(e => e.PersonId).ToArray();
+                    var attendance_issues = db.AttendanceIssues.Where(a => household_members.Contains(a.PersonId) && a.IsResolved == false).ToList();
+
+                    if (attendance_issues.Count == 0)
+                    {
+                        SendSMS(mobile_number, "Your household, " + pm.Person.Household.Name + ", doesn't have any school-related attendance issues.");
+
+                        #region record msg
+                        var record_msg = new Message();
+                        record_msg.Body = customer_msg;
+                        record_msg.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+                        record_msg.MobileNumberId = pm.MobileNumberId;
+
+                        db.Messages.Add(record_msg);
+                        db.SaveChanges();
+                        #endregion
+                    }
+                    else
+                    {
+                        foreach (var x in attendance_issues)
+                        {
+                            to_send.Append("Issue ID " + x.AttendanceIssueId + "-" + x.Comment);
+                            to_send.Append(" ");
+                        }
+
+                        SendSMS(mobile_number, to_send.ToString());
+
+                        #region record msg
+                        var record_msg = new Message();
+                        record_msg.Body = customer_msg;
+                        record_msg.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+                        record_msg.MobileNumberId = pm.MobileNumberId;
+
+                        db.Messages.Add(record_msg);
+                        db.SaveChanges();
+                        #endregion
+                    }
+                }
+                #endregion
+
+                #region fds compliance
+                if (msg[0] == "compliance-fds")
+                {
+                    StringBuilder to_send = new StringBuilder("Unresolved FDS Issues: ");
+
+                    int[] household_members = db.Persons.Where(p => p.HouseholdId == pm.Person.HouseholdId).Select(e => e.PersonId).ToArray();
+                    var FDS_issues = db.FDSIssues.Where(a => household_members.Contains(a.PersonId) && a.IsResolved == false).ToList();
+
+                    if (FDS_issues.Count == 0)
+                    {
+                        SendSMS(mobile_number, "Your household, " + pm.Person.Household.Name + ", doesn't have any Family development attendance issues.");
+
+                        #region record msg
+                        var record_msg = new Message();
+                        record_msg.Body = customer_msg;
+                        record_msg.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+                        record_msg.MobileNumberId = pm.MobileNumberId;
+
+                        db.Messages.Add(record_msg);
+                        db.SaveChanges();
+                        #endregion
+                    }
+                    else
+                    {
+                        foreach (var x in FDS_issues)
+                        {
+                            to_send.Append("Issue ID " + x.FDSIssueId + "-" + x.Comment);
+                            to_send.Append(" ");
+                        }
+
+                        SendSMS(mobile_number, to_send.ToString());
+
+                        #region record msg
+                        var record_msg = new Message();
+                        record_msg.Body = customer_msg;
+                        record_msg.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+                        record_msg.MobileNumberId = pm.MobileNumberId;
+
+                        db.Messages.Add(record_msg);
+                        db.SaveChanges();
+                        #endregion
                     }
                 }
                 #endregion
@@ -277,18 +521,29 @@ namespace _4Ps.Controllers
                 #region compliance
                 if (msg[0] == "compliance")
                 {
-                    StringBuilder to_send = new StringBuilder("Your household has ");
+                    StringBuilder to_send = new StringBuilder("Your household, " + pm.Person.Household.Name + ", has ");
 
-                    int[] household_members = db.Persons.Where(p => p.HouseholdId == pm.Person.HouseholdId).Select(e=>e.PersonId).ToArray();
+                    int[] household_members = db.Persons.Where(p => p.HouseholdId == pm.Person.HouseholdId).Select(e => e.PersonId).ToArray();
 
-                    var attendance_issues = db.AttendanceIssues.Where(a => household_members.Contains(a.PersonId) && a.IsResolved==false).ToList();
+                    var attendance_issues = db.AttendanceIssues.Where(a => household_members.Contains(a.PersonId) && a.IsResolved == false).ToList();
                     var health_issues = db.HealthCheckupIssues.Where(a => household_members.Contains(a.PersonId) && a.IsResolved == false).ToList();
                     var FDS_issues = db.FDSIssues.Where(a => household_members.Contains(a.PersonId) && a.IsResolved == false).ToList();
 
                     if (attendance_issues.Count() == 0 && health_issues.Count() == 0 && FDS_issues.Count() == 0)
                     {
-                        SendSMS(mobile_number, "Your household is fully complying to 4P's conditions.");
-                    }else
+                        SendSMS(mobile_number, "Your household, "+ pm.Person.Household.Name +",  is fully complying to 4P's conditions.");
+
+                        #region record msg
+                        var record_msg = new Message();
+                        record_msg.Body = customer_msg;
+                        record_msg.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+                        record_msg.MobileNumberId = pm.MobileNumberId;
+
+                        db.Messages.Add(record_msg);
+                        db.SaveChanges();
+                        #endregion
+                    }
+                    else
                     {
                         if (attendance_issues.Count() > 0)
                         {
@@ -321,7 +576,7 @@ namespace _4Ps.Controllers
 
                         if (FDS_issues.Count() > 0)
                         {
-                            if (health_issues.Count() > 0 || (health_issues.Count()==0 && attendance_issues.Count()>0))
+                            if (health_issues.Count() > 0 || (health_issues.Count() == 0 && attendance_issues.Count() > 0))
                             {
                                 to_send.Append(", ");
                             }
@@ -336,15 +591,44 @@ namespace _4Ps.Controllers
                             }
                         }
 
-                        to_send.Append(". Reply 'compliance-health' or 'compliance-attendance' or 'compliance-FDS' for more details.");
+                        to_send.Append(". Reply 'compliance-health' or 'compliance-school' or 'compliance-FDS' for more details.");
                         SendSMS(mobile_number, to_send.ToString());
+
+                        #region record msg
+                        var record_msg = new Message();
+                        record_msg.Body = customer_msg;
+                        record_msg.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+                        record_msg.MobileNumberId = pm.MobileNumberId;
+
+                        db.Messages.Add(record_msg);
+                        db.SaveChanges();
+                        #endregion
                     }
                 }
                 #endregion
 
+                #region ? create ticket
+                if (msg[0] == "?")
+                {
+                    var rec_msg = new Message();
+                    rec_msg.Body = customer_msg;
+                    rec_msg.DateTimeCreated = DateTime.UtcNow.AddHours(8);
+                    rec_msg.MobileNumberId = null;
+
+                    db.Messages.Add(rec_msg);
+                    db.SaveChangesAsync();
+
+                    SendSMS(mobile_number, "Your message has been received. Please wait for a message or ticket as a response.");
+
+                    /*signalr notification*/
+                    var signalr = GlobalHost.ConnectionManager.GetHubContext<FeedHub>();
+                    signalr.Clients.Group(pm.Person.Household.City.Name).grpmsg(pm.Person.GivenName +" - "+mobile_number+": " + customer_msg);
+                }
+                #endregion
             }
             else
             {
+                /*
                 var record_msg = new Message();
                 record_msg.Body = customer_msg;
                 record_msg.DateTimeCreated = DateTime.UtcNow.AddHours(8);
@@ -352,6 +636,7 @@ namespace _4Ps.Controllers
 
                 db.Messages.Add(record_msg);
                 db.SaveChangesAsync();
+                */
             }
 
             //return Content(result.ToString(), "application/json");
@@ -377,11 +662,11 @@ namespace _4Ps.Controllers
                         .SendMessage()
                         .GetDynamicResponse();
 
-                    Trace.TraceInformation("Sent message; "+message);
+                    Trace.TraceInformation("Sent message; " + message);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
-                    Trace.TraceInformation("Unable to send message to "+mobile_number+". Error; "+e.Message);
+                    Trace.TraceInformation("Unable to send message to " + mobile_number + ". Error; " + e.Message);
                 }
             }
 

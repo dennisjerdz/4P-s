@@ -64,7 +64,11 @@
                         @item.DateTimeCreated
                     </td>
                     <td style="text-align:right;">
-                        <a href="@Url.Action("GenerateComplianceForm", new { id=item.HospitalId })" class="btn btn-xs btn-info">Generate Compliance Form <span class="glyphicon glyphicon-export"></span></a>
+                        <a href="@Url.Action("GenerateComplianceForm0to5", new { id=item.HospitalId })" class="btn btn-xs btn-info">Compliance Form 0-5 yrs old<span class="glyphicon glyphicon-export"></span></a>
+
+                        <a href="@Url.Action("GenerateComplianceForm6to14", new { id=item.HospitalId })" class="btn btn-xs btn-info">Compliance Form 6-14 yrs old<span class="glyphicon glyphicon-export"></span></a>
+
+                        <a href="@Url.Action("GenerateComplianceFormPregnant", new { id=item.HospitalId })" class="btn btn-xs btn-info">Compliance Form for Pregnant Women<span class="glyphicon glyphicon-export"></span></a>
 
                         <a href="@Url.Action("Edit",new { id=item.HospitalId })" class="btn btn-xs btn-warning">Edit <span class="glyphicon glyphicon-pencil"></span></a>
 

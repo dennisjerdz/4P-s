@@ -10,6 +10,7 @@ using _4PsPH.Models;
 using Globe.Connect;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using _4PsPH.Extensions;
 
 namespace _4PsPH.Controllers
 {
@@ -18,7 +19,9 @@ namespace _4PsPH.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        public string short_code = "21583313";
+        //public string short_code = "21584812";
+        public string short_code = "21582183";
+
         private ActionResult SMS(string mobile_number, string message)
         {
             MobileNumber mb = db.MobileNumbers.FirstOrDefault(m => m.MobileNo == mobile_number);
@@ -123,8 +126,18 @@ namespace _4PsPH.Controllers
         // GET: FDS
         public ActionResult Index()
         {
-            var fDS = db.FDS.Include(f => f.City);
-            return View(fDS.ToList());
+            if (User.IsInRole("4P's Officer"))
+            {
+                var fDS = db.FDS.Include(f => f.City);
+                return View(fDS.ToList());
+            }
+            else
+            {
+                int city = Convert.ToInt16(User.Identity.GetCityId());
+
+                var fDS = db.FDS.Include(f => f.City).Where(f=>f.CityId == city);
+                return View(fDS.ToList());
+            }
         }
 
         // GET: FDS/Details/5

@@ -3,6 +3,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace _4PsPH.Models
 {
+    public class AccountsViewModel
+    {
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Role { get; set; }
+        public string City { get; set; }
+        public bool IsDisabled { get; set; }
+    }
+
     public class ExternalLoginConfirmationViewModel
     {
         [Required]
@@ -70,6 +79,10 @@ namespace _4PsPH.Models
         public string Email { get; set; }
 
         [Required]
+        [Display(Name ="City")]
+        public int CityId { get; set; }
+
+        [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
@@ -79,6 +92,15 @@ namespace _4PsPH.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        [Required]
+        [Display(Name = "Given Name")]
+        public string GivenName { get; set; }
+        [Display(Name = "Middle Name/Initial")]
+        public string MiddleName { get; set; }
+        [Display(Name = "Last Name")]
+        [Required]
+        public string LastName { get; set; }
     }
 
     public class ResetPasswordViewModel

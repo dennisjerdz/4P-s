@@ -81,7 +81,7 @@
                         {
                             if (User.IsInRole("Social Worker"))
                             {
-                                
+                                <a class="btn btn-xs btn-primary" href="@Url.Action("Resolve", new { id=item.TicketId })">Resolve <span class="glyphicon glyphicon-wrench"></span></a>
                             }
                             <a class="btn btn-xs btn-danger" href="@Url.Action("Revert", new { id=item.TicketId })">Previous Status <span class="glyphicon glyphicon-repeat"></span></a>
                         }
@@ -90,6 +90,7 @@
                         {
                             if (User.IsInRole("OIC"))
                             {
+                                <a class="btn btn-xs btn-primary" href="@Url.Action("Resolve", new { id=item.TicketId })">Resolve <span class="glyphicon glyphicon-wrench"></span></a>
                                 <a class="btn btn-xs btn-info" href="@Url.Action("Details", new { id=item.TicketId })">View Endorsement</a>
                             }
                             @*

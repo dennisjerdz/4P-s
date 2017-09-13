@@ -19,9 +19,16 @@ namespace _4PsPH.Controllers
         // GET: Households
         public ActionResult Index()
         {
-            int city = Convert.ToInt16(User.Identity.GetCityId());
+            if (User.IsInRole("4P's Officer"))
+            {
+                return View(db.Households.Include(h => h.City).Include(h => h.People).ToList());
+            }
+            else
+            {
+                int city = Convert.ToInt16(User.Identity.GetCityId());
 
-            return View(db.Households.Include(h=>h.City).Include(h=>h.People).Where(h=>h.CityId == city).ToList());
+                return View(db.Households.Include(h => h.City).Include(h => h.People).Where(h => h.CityId == city).ToList());
+            }
         }
 
         public ActionResult Details(int? id)
@@ -42,9 +49,17 @@ namespace _4PsPH.Controllers
         // GET: Households/Create
         public ActionResult Create()
         {
-            int city = Convert.ToInt16(User.Identity.GetCityId());
+            if (User.IsInRole("4P's Officer"))
+            {
+                ViewBag.CityId = new SelectList(db.City, "CityId", "Name");
+            }
+            else
+            {
+                int city = Convert.ToInt16(User.Identity.GetCityId());
 
-            ViewBag.CityId = new SelectList(db.City.Where(c=>c.CityId==city), "CityId", "Name");
+                ViewBag.CityId = new SelectList(db.City.Where(c => c.CityId == city), "CityId", "Name");
+            }
+                
             return View();
         }
 
@@ -53,7 +68,7 @@ namespace _4PsPH.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "HouseholdId,Name,DateTimeCreated,IsExcluded,CityId")] Household household)
+        public ActionResult Create([Bind(Include = "HouseholdId,Address,Name,DateTimeCreated,IsExcluded,CityId")] Household household)
         {
             household.DateTimeCreated = DateTime.UtcNow.AddHours(8);
 
@@ -64,9 +79,17 @@ namespace _4PsPH.Controllers
                 return RedirectToAction("Index");
             }
 
-            int city = Convert.ToInt16(User.Identity.GetCityId());
+            if (User.IsInRole("4P's Officer"))
+            {
+                ViewBag.CityId = new SelectList(db.City, "CityId", "Name");
+            }
+            else
+            {
+                int city = Convert.ToInt16(User.Identity.GetCityId());
 
-            ViewBag.CityId = new SelectList(db.City.Where(c => c.CityId == city), "CityId", "Name");
+                ViewBag.CityId = new SelectList(db.City.Where(c => c.CityId == city), "CityId", "Name");
+            }
+
             return View(household);
         }
 
@@ -82,9 +105,18 @@ namespace _4PsPH.Controllers
             {
                 return HttpNotFound();
             }
-            int city = Convert.ToInt16(User.Identity.GetCityId());
 
-            ViewBag.CityId = new SelectList(db.City.Where(c => c.CityId == city), "CityId", "Name");
+            if (User.IsInRole("4P's Officer"))
+            {
+                ViewBag.CityId = new SelectList(db.City, "CityId", "Name");
+            }
+            else
+            {
+                int city = Convert.ToInt16(User.Identity.GetCityId());
+
+                ViewBag.CityId = new SelectList(db.City.Where(c => c.CityId == city), "CityId", "Name");
+            }
+
             return View(household);
         }
 
@@ -93,7 +125,7 @@ namespace _4PsPH.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "HouseholdId,Name,DateTimeCreated,IsExcluded,CityId")] Household household)
+        public ActionResult Edit([Bind(Include = "HouseholdId,Address,Name,DateTimeCreated,IsExcluded,CityId")] Household household)
         {
             HouseholdHistory hh = new HouseholdHistory();
             hh.HouseholdId = household.HouseholdId;
@@ -109,9 +141,18 @@ namespace _4PsPH.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            int city = Convert.ToInt16(User.Identity.GetCityId());
 
-            ViewBag.CityId = new SelectList(db.City.Where(c => c.CityId == city), "CityId", "Name");
+            if (User.IsInRole("4P's Officer"))
+            {
+                ViewBag.CityId = new SelectList(db.City, "CityId", "Name");
+            }
+            else
+            {
+                int city = Convert.ToInt16(User.Identity.GetCityId());
+
+                ViewBag.CityId = new SelectList(db.City.Where(c => c.CityId == city), "CityId", "Name");
+            }
+
             return View(household);
         }
 

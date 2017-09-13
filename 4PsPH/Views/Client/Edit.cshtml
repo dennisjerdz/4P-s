@@ -1,178 +1,308 @@
 ﻿@model _4PsPH.Models.Person
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Client";
+
+    var options = new List<SelectListItem>();
+    options.Add(new SelectListItem { Text = "No", Value = "false" });
+    options.Add(new SelectListItem { Text = "Yes", Value = "true" });
+
+    var gender = new List<SelectListItem>();
+    gender.Add(new SelectListItem { Text = "Male", Value = "1" });
+    gender.Add(new SelectListItem { Text = "Female", Value = "0" });
 }
 
-<h2>Edit</h2>
+<div class="row">
+    <div class="col-md-8 left-ui">
+        <a href="@Url.Action("Details","Households", new { id=Model.HouseholdId })" class="outside-link">« Back to Household</a>
 
+        <hr class="heading-cut" />
+    </div>
+</div>
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Person</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.PersonId)
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.GivenName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.GivenName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.GivenName, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.MiddleName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.MiddleName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.MiddleName, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.IsBeneficiary, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.IsBeneficiary)
-                    @Html.ValidationMessageFor(model => model.IsBeneficiary, "", new { @class = "text-danger" })
+<div class="row">
+    <div class="col-md-12" style="padding:0px;">
+        <div class="col-md-8" style="padding:0px;">
+            <div class="shadow-wrapper">
+                <div class="row">
+                    <div class="window-heading">
+                        <div class="col-md-12">
+                            <div class="links">
+                                <strong>
+                                    @ViewBag.Title &emsp;»&emsp;Edit Client
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
+                <div class="row">
+                    <div class="window">
+                        <div class="col-md-12">
+                            @using (Html.BeginForm("Edit", "Client", FormMethod.Post, new { @id = "form" }))
+                            {
+                                @Html.AntiForgeryToken()
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.IsGrantee, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.IsGrantee)
-                    @Html.ValidationMessageFor(model => model.IsGrantee, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(model => model.PersonId)
+                                @Html.HiddenFor(model => model.HouseholdId)
+                                @Html.HiddenFor(model => model.IsBeneficiary)
+                                @Html.HiddenFor(model => model.IsParentLeader, new { @value = "false" })
+                                @Html.HiddenFor(model=>model.DateTimeCreated)
+
+                                <div class="form-horizontal">
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                    <div class="form-group">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(model => model.GivenName, htmlAttributes: new { @class = "control-label" })
+                                            @Html.EditorFor(model => model.GivenName, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.GivenName, "", new { @class = "text-danger" })
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="control-label">Middle Name</label>
+                                            @Html.EditorFor(model => model.MiddleName, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.MiddleName, "", new { @class = "text-danger" })
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label" })
+                                            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(model => model.Gender, htmlAttributes: new { @class = "control-label" })
+                                            @Html.DropDownListFor(model => model.Gender, gender, new { @class = "form-control gender-dropdown" })
+                                            @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label>Occupation</label>
+                                            <input class="form-control" id="O-input" name="O-input"/>
+                                            @*
+                                                @Html.DropDownList("OccupationId", null, htmlAttributes: new { @class = "form-control" })
+                                            *@
+
+                                            @Html.ValidationMessageFor(model => model.OccupationId, "", new { @class = "text-danger" })
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label>Educational Attainment</label>
+                                            <input class="form-control" id="EA-input" name="EA-input"/>
+                                            @*
+                                                @Html.DropDownList("EducationalAttainmentId", null, htmlAttributes: new { @class = "form-control" })
+                                            *@
+                                            @Html.ValidationMessageFor(model => model.EducationalAttainmentId, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-md-6">
+                                            <label>Birth Date</label>
+                                            @Html.EditorFor(model => model.BirthDate, new { htmlAttributes = new { @class = "form-control datepicker" } })
+                                            @Html.ValidationMessageFor(model => model.BirthDate, "", new { @class = "text-danger" })
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label>Age</label>
+                                            <input class="age form-control" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-md-6">
+                                            <label>Beneficiary?</label>
+                                            <input class="form-control beneficiary-display" readonly />
+                                            @Html.ValidationMessageFor(model => model.IsBeneficiary, "", new { @class = "text-danger" })
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label>Grantee?</label>
+                                            @Html.DropDownListFor(model => model.IsGrantee, options, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.IsGrantee, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-md-6">
+                                            <label>Role <!--Relation To Grantee--></label>
+                                            @Html.DropDownList("RelationToGranteeId", null, htmlAttributes: new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.RelationToGranteeId, "", new { @class = "text-danger" })
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label>Excluded?</label>
+                                            @Html.DropDownListFor(model => model.IsExcluded, options, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.IsExcluded, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-md-6">
+                                            <label>Enrolled At</label>
+                                            @Html.DropDownList("SchoolId", null, "Default: None", new { @class = "form-control", @disabled = "true" })
+                                            @Html.ValidationMessageFor(model => model.SchoolId, "", new { @class = "text-danger" })
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <label>Pregnant?</label>
+                                            @Html.DropDownListFor(model => model.IsPregnant, options, new { @class = "form-control pregnant-option", @disabled = "true" })
+                                            @Html.ValidationMessageFor(model => model.IsPregnant, "", new { @class = "text-danger" })
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label>Assigned Hospital</label>
+                                            @Html.DropDownList("HospitalId", null, "Default: None", new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.HospitalId, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.IsParentLeader, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.IsParentLeader)
-                    @Html.ValidationMessageFor(model => model.IsParentLeader, "", new { @class = "text-danger" })
+                <div class="window-footer window-footer-btn">
+                    <div class="col-md-12" style="text-align:right;">
+                        <button class="btn btn-primary" type="submit" form="form">Save</button>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Gender, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Gender, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.picture_url, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.picture_url, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.picture_url, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.IsExcluded, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.IsExcluded)
-                    @Html.ValidationMessageFor(model => model.IsExcluded, "", new { @class = "text-danger" })
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.BirthDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.BirthDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.BirthDate, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.DateTimeCreated, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.DateTimeCreated, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.DateTimeCreated, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.HouseholdId, "HouseholdId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("HouseholdId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.HouseholdId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.SchoolId, "SchoolId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("SchoolId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.SchoolId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.HospitalId, "HospitalId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("HospitalId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.HospitalId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.OccupationId, "OccupationId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("OccupationId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.OccupationId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.EducationalAttainmentId, "EducationalAttainmentId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("EducationalAttainmentId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.EducationalAttainmentId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.RelationToGranteeId, "RelationToGranteeId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("RelationToGranteeId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.RelationToGranteeId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
             </div>
         </div>
     </div>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
 </div>
+
+@section styles{
+    <style>
+        .form-group {
+            margin-bottom: 20px;
+        }
+    </style>
+
+    <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
+}
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+
+    <script src="~/Scripts/jquery-ui.min.js"></script> 
+
+    <script>
+        var occupations = [
+            @foreach (var x in ViewBag.O)
+            {
+                <text>"@Html.Raw(x.Name.Replace("\"", "'"))",</text>
+            }
+        ];
+
+        var ea = [
+            @foreach (var x in ViewBag.EA)
+            {
+                <text>"@Html.Raw(x.Name.Replace("\"", "'"))",</text>
+            }
+        ];
+
+        $(document).ready(function () {
+            $("#Gender").val($("#Gender option").last().val());
+
+            $('.datepicker').datetimepicker({
+                format: 'MM/DD/YYYY',
+                widgetPositioning: {
+                    horizontal: 'auto',
+                    vertical: 'bottom'
+                },
+                maxDate: moment()
+            });
+
+            $("#O-input").autocomplete({
+                source: occupations
+            });
+
+            $("#EA-input").autocomplete({
+                source: ea
+            });
+
+            $(".datepicker").datepicker("setDate", '@Model.BirthDate');
+        });
+
+        $(".gender-dropdown").on("change", function () {
+            var today = new Date();
+            var birthDate = new Date($("#BirthDate").val());
+
+            var age = today.getFullYear() - birthDate.getFullYear();
+            var m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+
+            if ($(".gender-dropdown").val() == 0 && age >= 12) {
+                $(".pregnant-option").attr("disabled", false);
+                $(".pregnant-option").val($(".pregnant-option option:first").val());
+            } else {
+                $(".pregnant-option").attr("disabled", true);
+                $(".pregnant-option").val($(".pregnant-option option:first").val());
+                $("#HospitalId").val($("#HospitalId option:first").val());
+                $("#HospitalId").attr("disabled", true);
+            }
+        });
+
+        $(".pregnant-option").on("change", function () {
+            if($(".pregnant-option").val() == 'true'){
+                $("#HospitalId").attr("disabled", false);
+
+                $("#IsBeneficiary").val("true");
+                $(".beneficiary-display").val("Yes");
+            } else {
+                $("#IsBeneficiary").val("false");
+                $(".beneficiary-display").val("No");
+            }
+        });
+
+        $(".datepicker").on("dp.change", function (e) {
+            var today = new Date();
+            var birthDate = new Date($("#BirthDate").val());
+
+            var age = today.getFullYear() - birthDate.getFullYear();
+            var m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+
+            $(".age").val(age);
+
+            if (age <= 18) {
+                $("#IsBeneficiary").val("true");
+                $(".beneficiary-display").val("Yes");
+                $("#SchoolId").attr("disabled", false);
+            }
+
+            if (age > 18) {
+                $("#IsBeneficiary").val("false");
+                $(".beneficiary-display").val("No");
+
+                $("#SchoolId").attr("disabled", true);
+                $("#SchoolId").val($("#SchoolId option:first").val());
+            }
+
+            // if age is below 11, disable pregnant and hospital options
+            if (age <= 11) {
+                $(".pregnant-option").attr("disabled", true);
+                $(".pregnant-option").val($(".pregnant-option option:first").val());
+                $("#HospitalId").val($("#HospitalId option:first").val());
+                $("#HospitalId").attr("disabled", true);
+            }
+
+            // if female and age is above or equal to 12, enable pregnant option
+            if ($(".gender-dropdown").val() == 0 && age >= 12) {
+                if ($(".gender-dropdown").val() == 0) {
+                    $(".pregnant-option").attr("disabled", false);
+                } else {
+                    $(".pregnant-option").attr("disabled", true);
+                    $(".pregnant-option").val($(".pregnant-option option:first").val());
+                    $("#HospitalId").val($("#HospitalId option:first").val());
+                    $("#HospitalId").attr("disabled", true);
+                }
+            }
+        });
+    </script>
 }

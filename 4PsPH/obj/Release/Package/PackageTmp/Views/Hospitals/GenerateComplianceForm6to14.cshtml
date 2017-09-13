@@ -1,0 +1,300 @@
+﻿@model _4PsPH.Models.Hospital
+
+@{
+    ViewBag.Title = "Compliance Report Form";
+}
+
+<div class="row">
+    <div class="col-md-10 left-ui">
+        <a href="@Url.Action("Index")" class="outside-link">« Back to List</a>
+    </div>
+
+    <div class="col-md-2 right-ui"></div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <hr class="heading-cut" />
+        <br />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12" style="padding:0px;" id="print-div">
+        <div class="paper">
+            <div class="row">
+                <div class="col-xs-6">
+                    <h5>Compliance Report form for 6-14 yrs old children on claiming Deworming Pills for Hospital: @Model.Name</h5>
+                    <h5>City of @Model.City.Name</h5>
+                </div>
+                <div class="col-xs-6">
+                    <h5>Date Generated: @DateTime.UtcNow.AddHours(8).ToString("MM/dd/yyyy")</h5>
+                    <h5>
+                        Period:
+                        <input class="datepicker" placeholder="Start Month" id="start" />
+                        and
+                        <input class="datepicker" placeholder="End Month" id="end" />
+                    </h5>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <hr />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-condensed table-hover">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Household ID</th>
+                                    <th>Member ID</th>
+                                    <th>Name</th>
+                                    <th colspan="2">Non Compliance for</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="4"></th>
+                                    <th id="t-start"></th>
+                                    <th id="t-end"></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @{
+                                    int count = 1;
+                                }
+
+                                @foreach (var x in Model.People.OrderByDescending(p => p.LastName).Where(p => p.IsExcluded == false && p.IsBeneficiary == true && p.getAge() >= 6 && p.getAge() <= 14))
+                                {
+                                    <tr>
+                                        <td>@count</td>
+                                        <td>@x.HouseholdId</td>
+                                        <td>@x.PersonId</td>
+                                        <td>@x.LastName, @x.GivenName @x.MiddleName</td>
+                                        <td>
+                                            <input type="checkbox" class="c1" data-PersonId="@x.PersonId" data-HospitalId="@x.HospitalId" data-Comment="" disabled />
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" class="c2" data-PersonId="@x.PersonId" data-HospitalId="@x.HospitalId" data-Comment="" disabled />
+                                        </td>
+                                    </tr>
+
+                                    count++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-2 col-md-offset-10" style="padding-right:1px;">
+        <br />
+        @using (Html.BeginForm("GenerateComplianceForm6to14", "Hospitals", FormMethod.Post, new { @id = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.HospitalId)
+
+            <div class="hidden" id="ppl">
+
+            </div>
+
+            <button type="submit" id="submit-btn" class="btn btn-primary btn-block" disabled>Submit Form <span class="glyphicon glyphicon-log-in"></span></button>
+        }
+    </div>
+</div>
+
+@section styles{
+    <style>
+        .datepicker {
+            border: none;
+            border-bottom: 1px solid grey;
+            text-align: center;
+            display: inline;
+            width: 100px;
+        }
+
+        .table thead tr th {
+            text-align: center;
+            font-size: 0.9em;
+            line-height: 15px !important;
+        }
+
+        .table tbody tr td {
+            text-align: center;
+            line-height: 18px;
+        }
+
+        .c1, .c2 {
+            background-color: white;
+            margin: 0px;
+            margin-top: 5px;
+        }
+    </style>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(document).ready(function () {
+            $('.datepicker').datetimepicker({
+                format: 'MMMM-YYYY',
+                widgetPositioning: {
+                    horizontal: 'auto',
+                    vertical: 'bottom'
+                },
+                minDate: moment().subtract(1, 'd'),
+                viewMode: "months",
+                useCurrent: false
+            });
+        });
+
+
+        $("#start").on("dp.change", function (e) {
+            var val = new Date($("#start").val());
+            var arr = val.toString().split(" ");
+            $("#t-start").html(arr[1]);
+        });
+
+        $("#end").on("dp.change", function (e) {
+            var val = new Date($("#end").val());
+            var arr = val.toString().split(" ");
+            $("#t-end").html(arr[1]);
+        });
+    </script>
+
+    <script>
+        $(".c1").click(function () {
+            var cb = $(this);
+
+            var PersonId = cb.attr("data-PersonId");
+            var HospitalId = cb.attr("data-HospitalId");
+            var Comment = cb.attr("data-Comment");
+            var join = PersonId + HospitalId + Comment;
+
+            if (cb.is(":checked")) {
+                //if checked
+                var count = $(".ppl-row").length;
+
+                var insert = "<div class='ppl-row' data-join='" + join + "'>" +
+                    "<input class='p' value='" + PersonId + "' name='HealthCheckupIssues[" + count + "].PersonId'/>" +
+                    "<input class='h' value='" + HospitalId + "' name='HealthCheckupIssues[" + count + "].HospitalId'/>" +
+                    "<input class='c' value='" + Comment + "' name='HealthCheckupIssues[" + count + "].Comment'/>" +
+                    "</div>";
+                $("#ppl").append(insert);
+            } else {
+                //if uncheck
+
+                $(".ppl-row").each(function () {
+                    if ($(this).attr("data-join") == join) {
+                        $(this).remove();
+                    }
+                });
+
+                reorder();
+            }
+        });
+
+        $(".c2").click(function () {
+            var cb = $(this);
+
+            var PersonId = cb.attr("data-PersonId");
+            var HospitalId = cb.attr("data-HospitalId");
+            var Comment = cb.attr("data-Comment");
+            var join = PersonId + HospitalId + Comment;
+
+            if (cb.is(":checked")) {
+                //if checked
+                var count = $(".ppl-row").length;
+
+                var insert = "<div class='ppl-row' data-join='" + join + "'>" +
+                    "<input class='p' value='" + PersonId + "' name='HealthCheckupIssues[" + count + "].PersonId'/>" +
+                    "<input class='h' value='" + HospitalId + "' name='HealthCheckupIssues[" + count + "].HospitalId'/>" +
+                    "<input class='c' value='" + Comment + "' name='HealthCheckupIssues[" + count + "].Comment'/>" +
+                    "</div>";
+                $("#ppl").append(insert);
+            } else {
+                //if uncheck
+
+                $(".ppl-row").each(function () {
+                    if ($(this).attr("data-join") == join) {
+                        $(this).remove();
+                    }
+                });
+
+                reorder();
+            }
+        });
+
+        function reorder() {
+            var count = 0;
+
+            $(".ppl-row").each(function () {
+                var r = $(this);
+
+                r.find(".p").attr("name", "HealthCheckupIssues[" + count + "].PersonId");
+                r.find(".h").attr("name", "HealthCheckupIssues[" + count + "].HospitalId");
+                r.find(".c").attr("name", "HealthCheckupIssues[" + count + "].Comment");
+
+                count++;
+            })
+        }
+
+        $("#start").on("dp.change", function () {
+            if ($("#start").val() != null) {
+                if ($("#start").val() == $("#end").val()) {
+                    alert("Month 1 and Month 2 shouldn't be the same.");
+                    $("#start").val(null);
+                } else {
+                    if ($("#end").val().length != 0) {
+                        $("#submit-btn").attr("disabled", false)
+                    }
+
+                    $(".c1").each(function () {
+                        $(this).attr("disabled", false);
+                        $(this).attr("data-Comment", $("#start").val());
+                    });
+                }
+            } else {
+                $("#submit-btn").attr("disabled", true);
+                $(".c1").each(function () {
+                    $(this).attr("disabled", true);
+                    $(this).attr("data-Comment", null);
+                });
+            }
+        });
+
+        $("#end").on("dp.change", function () {
+            if ($("#end").val() != null) {
+
+                if ($("#start").val() == $("#end").val()) {
+                    alert("Month 1 and Month 2 shouldn't be the same.");
+                    $("#end").val(null);
+                } else {
+                    if ($("#start").val().length != 0) {
+                        $("#submit-btn").attr("disabled", false)
+                    }
+
+                    $(".c2").each(function () {
+                        $(this).attr("disabled", false);
+                        $(this).attr("data-Comment", $("#end").val());
+                    });
+                }
+            } else {
+                $("#submit-btn").attr("disabled", true);
+                $(".c2").each(function () {
+                    $(this).attr("disabled", true);
+                    $(this).attr("data-Comment", null);
+                });
+            }
+        });
+    </script>
+}

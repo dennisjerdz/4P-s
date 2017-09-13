@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using _4PsPH.Models;
+using System.Text;
+using _4PsPH.Extensions;
 
 namespace _4PsPH.Controllers
 {
@@ -14,11 +16,55 @@ namespace _4PsPH.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        public ActionResult Resolve(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            FDSIssue fDSIssue = db.FDSIssues.Find(id);
+            if (fDSIssue == null)
+            {
+                return HttpNotFound();
+            }
+
+            fDSIssue.ResolveComment = "Resolved by " + User.Identity.GetFullName();
+            fDSIssue.ResolvedDate = DateTime.UtcNow.AddHours(8);
+            fDSIssue.IsResolved = true;
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
         // GET: FDSIssues
         public ActionResult Index()
         {
             var fDSIssues = db.FDSIssues.Include(f => f.FDS).Include(f => f.Person);
             return View(fDSIssues.ToList());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ResolveDateRange()
+        {
+            DateTime a = DateTime.Parse(Request.Form["date1"]);
+            DateTime b = DateTime.Parse(Request.Form["date2"]);
+
+            var issues = db.FDSIssues.Where(f => f.DateTimeCreated >= a && f.DateTimeCreated <= b && f.IsResolved == false);
+
+            if(issues != null)
+            {
+                foreach (var x in issues)
+                {
+                    x.ResolveComment = "Resolved by " + User.Identity.GetFullName();
+                    x.ResolvedDate = DateTime.UtcNow.AddHours(8);
+                    x.IsResolved = true;
+                }
+
+                db.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
         }
 
         // GET: FDSIssues/Details/5

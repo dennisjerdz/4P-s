@@ -14,6 +14,7 @@
     <link href="~/Content/font-awesome4.7/css/font-awesome.min.css" rel="stylesheet" />
     <link href="@Url.Content("~/Content/bootstrap-datetimepicker.css")" rel="stylesheet" />
     <link rel="icon" type="image/gif" href="~/Content/images/4Ps_logo.png" />
+    <!--<link href="~/Content/jquery-ui.min.css" rel="stylesheet" />-->
 
     <style>
         .tooltip{
@@ -43,16 +44,24 @@
                 <li class="sidebar-brand-right"><a id="menu-toggle-right" href="#"><font style="color:#7a93b5;">Menu</font> <img width="59" style="padding-top:5px; padding-bottom:5px; float:right; padding-right:15px;" src="~/Content/images/4Ps_logo.png" /></a></li>
             </ul>
             <ul class="sidebar-nav-right" id="sidebar-right">
-                <li><a href="@Url.Action("Index","Client")">Client<span class="sub_icon glyphicon glyphicon-user"></span></a></li>
-                <li><a href="@Url.Action("Index","Households")">Household<span class="sub_icon glyphicon glyphicon-home"></span></a></li>
-                <li><a href="@Url.Action("Index","MobileNumbers")">Mobile No.<span class="sub_icon glyphicon glyphicon-phone"></span></a></li>
-                <li><a href="@Url.Action("Index","Tickets")">Tickets <span class="sub_icon fa fa-ticket" style="padding-right:28px; font-size:1.3em; padding-top:15px;"></span></a></li>
-                <li><a href="@Url.Action("Index","FDS")">FDS <span class="sub_icon fa fa-group" style="padding-right:27px; font-size:1.3em; padding-top:15px;"></span></a></li>
-                <li><a href="@Url.Action("Index","Schools")">Schools <span class="sub_icon fa fa-graduation-cap" style="padding-right:27px; font-size:1.3em; padding-top:15px;"></span></a></li>
-                <li><a href="@Url.Action("Index","Hospitals")">Hospitals <span class="sub_icon fa fa-medkit" style="padding-right:28px; font-size:1.3em; padding-top:15px;"></span></a></li>
-                <li><a href="@Url.Action("Index","FDSIssues")" style="position:relative;"><font style="font-size:0.9em;">FDS Issues</font><span class="sub_icon fa fa-group" style="padding-right:27px; font-size:1.3em; padding-top:15px;"></span> <span class="fa fa-exclamation-triangle" style="position:absolute; bottom:10px; right:22px; color:#c35656;"></span></a></li>
-                <li><a href="@Url.Action("Index","AttendanceIssues")" style="position:relative;"><font style="font-size:0.9em;">Attendance</font> <span class="sub_icon fa fa-graduation-cap" style="padding-right:27px; font-size:1.3em; padding-top:15px;"></span> <span class="fa fa-exclamation-triangle" style="position:absolute; bottom:15px; right:22px; color:#c35656;"></span></a></li>
-                <li><a href="@Url.Action("Index","HealthCheckupIssues")" style="position:relative;"><font style="font-size:0.9em;">Health</font><span class="sub_icon fa fa-medkit" style="padding-right:28px; font-size:1.3em; padding-top:15px;"></span> <span class="fa fa-exclamation-triangle" style="position:absolute; bottom:12px; right:22px; color:#c35656;"></span></a></li>
+                <li><a href="@Url.Action("Index","Client")"><font style="font-size:0.9em;">Client</font><span class="sub_icon glyphicon glyphicon-user"></span></a></li>
+                <li><a href="@Url.Action("Index","Households")"><font style="font-size:0.9em;">Household</font><span class="sub_icon glyphicon glyphicon-home"></span></a></li>
+                <li><a href="@Url.Action("Index","MobileNumbers")"><font style="font-size:0.9em;">Mobile No.</font><span class="sub_icon glyphicon glyphicon-phone"></span></a></li>
+                <li><a href="@Url.Action("Index","Tickets")"><font style="font-size:0.9em;">Tickets</font><span class="sub_icon fa fa-ticket" style="padding-right:28px; font-size:1.3em; padding-top:15px;"></span></a></li>
+                <li><a href="@Url.Action("Index","FDS")"><font style="font-size:0.9em;">FDS</font><span class="sub_icon fa fa-group" style="padding-right:27px; font-size:1.3em; padding-top:15px;"></span></a></li>
+                <li><a href="@Url.Action("Index","Schools")"><font style="font-size:0.9em;">Schools</font><span class="sub_icon fa fa-graduation-cap" style="padding-right:27px; font-size:1.3em; padding-top:15px;"></span></a></li>
+                <li><a href="@Url.Action("Index","Hospitals")"><font style="font-size:0.9em;">Hospitals</font><span class="sub_icon fa fa-medkit" style="padding-right:28px; font-size:1.3em; padding-top:15px;"></span></a></li>
+                <li><a href="@Url.Action("Index","FDSIssues")" style="position:relative;"><font style="font-size:0.9em;">FDS Issues</font><span class="sub_icon fa fa-group" style="padding-right:27px; font-size:1.3em; padding-top:14px;"></span> <span class="fa fa-exclamation-triangle" style="position:absolute; bottom:10px; right:22px; color:#c35656;"></span></a></li>
+                <li><a href="@Url.Action("Index","AttendanceIssues")" style="position:relative;"><font style="font-size:0.9em;">Attendance</font> <span class="sub_icon fa fa-graduation-cap" style="padding-right:27px; font-size:1.3em; padding-top:14px;"></span> <span class="fa fa-exclamation-triangle" style="position:absolute; bottom:15px; right:22px; color:#c35656;"></span></a></li>
+                <li><a href="@Url.Action("Index","HealthCheckupIssues")" style="position:relative;"><font style="font-size:0.9em;">Health</font><span class="sub_icon fa fa-medkit" style="padding-right:28px; font-size:1.3em; padding-top:14px;"></span> <span class="fa fa-exclamation-triangle" style="position:absolute; bottom:12px; right:22px; color:#c35656;"></span></a></li>
+                <li><a href="@Url.Action("Index","Reports")" style="position:relative;"><font style="font-size:0.9em;">Reports</font><span class="sub_icon fa fa-area-chart" style="padding-right:28px; font-size:1.3em; padding-top:14px;"></span></a></li>
+                <li><a href="@Url.Action("Index","Messages")" style="position:relative;"><font style="font-size:0.9em;">Messages</font><span class="sub_icon fa fa-envelope-open" style="padding-right:28px; font-size:1.3em; padding-top:14px;"></span></a></li>
+
+                @if (User.IsInRole("4P's Officer"))
+                {
+                    <li><a href="@Url.Action("Accounts","Admin")" style="position:relative;"><font style="font-size:0.9em;">Accounts</font><span class="sub_icon fa fa-unlock-alt" style="padding-right:31px; font-size:1.4em; padding-top:14px;"></span></a></li>
+                    <li><a href="@Url.Action("Index","Cities")" style="position:relative;"><font style="font-size:0.9em;">Cities</font><span class="sub_icon fa fa-globe" style="padding-right:31px; font-size:1.4em; padding-top:14px;"></span></a></li>
+                }
                 @*
                     <li style="position:absolute; bottom:0;"><a id="no-hover" style="font-family: 'Sriracha', cursive; font-size:1.5em; line-height:54px;">4P's <img style="width:57px; padding-top:6px; padding-bottom:6px; padding-right:12px; float:right;" src="~/Content/images/4Ps_logo.png" /></a></li>
                 *@
@@ -157,7 +166,7 @@
     </div>
 
     <div style="position:fixed; bottom:5px; right:10px; color:#7a93b5; font-size:0.8em;">
-        &copy; @DateTime.Now.Year - 4P's Cloud Ver 1.0
+        <font style="opacity:0;">Jerdine Sabio Yurika Zacarias Alen Malonzo</font> &copy; @DateTime.Now.Year - 4P's Cloud Ver 1.0
     </div>
 
     @Scripts.Render("~/bundles/jquery")
@@ -169,7 +178,8 @@
     <script src="~/Scripts/datatables.js"></script>
     <script src="~/Scripts/dataTables.bootstrap.js"></script>
 
-    @RenderSection("scripts", required: false)
+    <!--<script src="~/Scripts/jquery-ui.min.js"></script>-->
+    <script src="~/Scripts/bootstrap-notify.min.js"></script>
 
     <script>
         $("#menu-toggle-right").click(function(e) {
@@ -178,8 +188,129 @@
         });
     </script>
 
+    <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
+    <script src="~/signalr/hubs"></script>
+
+    <script id="signalR">
+        $(function () {
+            var feed = $.connection.feedHub;
+
+            feed.client.addmsg = function (msg) {
+                //  $("#feed").append("<li>" + msg + "</li>");
+                spawnNotification(msg, "4P's notifications.");
+            }
+
+            feed.client.grpmsg = function (msg) {
+                spawnNotification(msg, "4P's notifications.");
+            }
+
+            feed.client.ticketmsg = function (msg) {
+                console.log(msg);
+                var msgArray = msg.split(",");
+
+                if (msgArray[0] == "Ticket") {
+                    var controllerName = "@HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString()";
+
+                    if (controllerName == "Tickets") {
+                        var actionName = "@ViewContext.RouteData.GetRequiredString("action")";
+
+                        if (actionName == "Details") {
+                            var id = "@ViewContext.RouteData.Values["id"]";
+
+                            console.log(msgArray[1]);
+
+                            if (msgArray[1] == id) {
+                                $(".comments_here").prepend("<p class='comment-heading'>"+msgArray[2]+"&emsp; <font>("+msgArray[3]+") "+msgArray[4]+"</font></p><p class='comment-body'>"+msgArray[5]+"</p>");
+                            }
+                        }
+                    }
+                }
+
+                //spawnNotification(msg, "Ticket notifications.");
+            }
+
+            $.connection.hub.start().done(function () {
+
+            });
+        });
+
+        function spawnNotification(theBody, theTitle) {
+            var options = {
+                body: theBody,
+                icon: "@Url.Content("~/Content/images/4Ps_logo.png")"
+            }
+            var n = new Notification(theTitle, options);
+            setTimeout(n.close.bind(n), 4500);
+            Play(3, 900);
+        }
+
+        Play = (function () {
+
+            var ctx = new (AudioContext || webkitAudioContext);
+
+            return function (duration, freq, finishedCallback) {
+                duration = +duration;
+                if (typeof finishedCallback != "function") {
+                    finishedCallback = function () { };
+                }
+                var osc = ctx.createOscillator();
+                var g = ctx.createGain();
+                osc.connect(g);
+                g.connect(ctx.destination);
+                osc.type = "sine";
+                osc.frequency.value = freq;
+
+                if (osc.start) {
+                    osc.start();
+                    g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + duration);
+                }
+                else {
+                    osc.noteOn(0);
+                    g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + duration);
+                }
+            };
+        })();
+
+        $(document).ready(function () {
+
+            if (Notification.permission === "granted") {
+                notifyUI("It work!", "info", "http://www.facebook.com");
+            } else {
+                Notification.requestPermission().then(function (result) {
+                    if (result === "granted") {
+                        spawnNotification("Hello there!", "Notifications are enabled.");
+                    }
+                });
+            }
+        });
+
+        function notifyUI(message, type, link) {
+            $.notify({
+                // options
+                message: message,
+                title: "4P's Notifications",
+                url: link,
+                target: '_blank'
+            }, {
+                // settings
+                type: type,
+                newest_on_top: true,
+                placement: {
+                    from: "top",
+                    align: "right"
+                },
+                delay: 0,
+                offset: 10,
+                spacing: 5,
+                z_index: 10001
+            });
+        }
+    </script>
+
+    @RenderSection("scripts", required: false)
+
     <script>
-        $(document).ready(function(){
+        $(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip();
         });
     </script>

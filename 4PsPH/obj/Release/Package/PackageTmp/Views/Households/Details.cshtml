@@ -71,8 +71,7 @@
                             Projected Monthly Benefit:
                             <strong>
                                 @{
-                                    int legible_beneficiaries = Model.People.Count(p => p.getAge() < 18
-                                         && p.AttendanceIssues.Count(a => a.IsResolved) == p.AttendanceIssues.Count()
+                                    int legible_beneficiaries = Model.People.Count(p => p.AttendanceIssues.Count(a => a.IsResolved) == p.AttendanceIssues.Count()
                                          && p.FDSIssues.Count(a => a.IsResolved) == p.FDSIssues.Count()
                                          && p.HealthCheckupIssues.Count(a => a.IsResolved) == p.HealthCheckupIssues.Count()
                                          && p.IsExcluded == false
@@ -92,7 +91,7 @@
 
                                 @if (Model.IsExcluded)
                                 {
-                                    <text>None; Household is excluded</text>
+                                    <text>Excluded</text>
                                 }
                                 else
                                 {
@@ -152,6 +151,10 @@
                                         <i style="color:#ffa0ec" class="fa fa-venus"></i>
                                     }
                                     <font style="font-size:0.9em; padding-left:3px;">@item.getFullName()</font>
+                                    @if (item.IsPregnant == true)
+                                    {
+                                        <font style="font-size:0.7em; color:#ffa0ec; padding-left:3px;">(pregnant)</font>
+                                    }
                                 </div>
                             </div>
                             <div class="window">
@@ -183,10 +186,16 @@
                             </div>
                             <div class="window-footer">
                                 <div class="btn-group btn-group-justified">
-                                    <a href="@Url.Action("ClientIndex","MobileNumbers",new { id=item.PersonId})" class="btn btn-info-g"><i class="fa fa-address-book"></i></a>
-                                    <a href="#" class="btn btn-warning-g"><i class="fa fa-pencil"></i></a>
-                                    <a href="#" class="btn btn-danger2-g"><i class="fa fa-warning"></i></a>
-                                    <a href="#" class="btn btn-danger-g"><i class="fa fa-remove"></i></a>
+                                    <a href="@Url.Action("ClientIndex","MobileNumbers",new { id=item.PersonId })" class="btn btn-info-g"><i class="fa fa-address-book"></i></a>
+                                    <a href="@Url.Action("Edit","Client", new { id=item.PersonId })" class="btn btn-warning-g"><i class="fa fa-pencil"></i></a>
+                                    @if (item.IsPregnant == true)
+                                    {
+                                        <a title="Remove Pregnancy And Beneficiary Status" href="@Url.Action("RemovePregnancy","Client", new { id=item.PersonId })" class="btn btn-danger-g"><i class="fa fa-child"></i></a>
+                                    }
+                                    @*
+                                        <a href="#" class="btn btn-danger2-g"><i class="fa fa-warning"></i></a>
+                                        <a href="#" class="btn btn-danger-g"><i class="fa fa-remove"></i></a>
+                                    *@
                                 </div>
                             </div>
                         </div>

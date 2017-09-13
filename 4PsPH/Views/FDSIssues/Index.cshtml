@@ -7,12 +7,16 @@
 <div class="shadow-wrapper">
     <div class="row">
         <div class="window-heading">
-            <div class="col-md-9">
+            <div class="col-md-5">
                 <div class="links">
                     <strong>
                         @ViewBag.Title
                     </strong>
                 </div>
+            </div>
+
+            <div class="col-md-4" style="text-align:right;">
+                <a href="#" data-toggle="modal" data-target="#resolveModal" class="btn btn-info">Resolve Issues <span class="fa fa-calendar-check-o"></span></a>
             </div>
 
             <div class="col-md-3" style="text-align:right;">
@@ -24,26 +28,26 @@
         </div>
     </div>
 
-    <table class="table table-hover">
+    <table class="table table-hover table-condensed">
         <thead>
             <tr>
                 <th>
                     @Html.DisplayNameFor(model => model.FDS.Name)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Person.GivenName)
+                    Client
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Comment)
+                    Household # - Name
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.IsResolved)
+                    Status
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.ResolvedDate)
+                    Date Created
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.DateTimeCreated)
+                    Comment
                 </th>
                 <th></th>
             </tr>
@@ -60,24 +64,72 @@
                         @Html.DisplayFor(modelItem => item.Person.GivenName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Comment)
+                        @item.Person.HouseholdId - @item.Person.Household.Name
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.IsResolved)
+                        @if (item.IsResolved)
+                        {
+                            <font style="color:#3ec405">Resolved <span  data-toggle="tooltip" class="glyphicon glyphicon-info-sign" title="@item.ResolveComment on @item.ResolvedDate.Value.ToString("MM/dd/yy")"></span></font>
+                        }
+                        else
+                        {
+                            <font style="color:#a4a2a2">Unresolved</font>
+                        }
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ResolvedDate)
+                        @item.DateTimeCreated.ToString("MM/dd/yy")
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.DateTimeCreated)
+                        @item.Comment
                     </td>
-                    <td>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.FDSIssueId })
+                    <td style="text-align:right;">
+                        @if (!item.IsResolved)
+                        {
+                            @Html.ActionLink("Resolve", "Resolve", new { id = item.FDSIssueId }, new { @class = "btn btn-success btn-xs" })
+                        }
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+</div>
+
+<div id="resolveModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Resolve Issues</h4>
+            </div>
+            @using (Html.BeginForm("ResolveDateRange","FDSIssues"))
+            {
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-group">
+                        <label>From</label>
+                        <input class="form-control datepicker" name="date1" id="date1" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label>To</label>
+                        <input class="form-control datepicker" id="date2" name="date2" required />
+                    </div>
+
+                    <div class="form-group">
+                        <div id="result"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="Submit" class="btn btn-info">Submit <span class="glyphicon glyphicon-check"></span></button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+
+    </div>
 </div>
 
 @section scripts{
@@ -90,6 +142,14 @@
                 "columnDefs": [
                     { "orderable": false, "targets": 6 }
                 ]
+            });
+            
+            $('.datepicker').datetimepicker({
+                format: 'MM/DD/YYYY',
+                widgetPositioning: {
+                    horizontal: 'auto',
+                    vertical: 'bottom'
+                }
             });
 
             $(".all-search").keyup(function () {

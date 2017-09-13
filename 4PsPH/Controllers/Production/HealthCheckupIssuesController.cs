@@ -14,6 +14,25 @@ namespace _4PsPH.Controllers.Production
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        public ActionResult Resolve(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            HealthCheckupIssue healthCheckupIssue = db.HealthCheckupIssues.Find(id);
+            if (healthCheckupIssue == null)
+            {
+                return HttpNotFound();
+            }
+
+            healthCheckupIssue.IsResolved = true;
+            healthCheckupIssue.ResolvedDate = DateTime.UtcNow.AddHours(8);
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
         // GET: HealthCheckupIssues
         public ActionResult Index()
         {

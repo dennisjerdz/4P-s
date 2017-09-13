@@ -27,6 +27,7 @@ namespace _4PsPH.Models
         [Required]
         [Display(Name="Household Name")]
         public string Name { get; set; }
+        public string Address { get; set; }
         public DateTime DateTimeCreated { get; set; }
         [Display(Name = "Excluded")]
         public bool IsExcluded { get; set; }

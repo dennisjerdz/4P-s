@@ -123,7 +123,7 @@
                                 }
                             </div>
 
-                            <div class="comments_here">
+                            <div class="comments_here" style="max-height:380px; overflow-y:auto;">
                                 @foreach (var x in Model.Ticket.TicketComments.OrderByDescending(c => c.DateTimeCreated))
                                 {
                                     if (x.CreatedByUsername == User.Identity.Name)
@@ -144,7 +144,10 @@
                             @if(Model.Ticket.CaseSummaryReports.Count == 0){
                                 <center style="margin-top:70px; margin-bottom:50px; color:#50596e; font-size:1.1em;">
                                     @if (User.IsInRole("Social Worker")) {
-                                        <text>No case summary report found,</text> <a href="@Url.Action("Create","CaseSummaryReports", new { id=Model.TicketId })">create case summary report.</a>
+                                        if (Model.Ticket.Category.Name == "Exclusion Errors" || Model.Ticket.Category.Name == "Others")
+                                        {
+                                            <text>No case summary report found,</text> <a href="@Url.Action("Create","CaseSummaryReports", new { id=Model.TicketId })">create case summary report.</a>
+                                        }
                                     }else
                                     {
                                         <text>No case summary report found.</text>
@@ -196,7 +199,11 @@
                                 <center style="margin-top:70px; margin-bottom:50px; color:#50596e; font-size:1.1em;">
                                     @if (User.IsInRole("Social Worker"))
                                     {
-                                        <text>No endorsement letter found,</text> <a href="@Url.Action("Create","Endorsements", new { id=Model.TicketId })">create endorsement letter.</a>
+                                        if (Model.Ticket.Category.Name == "Exclusion Errors" || Model.Ticket.Category.Name == "Others")
+                                        {
+                                            <text>No endorsement letter found,</text> <a href="@Url.Action("Create","Endorsements", new { id=Model.TicketId })">create endorsement letter.</a>
+                                        }
+                                        
                                     }else
                                     {
                                         <text>No endorsement letter found.</text>

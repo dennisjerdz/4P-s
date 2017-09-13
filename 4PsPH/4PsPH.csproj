@@ -181,6 +181,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\FBController.cs" />
+    <Compile Include="Controllers\Production\AdminController.cs" />
     <Compile Include="Controllers\Client\ClientController.cs" />
     <Compile Include="Controllers\Groups\SchoolsController.cs" />
     <Compile Include="Controllers\Production\EndorsementsController.cs" />
@@ -201,6 +203,7 @@
     <Compile Include="Controllers\Client\OccupationsController.cs" />
     <Compile Include="Controllers\Client\RelationToGranteesController.cs" />
     <Compile Include="Controllers\Production\MessagesController.cs" />
+    <Compile Include="Controllers\Production\ReportsController.cs" />
     <Compile Include="Controllers\Production\StatusController.cs" />
     <Compile Include="Controllers\Production\TicketsController.cs" />
     <Compile Include="Controllers\SMSController.cs" />
@@ -320,6 +323,7 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap-datetimepicker.4.15.js" />
+    <Content Include="Scripts\bootstrap-notify.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Content\font-awesome4.7\fonts\fontawesome-webfont.eot" />
@@ -366,11 +370,14 @@
     <None Include="Properties\PublishProfiles\4PsPH - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\4PsPH - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\Chart.js" />
+    <Content Include="Scripts\Chart.min.js" />
     <Content Include="Scripts\dataTables.bootstrap.js" />
     <Content Include="Scripts\datatables.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.signalR-2.2.2.js" />
     <Content Include="Scripts\jquery.signalR-2.2.2.min.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
@@ -380,6 +387,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
@@ -540,9 +548,20 @@
     <Content Include="Views\Hospitals\GenerateComplianceForm.cshtml" />
     <Content Include="Views\Shared\_Layout_e.cshtml" />
     <Content Include="Views\FDS\GenerateComplianceForm.cshtml" />
+    <Content Include="Views\Admin\Accounts.cshtml" />
+    <Content Include="Views\Admin\Create.cshtml" />
+    <Content Include="Views\Reports\Test.cshtml" />
+    <Content Include="Views\Reports\Index.cshtml" />
+    <Content Include="Views\Hospitals\GenerateComplianceForm0to5.cshtml" />
+    <Content Include="Views\Hospitals\GenerateComplianceForm6to14.cshtml" />
+    <Content Include="Views\Hospitals\GenerateComplianceFormPregnant.cshtml" />
+    <Content Include="Views\Client\BeneficiaryAgeCheck.cshtml" />
+    <Content Include="Views\Reports\_reportViewMonth.cshtml" />
+    <Content Include="Views\Reports\_reportViewYear.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\FB\" />
     <Folder Include="Views\SMS\" />
   </ItemGroup>
   <ItemGroup>

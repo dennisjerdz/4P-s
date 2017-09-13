@@ -11,16 +11,19 @@ using _4PsPH.Extensions;
 using Microsoft.AspNet.Identity;
 using Globe.Connect;
 using System.Diagnostics;
+using _4PsPH.Hubs;
+using Microsoft.AspNet.SignalR;
 
 namespace _4PsPH.Controllers.Production
 {
-    [Authorize]
+    [System.Web.Mvc.Authorize]
     public class TicketsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         /* send sms action */
-        public string short_code = "21583313";
+        //public string short_code = "21584812";
+        public string short_code = "21582183";
         private ActionResult SMS(string mobile_number, string message)
         {
             MobileNumber mb = db.MobileNumbers.FirstOrDefault(m => m.MobileNo == mobile_number);
@@ -94,10 +97,19 @@ namespace _4PsPH.Controllers.Production
         // GET: Tickets
         public ActionResult Index()
         {
-            int city = Convert.ToInt16(User.Identity.GetCityId());
+            if (User.IsInRole("4P's Officer"))
+            {
+                var tickets = db.Tickets.Include(t => t.Category).Include(t => t.MobileNumber).Include(t => t.Person).Include(t => t.Status);
+                return View(tickets.ToList());
+            }
+            else
+            {
+                int city = Convert.ToInt16(User.Identity.GetCityId());
 
-            var tickets = db.Tickets.Include(t => t.Category).Include(t => t.MobileNumber).Include(t => t.Person).Include(t => t.Status).Where(t=>t.Person.Household.CityId == city);
-            return View(tickets.ToList());
+                var tickets = db.Tickets.Include(t => t.Category).Include(t => t.MobileNumber).Include(t => t.Person).Include(t => t.Status).Where(t => t.Person.Household.CityId == city);
+                return View(tickets.ToList());
+            }
+            
         }
 
         // GET: Tickets/Details/5
@@ -313,6 +325,11 @@ namespace _4PsPH.Controllers.Production
             {
                 db.TicketComments.Add(ticketComment);
                 db.SaveChanges();
+
+                //signalr notify ticket
+                var signalr = GlobalHost.ConnectionManager.GetHubContext<FeedHub>();
+                signalr.Clients.Group(User.Identity.GetCityName()).ticketmsg("Ticket,"+ticketComment.Ticket.TicketId+","+User.Identity.GetFullName()+","+type+","+ticketComment.DateTimeCreated+","+ticketComment.Body);
+
                 return RedirectToAction("Details", "Tickets", new { id = ticketComment.TicketId });
             }
 
@@ -341,7 +358,7 @@ namespace _4PsPH.Controllers.Production
                 {
                     try
                     {
-                        string msg = "Hello " + ticket.Person.GivenName + ", the " + ticket.Category.Name + " ticket with ID; " + ticket.TicketId + " has been verified.";
+                        string msg = "Hello " + ticket.Person.GivenName + ", the " + ticket.Category.Name + " ticket with ID; " + ticket.TicketId + " has been verified. An interview is required to proceed. Please go to the nearest City Action Team for the interview.";
                         SMS(ticket.MobileNumber.MobileNo, msg);
                     }
                     catch (Exception e)
@@ -349,6 +366,10 @@ namespace _4PsPH.Controllers.Production
                         Trace.TraceInformation("Unable to send message to " + ticket.MobileNumber.MobileNo + " with error; " + e.Message);
                     }
                 }
+
+                //signalr notify social workers
+                var signalr = GlobalHost.ConnectionManager.GetHubContext<FeedHub>();
+                signalr.Clients.Group("Social Worker" + "-" + User.Identity.GetCityName()).grpmsg("Ticket with ID; " + ticket.TicketId + " has is now Verified / Pending Endorsement.");
             }
             else if(current_status == "Verified / Pending Endorsement")
             {
@@ -436,6 +457,10 @@ namespace _4PsPH.Controllers.Production
                             Trace.TraceInformation("Unable to send message to " + ticket.MobileNumber.MobileNo + " with error; " + e.Message);
                         }
                     }
+
+                    //signalr notify social workers
+                    var signalr = GlobalHost.ConnectionManager.GetHubContext<FeedHub>();
+                    signalr.Clients.Group("Social Worker" + "-" + User.Identity.GetCityName()).grpmsg("Ticket with ID; " + ticket.TicketId + " has been reverted to pending OIC approval");
                 }
             }
             else if (current_status == "Resolved")

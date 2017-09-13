@@ -1,0 +1,100 @@
+﻿@model IEnumerable<_4PsPH.Models.Person>
+
+@{
+    ViewBag.Title = "Beneficiaries greater than age 18 and are not pregnant";
+}
+
+<div class="shadow-wrapper">
+    <div class="row">
+        <div class="window-heading">
+            <div class="col-md-9">
+                <div class="links">
+                    <strong>
+                        @ViewBag.Title
+                    </strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Household</th>
+                <th>City</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Age</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model.Where(p=>p.getAge() > 18 && p.IsBeneficiary == true && (p.IsPregnant == false || p.IsPregnant == null)))
+            {
+                <tr>
+                    <td>@item.LastName, @item.GivenName @item.MiddleName</td>
+                    <td><a href="@Url.Action("Details","Households", new { id = item.HouseholdId})">@item.Household.Name</a></td>
+                    <td>@item.Household.City.Name</td>
+                    <td>
+                        @if (item.IsBeneficiary.HasValue)
+                        {
+                            if (item.IsBeneficiary.Value)
+                            {
+                                <text>Beneficiary</text>
+                            }
+                        }
+                        @if (item.IsGrantee.HasValue && item.IsBeneficiary.HasValue)
+                        {
+                            if (item.IsGrantee.Value && item.IsBeneficiary.Value)
+                            {
+                                <text> / </text>
+                            }
+                        }
+                        @if (item.IsGrantee.HasValue)
+                        {
+                            if (item.IsGrantee.Value)
+                            {
+                                <font style="color:#ffd800">Grantee</font>
+                            }
+                        }
+                    </td>
+                    <td>
+                        @if (item.IsExcluded)
+                        {
+                            <text><font style="color:#EF5350;">Excluded</font></text>
+                        }
+                        else
+                        {
+                            <text>Active</text>
+                        }
+                    </td>
+                    <td>@item.getAge()</td>
+                    <td style="text-align:right;">
+                        <a href="@Url.Action("RemoveBeneficiaryStatus","Client",new { id = item.PersonId})" class="btn btn-danger btn-xs">Remove Beneficiary Status <span class="fa fa-remove"></span></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            var datatable = $("table").DataTable({
+                paging: true,
+                "pageLength": 10,
+                "dom": "<'row'<'table-window'<'table-responsive'rt>>><'window-footer'<'col-md-6'i><'col-md-6'p>>",
+                "columnDefs": [
+                    { "orderable": false, "targets": 6 }
+                ]
+            });
+
+            $(".all-search").keyup(function () {
+                datatable.search($(this).val()).draw();
+            })
+        });
+    </script>
+}

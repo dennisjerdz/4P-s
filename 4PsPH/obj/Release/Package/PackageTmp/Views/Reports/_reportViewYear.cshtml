@@ -1,0 +1,257 @@
+﻿@model IEnumerable<_4PsPH.Models.Ticket>
+
+<center>
+    <h4 style="padding-top:0px; padding-bottom:0px;">
+        Report for the Year <strong id="afterReport"></strong>
+    </h4>
+    <br />
+</center>
+
+<table class="table table-bordered table-condensed">
+    <thead>
+        <tr>
+            <th colspan="4"><center>Summary</center></th>
+        </tr>
+    </thead>
+
+    <thead>
+        <tr>
+            <th>Month</th>
+            <th>Frequency</th>
+            <th>Resolved</th>
+            <th>Pending</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td>January</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 1)</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 1 && m.Status.Name == "Resolved")</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 1 && m.Status.Name != "Resolved")</td>
+        </tr>
+
+        <tr>
+            <td>February</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 2)</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 2 && m.Status.Name == "Resolved")</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 2 && m.Status.Name != "Resolved")</td>
+        </tr>
+
+        <tr>
+            <td>March</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 3)</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 3 && m.Status.Name == "Resolved")</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 3 && m.Status.Name != "Resolved")</td>
+        </tr>
+
+        <tr>
+            <td>April</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 4)</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 4 && m.Status.Name == "Resolved")</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 4 && m.Status.Name != "Resolved")</td>
+        </tr>
+
+        <tr>
+            <td>May</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 5)</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 5 && m.Status.Name == "Resolved")</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 5 && m.Status.Name != "Resolved")</td>
+        </tr>
+
+        <tr>
+            <td>June</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 6)</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 6 && m.Status.Name == "Resolved")</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 6 && m.Status.Name != "Resolved")</td>
+        </tr>
+
+        <tr>
+            <td>July</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 7)</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 7 && m.Status.Name == "Resolved")</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 7 && m.Status.Name != "Resolved")</td>
+        </tr>
+
+        <tr>
+            <td>August</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 8)</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 8 && m.Status.Name == "Resolved")</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 8 && m.Status.Name != "Resolved")</td>
+        </tr>
+
+        <tr>
+            <td>September</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 9)</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 9 && m.Status.Name == "Resolved")</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 9 && m.Status.Name != "Resolved")</td>
+        </tr>
+
+        <tr>
+            <td>October</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 10)</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 10 && m.Status.Name == "Resolved")</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 10 && m.Status.Name != "Resolved")</td>
+        </tr>
+
+        <tr>
+            <td>November</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 11)</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 11 && m.Status.Name == "Resolved")</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 11 && m.Status.Name != "Resolved")</td>
+        </tr>
+
+        <tr>
+            <td>December</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 12)</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 12 && m.Status.Name == "Resolved")</td>
+            <td>@Model.Count(m => m.DateTimeCreated.Month == 12 && m.Status.Name != "Resolved")</td>
+        </tr>
+
+        <tr>
+            <td></td>
+            <td>@Model.Count()</td>
+            <td>@Model.Count(m => m.Status.Name == "Resolved")</td>
+            <td>@Model.Count(m => m.Status.Name != "Resolved")</td>
+        </tr>
+    </tbody>
+</table>
+
+<br />
+
+<table class="table table-bordered table-condensed">
+    <thead>
+        <tr>
+            <th colspan="7">
+                <center>
+                    Tickets List
+                </center>
+            </th>
+        </tr>
+    </thead>
+
+    <thead>
+        <tr>
+            <th>Ticket ID</th>
+            <th>Household ID</th>
+            <th>Client ID</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Date Created</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var x in Model.OrderBy(m => m.DateTimeCreated))
+        {
+            <tr>
+                <td>Ticket ID</td>
+                <td>@x.Person.HouseholdId</td>
+                <td>@x.PersonId</td>
+                <td>@x.Person.LastName, @x.Person.GivenName</td>
+                <td>@x.Category.Name</td>
+                <td>
+                    @x.Status.Name
+                    @if (x.Status.Name == "Resolved")
+                    {
+                        <button data-toggle="tooltip" title="Resolved by: @x.ResolvedBy on @x.ResolvedDate" class="btn btn-xs"><span class="fa fa-info-circle"></span></button>
+                    }
+                </td>
+                <td>@x.DateTimeCreated.ToString("MM/dd/yy")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script src="~/Scripts/Chart.js"></script>
+
+@*
+        <script>
+                function rColor() {
+                    var rgb = 'rgb(' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ')';
+                    console.log(rgb);
+                    return rgb;
+                }
+
+                var barChartData = {
+                    labels: [
+                        "2011", "2012", "2013"
+                    ],
+                    datasets: [
+                        @foreach (var x in Model.GroupBy(c=>c.Category))
+                        {
+                            <text>
+                                {
+                                    label: "@x.Key.Name",
+                                    backgroundColor: rColor(),
+                                    data: [
+                                        @x.Count(a=>a.DateTimeCreated.Year == 2011)
+                                        ,
+                                        @x.Count(a => a.DateTimeCreated.Year == 2012)
+                                        ,
+                                        @x.Count(a => a.DateTimeCreated.Year == 2013)
+                                    ]
+                                },
+                            </text>
+                        }
+
+                        /*
+                        {
+                        label: 'Dataset 1',
+                        backgroundColor: "rgba(200,0,0,1)",
+                        data: [
+                            4,
+                            5,
+                            2
+                        ]
+                    }, {
+                        label: 'Dataset 2',
+                        backgroundColor: "rgba(0,200,0,1)",
+                        data: [
+                            12,
+                            15,
+                            12
+                        ]
+                    }, {
+                        label: 'Dataset 3',
+                        backgroundColor: "rgba(0,0,200,1)",
+                        data: [
+                            4,
+                            5,
+                            2
+                        ]
+                    }*/
+
+                    ]
+
+                };
+
+                $(document).ready(function () {
+                    var ctx = $("#report-here")[0].getContext("2d");
+                    window.myBar = new Chart(ctx, {
+                        type: 'bar',
+                        data: barChartData,
+                        options: {
+                            title: {
+                                display: true,
+                                text: "Category of Grievances Received Per Year Summation"
+                            },
+                            tooltips: {
+                                mode: 'index',
+                                intersect: false
+                            },
+                            responsive: true,
+                            scales: {
+                                xAxes: [{
+                                    stacked: true,
+                                }],
+                                yAxes: [{
+                                    stacked: true
+                                }]
+                            }
+                        }
+                    });
+                });
+    </script>
+*@

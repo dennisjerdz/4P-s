@@ -14,6 +14,25 @@ namespace _4PsPH.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        public ActionResult Resolve(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            AttendanceIssue attendanceIssue = db.AttendanceIssues.Find(id);
+            if (attendanceIssue == null)
+            {
+                return HttpNotFound();
+            }
+
+            attendanceIssue.IsResolved = true;
+            attendanceIssue.ResolvedDate = DateTime.UtcNow.AddHours(8);
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
         // GET: AttendanceIssues
         public ActionResult Index()
         {

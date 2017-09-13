@@ -42,7 +42,7 @@ namespace _4PsPH.Controllers.Groups
                     AttendanceIssue ai = new AttendanceIssue();
                     ai.ResolvedDate = null;
                     ai.IsResolved = false;
-                    string comment = "The beneficiary didn't attend for the month of " + x.Comment + ".";
+                    string comment = "The beneficiary didn't comply for the month of " + x.Comment + ".";
                     ai.Comment = comment;
                     ai.PersonId = x.PersonId;
                     ai.SchoolId = x.SchoolId;
@@ -63,10 +63,18 @@ namespace _4PsPH.Controllers.Groups
         // GET: Schools
         public ActionResult Index()
         {
-            int city = Convert.ToInt16(User.Identity.GetCityId());
+            if (User.IsInRole("4P's Officer"))
+            {
+                var schools = db.Schools.Include(s => s.People);
+                return View(schools.ToList());
+            }
+            else
+            {
+                int city = Convert.ToInt16(User.Identity.GetCityId());
 
-            var schools = db.Schools.Include(s=>s.People).Where(s=>s.CityId == city);
-            return View(schools.ToList());
+                var schools = db.Schools.Include(s => s.People).Where(s => s.CityId == city);
+                return View(schools.ToList());
+            }
         }
 
         // GET: Schools/Create

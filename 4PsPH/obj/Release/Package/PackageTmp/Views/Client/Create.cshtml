@@ -8,8 +8,8 @@
     options.Add(new SelectListItem { Text = "Yes", Value = "true" });
 
     var gender = new List<SelectListItem>();
-    gender.Add(new SelectListItem { Text = "Male", Value = "1" });
     gender.Add(new SelectListItem { Text = "Female", Value = "0" });
+    gender.Add(new SelectListItem { Text = "Male", Value = "1" });
 }
 
 <div class="row">
@@ -71,19 +71,26 @@
                                     <div class="form-group">
                                         <div class="col-md-4">
                                             @Html.LabelFor(model => model.Gender, htmlAttributes: new { @class = "control-label" })
-                                            @Html.DropDownListFor(model => model.Gender, gender, new { @class = "form-control" })
+                                            @Html.DropDownListFor(model => model.Gender, gender, new { @class = "form-control gender-dropdown" })
                                             @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
                                         </div>
 
                                         <div class="col-md-4">
                                             <label>Occupation</label>
-                                            @Html.DropDownList("OccupationId", null, htmlAttributes: new { @class = "form-control" })
+                                            <input class="form-control" id="O-input" name="O-input"/>
+                                            @*
+                                                @Html.DropDownList("OccupationId", null, htmlAttributes: new { @class = "form-control" })
+                                            *@
+                                            
                                             @Html.ValidationMessageFor(model => model.OccupationId, "", new { @class = "text-danger" })
                                         </div>
 
                                         <div class="col-md-4">
                                             <label>Educational Attainment</label>
-                                            @Html.DropDownList("EducationalAttainmentId", null, htmlAttributes: new { @class = "form-control" })
+                                            <input  class="form-control" id="EA-input" name="EA-input"/>
+                                            @*
+                                                @Html.DropDownList("EducationalAttainmentId", null, htmlAttributes: new { @class = "form-control" })
+                                            *@
                                             @Html.ValidationMessageFor(model => model.EducationalAttainmentId, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -117,7 +124,7 @@
 
                                     <div class="form-group">
                                         <div class="col-md-6">
-                                            <label>Relation to Grantee</label>
+                                            <label>Role <!--Relation To Grantee--></label>
                                             @Html.DropDownList("RelationToGranteeId", null, htmlAttributes: new { @class = "form-control" })
                                             @Html.ValidationMessageFor(model => model.RelationToGranteeId, "", new { @class = "text-danger" })
                                         </div>
@@ -132,13 +139,19 @@
                                     <div class="form-group">
                                         <div class="col-md-6">
                                             <label>Enrolled At</label>
-                                            @Html.DropDownList("SchoolId", null, htmlAttributes: new { @class = "form-control" })
+                                            @Html.DropDownList("SchoolId", null, "Default: None", new { @class="form-control", @disabled = "true" })
                                             @Html.ValidationMessageFor(model => model.SchoolId, "", new { @class = "text-danger" })
                                         </div>
 
-                                        <div class="col-md-6">
-                                            <label>Hospital</label>
-                                            @Html.DropDownList("HospitalId", null, htmlAttributes: new { @class = "form-control" })
+                                        <div class="col-md-2">
+                                            <label>Pregnant?</label>
+                                            @Html.DropDownListFor(model => model.IsPregnant, options, new { @class = "form-control pregnant-option", @disabled = "true" })
+                                            @Html.ValidationMessageFor(model => model.IsPregnant, "", new { @class = "text-danger" })
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label>Assigned Hospital</label>
+                                            @Html.DropDownList("HospitalId", null, "Default: None", new { @class = "form-control", @disabled = "true" })
                                             @Html.ValidationMessageFor(model => model.HospitalId, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -162,14 +175,34 @@
         .form-group{
             margin-bottom:20px;
         }
-    </style>    
+    </style>
+    
+    <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
 }
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
     
+    <script src="~/Scripts/jquery-ui.min.js"></script> 
+
     <script>
+        var occupations = [
+            @foreach (var x in ViewBag.O)
+            {
+                <text>"@Html.Raw(x.Name.Replace("\"", "'"))",</text>
+            }
+        ];
+
+        var ea = [
+            @foreach (var x in ViewBag.EA)
+            {
+                <text>"@Html.Raw(x.Name.Replace("\"", "'"))",</text>
+            }
+        ];
+
         $(document).ready(function () {
+            $("#Gender").val($("#Gender option").last().val());
+
             $('.datepicker').datetimepicker({
                 format: 'MM/DD/YYYY',
                 widgetPositioning: {
@@ -178,6 +211,47 @@
                 },
                 maxDate: moment()
             });
+
+            $("#O-input").autocomplete({
+                source: occupations
+            });
+
+            $("#EA-input").autocomplete({
+                source: ea
+            });
+        });
+
+        $(".gender-dropdown").on("change", function () {
+            var today = new Date();
+            var birthDate = new Date($("#BirthDate").val());
+
+            var age = today.getFullYear() - birthDate.getFullYear();
+            var m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+
+            if ($(".gender-dropdown").val() == 0 && age >= 12) {
+                $(".pregnant-option").attr("disabled", false);
+                $(".pregnant-option").val($(".pregnant-option option:first").val());
+            } else {
+                $(".pregnant-option").attr("disabled", true);
+                $(".pregnant-option").val($(".pregnant-option option:first").val());
+                $("#HospitalId").val($("#HospitalId option:first").val());
+                $("#HospitalId").attr("disabled", true);
+            }
+        });
+
+        $(".pregnant-option").on("change", function () {
+            if($(".pregnant-option").val() == 'true'){
+                $("#HospitalId").attr("disabled", false);
+
+                $("#IsBeneficiary").val("true");
+                $(".beneficiary-display").val("Yes");
+            } else {
+                $("#IsBeneficiary").val("false");
+                $(".beneficiary-display").val("No");
+            }
         });
 
         $(".datepicker").on("dp.change", function (e) {
@@ -195,11 +269,35 @@
             if (age <= 18) {
                 $("#IsBeneficiary").val("true");
                 $(".beneficiary-display").val("Yes");
+                $("#SchoolId").attr("disabled", false);
             }
 
-            if (age>18) {
+            if (age > 18) {
                 $("#IsBeneficiary").val("false");
                 $(".beneficiary-display").val("No");
+
+                $("#SchoolId").attr("disabled", true);
+                $("#SchoolId").val($("#SchoolId option:first").val());
+            }
+
+            // if age is below 11, disable pregnant and hospital options
+            if (age <= 11) {
+                $(".pregnant-option").attr("disabled", true);
+                $(".pregnant-option").val($(".pregnant-option option:first").val());
+                $("#HospitalId").val($("#HospitalId option:first").val());
+                $("#HospitalId").attr("disabled", true);
+            }
+
+            // if female and age is above or equal to 12, enable pregnant option
+            if ($(".gender-dropdown").val() == 0 && age >= 12) {
+                if ($(".gender-dropdown").val() == 0) {
+                    $(".pregnant-option").attr("disabled", false);
+                } else {
+                    $(".pregnant-option").attr("disabled", true);
+                    $(".pregnant-option").val($(".pregnant-option option:first").val());
+                    $("#HospitalId").val($("#HospitalId option:first").val());
+                    $("#HospitalId").attr("disabled", true);
+                }
             }
         });
     </script>

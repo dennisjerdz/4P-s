@@ -17,6 +17,8 @@
 
             <div class="col-md-4" style="text-align:right;">
                 <a href="@Url.Action("Create")" class="btn btn-info">Create Household <span class="glyphicon glyphicon-plus-sign"></span></a>
+
+                <a href="#" class="btn btn-danger excluded"><font>Show Excluded</font> <span class="glyphicon glyphicon-thumbs-down"></span></a>
             </div>
 
             <div class="col-md-3" style="text-align:right;">
@@ -59,7 +61,7 @@
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
+                <tr @if (item.IsExcluded) { <text>data-excluded="yes"</text> } else { <text>data-excluded="no"</text> }>
                     <td>
                         @item.HouseholdId
                     </td>
@@ -134,6 +136,42 @@
             $(".all-search").keyup(function () {
                 datatable.search($(this).val()).draw();
             })
+
+            $(document).on("click", ".excluded", function () {
+                $.fn.dataTable.ext.search.pop();
+                datatable.draw();
+
+                $.fn.dataTable.ext.search.push(
+                  function (settings, data, dataIndex) {
+                      return $(datatable.row(dataIndex).node()).attr('data-excluded') == "yes";
+                  }
+                );
+                datatable.draw();
+
+                $(this).removeClass("btn-danger excluded");
+                $(this).addClass("btn-primary included");
+                $(this).find("span").removeClass("glyphicon-thumbs-down");
+                $(this).find("span").addClass("glyphicon-thumbs-up");
+                $(this).find("font").html("Show Active");
+            });
+
+            $(document).on("click", ".included", function () {
+                $.fn.dataTable.ext.search.pop();
+                datatable.draw();
+
+                $.fn.dataTable.ext.search.push(
+                  function (settings, data, dataIndex) {
+                      return $(datatable.row(dataIndex).node()).attr('data-excluded') == "no";
+                  }
+                );
+                datatable.draw();
+
+                $(this).addClass("btn-danger excluded");
+                $(this).removeClass("btn-primary included");
+                $(this).find("span").addClass("glyphicon-thumbs-down");
+                $(this).find("span").removeClass("glyphicon-thumbs-up");
+                $(this).find("font").html("Show Excluded");
+            });
         });
     </script>
 }
